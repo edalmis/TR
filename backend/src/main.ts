@@ -1,38 +1,43 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
+// import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import * as express from 'express';
 config();
-import { Server } from 'socket.io';
-import { createServer } from 'http';
+import { Server } from 'colyseus';
+import { PongRoom } from './game/game.room';
+import { privateRoom } from './game/game.privateroom';
+// import { IoAdapter } from '@nestjs/platform-socket.io';
+
+
+async function gameServer() {
+  const gameServer = new Server();
+  gameServer.listen(3001);
+  gameServer.define("pong", PongRoom);
+  gameServer.define("privateRoom", privateRoom);
+}
+
+
 
 async function bootstrap() {
   // Creation server [ Port - 3000 ] 
   const app = await NestFactory.create(AppModule);
-  const { httpAdapter } = app.get(HttpAdapterHost);
+  // const { httpAdapter } = app.get(HttpAdapterHost);
   app.use(express.json());
   app.enableCors({
     origin: 'http://localhost:5173',
-    methods: 'GET,POST',
+    // methods: 'GET,POST',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     allowedHeaders: 'Content-Type, Authorization, Accept',
   });
+  // app.useWebSocketAdapter(new IoAdapter(app));
   await app.listen(3000);
 
-  // // Creation server WebSocket [ Port - 3001 ]
-  // const server = createServer(app.getHttpAdapter().getInstance());
-  // const io = new Server(server, {
-  //   cors: {
-  //     origin: 'http://localhost:5173',
-  //     credentials: true,
-  //     allowedHeaders: 'Content-Type, Authorization, Accept',
-  //   },
-  // });
-  // io.listen(3001);
 
   console.log(`Backend is running on port 3000.`);
-  console.log(`io.listen(3001).`);
+  console.log(`io.listen(3002).`);
 }
 bootstrap();
+gameServer();
 
-// app.use(bodyParser.json());

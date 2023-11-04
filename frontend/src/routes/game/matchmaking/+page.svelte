@@ -8,9 +8,15 @@
 	import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
-		actualUsername, ballSpeed,
-		inGame, session, userId,
-		userLogin, winnerScore, launchedGame, navbar,
+		actualUsername,
+		ballSpeed,
+		inGame,
+		session,
+		userId,
+		userLogin,
+		winnerScore,
+		launchedGame,
+		navbar,
 	} from "$lib/store/store";
 
 	let state: GameState;
@@ -52,8 +58,9 @@
 		winnerScore.set(3);
 		ballSpeed.set(3);
 		// // // // // // // // // // // // // // // // // // // // // // // // // // // //
+		console.log("Connection Ws Colyseus [ 3001 ]");
 
-		client = new Colyseus.Client("ws://localhost:3000");
+		client = new Colyseus.Client("ws://localhost:3001");
 		clientColyseus.set(client);
 
 		navbar.set(false);
@@ -213,10 +220,9 @@
 			room.onMessage("gameFinished", (message: any) => {
 				// alert(message.winner);
 				if (message.winnerLogin) {
-       				alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
-    			}
+					alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
+				}
 				LeaveGame();
-				
 			});
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);

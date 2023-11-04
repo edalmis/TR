@@ -29,7 +29,9 @@
 		paddleSize,
 		gameState,
 		rightPlayerUsername,
-		leftPlayerUsername, navbar,launchedGame,
+		leftPlayerUsername,
+		navbar,
+		launchedGame,
 	} from "$lib/store/store";
 
 	// let state: GameState;
@@ -79,7 +81,8 @@
 	}
 
 	onMount(() => {
-		client = new Colyseus.Client("ws://localhost:3000");
+		console.log("Connection Ws Colyseus [ 3001 ]");
+		client = new Colyseus.Client("ws://localhost:3001");
 		clientColyseus.set(client);
 		navbar.set(false);
 		launchedGame.set(true);

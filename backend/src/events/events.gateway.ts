@@ -11,11 +11,9 @@ import {
 import { Socket, Server } from 'socket.io';
 import { ChatService } from 'src/chat/chat.service';
 import { ChatRoom } from 'src/chat/chat_room.entity';
-import { ChatRoomMember } from 'src/chat/chat_room_member.entity';
 import { DirectMessageService } from 'src/direct_message/direct_message.service';
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
-import { LessThan } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
 interface SendMessageData {
@@ -26,14 +24,15 @@ interface SendMessageData {
 
 @Injectable()
 @WebSocketGateway(
-	3001, {
-	cors: {
-		origin: 'http://localhost:5173',
-		methods: ['GET', 'POST'],
-		credentials: true
+	3002,
+	{
+		cors: {
+			origin: 'http://localhost:5173',
+			methods: ['GET', 'POST'],
+			credentials: true
+		}
 	}
-}
-) // WebSocket server will run on http://localhost:3001
+)
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer() server: Server;
 
@@ -49,7 +48,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ EventsGateway ]- *initialized* afterInit( server io )')
 	}
 
-	handleConnection(client: Socket, ...args: any[]) {
+	// handleConnection(client: Socket, ...args: any[]) {
+	handleConnection(client: Socket) {
 		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
 		if (connected) {
 			console.log("-[ Handle Connection ]- Deja connected, -> deconnection");

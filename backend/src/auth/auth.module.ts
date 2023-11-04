@@ -10,10 +10,10 @@ import { AuthService } from './auth.service';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthService } from './jwt/jwt.service';
-import { EventsGateway } from 'src/events/events.gateway';
+// import { EventsGateway } from 'src/events/events.gateway';
 import { DirectMessageService } from 'src/direct_message/direct_message.service';
 import { DirectMessageModule } from 'src/direct_message/direct_message.module';
-import { EventsModule } from 'src/events/events.module';
+// import { EventsModule } from 'src/events/events.module';
 import { ChatService } from 'src/chat/chat.service';
 import { ChatRoomMember } from 'src/chat/chat_room_member.entity';
 import { ChatRoom } from 'src/chat/chat_room.entity';
@@ -43,7 +43,7 @@ import { DirectMessageRoom } from 'src/direct_message/direct_message_room.entity
   controllers: [AuthController],
 
   // providers: [AuthService, UserService, JwtAuthService],
-  providers: [AuthService, UserService, JwtAuthService, EventsGateway, DirectMessageService, ChatService],
+  providers: [AuthService, UserService, JwtAuthService, DirectMessageService, ChatService],
 
   exports: [UserService, HttpModule, UserModule, AuthService, JwtAuthService],
 

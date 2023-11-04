@@ -67,8 +67,8 @@
 	});
 
 	function connectSocket(id: number) {
-		console.log(" -[ Layout ]- Ws Connection ...");
-		const socket = io("http://localhost:3001", {
+		console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
+		const socket = io("http://localhost:3002", {
 			withCredentials: true,
 			extraHeaders: {
 				Accept: "abcd",
@@ -76,9 +76,10 @@
 			query: {
 				id: id,
 			},
-			reconnectionDelay: 5000, // Délai de réessai en millisecondes (5 secondes)
 		});
-		// $session = socket;
+		// const socket = io("http://localhost:3000");
+
+		$session = socket;
 		session.set(socket);
 
 		socket.on("receivedGameInvitation", (data) => {
@@ -124,6 +125,7 @@
 
 	if (auth === false) {
 		//  *- [ Authentification ] -* { Local Storage }  via  URL
+		console.log("-[ Layout ]-  auth === false ");
 		onMount(async () => {
 			// [ 1 ] Check si un Jwt est deja present Dans le LocalStorage du Browser
 			const token = localStorage.getItem("jwt");
@@ -202,6 +204,7 @@
 							" -[ Layout - [2-3] ]-  else-> reception jwt Url -> websocket"
 						);
 						connectSocket(id);
+						navbar.set(true);
 					}
 					// [ 2 - 4 ] Cas ou Jwt Non present dans l'Url
 					else {
