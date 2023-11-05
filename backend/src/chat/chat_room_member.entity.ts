@@ -19,11 +19,11 @@ export class ChatRoomMember {
 
 	@ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.members)
 	chatRoom: ChatRoom;
-	// @JoinColumn({ name: "roomId" })  // Explicitly specify the foreign key column name
+	
 
 	@ManyToOne(() => UserEntity, user => user.chatRoomMembers)
 	user: UserEntity;
-	// @JoinColumn({ name: "userId" })  // Explicitly specify the foreign key column name
+	
 
 	@Column()
 	role: string; // 'Owner', 'Admin', 'Participant'
@@ -42,9 +42,7 @@ export class ChatRoomMember {
 
 
 
-	// @ManyToOne(() => UserEntity)
-	// @JoinColumn({ name: 'userId', referencedColumnName: 'id42' }) // referencing id42 in User entity
-	// user: UserEntity;
+	
 	@Column({ type: 'timestamp', nullable: true })
 	kickedTime: Date; // Timestamp when kicked
 

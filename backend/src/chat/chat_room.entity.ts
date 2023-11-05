@@ -32,9 +32,7 @@ export class ChatRoom {
 
 	@Column({ nullable: true }) // or just @Column() if you don't want to make it nullable
 	hashedPassword: string;
-	// @OneToMany(() => ChatRoomMember, (member) => member.chatRoom)
-	// @JoinColumn({ name: "id" }) 
-	// members: ChatRoomMember[];
+	
 
 	@OneToMany(() => ChatRoomMember, (member) => member.chatRoom)
 	members: ChatRoomMember[];
@@ -42,8 +40,7 @@ export class ChatRoom {
 	@OneToMany(() => ChatMessage, (message) => message.room)
 	messages: ChatMessage[];
 
-	// @OneToMany(() => ChatRoomMember, (member) => member.chatRoom)
-	// members: ChatRoomMember[];
+	
 
 	// Added this new relationship for banned users
 	@ManyToMany(() => UserEntity)

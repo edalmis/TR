@@ -7,19 +7,14 @@
 	let isPageFocused = true;
 	let rooms: Array<any> = [];
 	let roomSelected: number = -1;
-	// let messages: Array<{message: string, sendBy: number}> = [];
 	let messages: any = [];
-
 	let chatMessage: string = "";
 	let showEmojiPicker: boolean = false;
 	let usersIBlockedList: string[] = [];
-	let usersid42IBlockedList: number[] = [];
 	let usersWhoBlockedMeList: string[] = [];
-	let usersid42IBlockedByList: number[] = [];
 	let usersIBlockedEmptyArray: boolean = false;
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 	let blockedUsername: boolean = false;
-	// let messageListContainer: HTMLElement | null = null;
 	let messageListContainer: any = null;
 
 	interface Emoji {
@@ -76,50 +71,6 @@
 				console.log("usersIblockedList: ", usersIBlockedList);
 			}
 
-			//--------------------------------------------------------
-			// const blockedUsersid42ListResponse = await fetch(
-			// 	`http://localhost:3000/user/blockUserid42List`,
-			// 	{
-			// 		method: "GET",
-			// 		headers: {
-			// 			Authorization: `Bearer ${jwt}`,
-			// 			"Content-Type": "application/json",
-			// 		},
-			// 	}
-			// );
-			// if (blockedUsersid42ListResponse.ok) {
-			// 	usersid42IBlockedList =
-			// 		await blockedUsersid42ListResponse.json();
-			// 	// if (usersid42IBlockedList.length === 0) {
-			// 	// 	usersIBlockedEmptyArray = true;
-			// 	// }
-			// 	console.log("usersid42IblockedList: ", usersid42IBlockedList);
-			// }
-			//----------------------
-			// const blockedByUsersid42ListResponse = await fetch(
-			// 	`http://localhost:3000/user/blockedByUserid4List`,
-			// 	{
-			// 		method: "GET",
-			// 		headers: {
-			// 			Authorization: `Bearer ${jwt}`,
-			// 			"Content-Type": "application/json",
-			// 		},
-			// 	}
-			// );
-			// if (blockedByUsersid42ListResponse.ok) {
-			// 	usersid42IBlockedByList =
-			// 		await blockedByUsersid42ListResponse.json();
-			// 	// if (usersid42IBlockedList.length === 0) {
-			// 	// 	usersIBlockedEmptyArray = true;
-			// 	// }
-			// 	console.log(
-			// 		"usersid42IblockedBYList: ",
-			// 		usersid42IBlockedByList
-			// 	);
-			// }
-
-			// getUsersWhoBlockedMeListId42
-
 			// Users Who Blocked Me
 			const usersWhoBlockedMeListResponse = await fetch(
 				`http://localhost:3000/user/blockedByList`,
@@ -149,70 +100,12 @@
 			console.log("repDmRooms:", rooms);
 		});
 
-		// $session.on('repMessagesInDmRooms', (data) => {
-		//     console.log('repMessagesInDmRooms:', data.messages);
-		//     messages = data.messages;
-		// });
-		//         $session.on('repMessagesInDmRooms', (data) => {
-		//     messages = data.messages.filter(msg => {
-		//         // Don't show messages sent by blocked users
-		//         if (usersid42IBlockedList.includes(msg.sendBy)) return false;
-
-		//         // Don't show messages sent to users who blocked me
-		//         if (usersid42IBlockedByList.includes(msg.sendBy)) return false;
-
-		//         // If none of the above, display the message
-		//         return true;
-		//     });
-		//     scrollToBottom();
-		//     console.log('repMessagesInDmRooms:', messages);
-		// });
-		// $session.on('repMessagesInDmRooms', (data) => {
-		//     messages = data.messages.filter(msg => {
-		//         // Don't show messages sent by blocked users
-		//         if (usersid42IBlockedList.includes(msg.sendBy)) return false;
-		//         // Don't show messages sent to users who blocked me
-		//         if (usersid42IBlockedByList.includes(msg.sendBy)) return false;
-		//         // If none of the above, display the message
-		//         return true;
-		//     });
-		//     scrollToBottom();
-		//     console.log('repMessagesInDmRooms:', messages);
-		// });
-
 		$session.on("repMessagesInDmRooms", (data: any) => {
 			messages = data.messages;
 			scrollToBottom();
 			console.log("repMessagesInDmRooms:", messages);
 		});
 
-		// $session.on('newMessage', (data) => {
-		//     messages = [...messages, data];
-		//     if (!isPageFocused) {
-		//         showNotification(data.message);
-		//     }
-		// });
-
-		//         $session.on('newMessage', (data) => {
-		//     if (!usersid42IBlockedList.includes(data.sendBy) && !usersid42IBlockedByList.includes(data.sendBy)) {
-		//         messages = [...messages, data];
-		//         if (!isPageFocused) {
-		//             showNotification(data.message);
-		//         }
-		//     }
-		//     scrollToBottom();
-
-		// });
-
-		// $session.on('newMessage', (data) => {
-		//     if (!usersid42IBlockedList.includes(data.sendBy) && !usersid42IBlockedByList.includes(data.sendBy)) {
-		//         messages = [...messages, data];
-		//         if (!isPageFocused) {
-		//             showNotification(data.message);
-		//         }
-		//     }
-		//     scrollToBottom();
-		// });
 		$session.on("newMessage", (data: any) => {
 			messages = [...messages, data.messages];
 			if (!isPageFocused) {
@@ -275,15 +168,6 @@
 	on:blur={() => (isPageFocused = false)}
 />
 
-<!-- Your HTML and CSS code remain as before... -->
-
-<!-- <svelte:head> -->
-
-<!-- <link rel='stylesheet' href='https://unpkg.com/svelte-emoji-picker/dist/index.css'> -->
-<!-- <link rel='stylesheet' href='/global.css'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/svelte-emoji-picker/dist/index.css'> -->
-<!-- 
-</svelte:head> -->
 
 <div class="w-full h-full flex">
 	<div class="room-list">

@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DirectMessage } from './direct_message.entity';
 import { DirectMessageService } from './direct_message.service';

@@ -19,16 +19,3 @@ import { DirectMessageService } from 'src/direct_message/direct_message.service'
   ]
 })
 export class EventsModule { }
-
-// import { Module } from '@nestjs/common';
-// import { EventsGateway } from './events.gateway';
-// import { DirectMessageModule } from 'src/direct_message/direct_message.module';
-// import { UserModule } from 'src/users/user.module';
-// import { ChatModule } from 'src/chat/chat.module';
-
-// @Module({
-//   providers: [EventsGateway],
-//   exports: [EventsGateway],
-//   imports: [DirectMessageModule, ChatModule, UserModule]
-// })
-// export class EventsModule { }

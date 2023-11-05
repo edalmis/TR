@@ -10,7 +10,6 @@ interface EnhancedDirectMessageRoom extends DirectMessageRoom {
 	userTwoDetails: { userName: string; avatar: string; };
 }
 
-// TODO try catch
 
 @Injectable()
 export class DirectMessageService {
@@ -21,125 +20,6 @@ export class DirectMessageService {
 		private readonly roomRepository: Repository<DirectMessageRoom>,
 		private readonly userService: UserService
 	) { }
-
-	sayCoucou() {
-		console.log("coucoucou")
-	}
-
-	//     async sendMessage(sender: number, receiver: number, messageText: string): Promise<DirectMessage> {
-	//     let room = await this.roomRepository.findOne({
-	//         where: [
-	//             { userOneId: sender, userTwoId: receiver },
-	//             { userOneId: receiver, userTwoId: sender },
-	//         ],
-	//     });
-
-	//     const userSender = await this.userService.find_user_by_id(sender);
-	//     if (!room) {
-	//         room = new DirectMessageRoom();
-	//         room.userOneId = sender;
-	//         room.userTwoId = receiver;
-	//         await this.roomRepository.save(room);
-	//     }
-
-	//     const message = new DirectMessage();
-	//     message.room = room;
-	//     message.sendBy = sender;
-	//     message.sendTo = receiver;
-	//     message.message = messageText;
-	//     message.senderLogin = userSender.login;
-
-	//     await this.dmRepository.save(message);
-
-	//     return message;
-	// }
-
-	// async sendMessage(sender: number, receiver: number, messageText: string): Promise<DirectMessage> {
-	//     // Step 1 & 2: Check or create room
-	//     let room = await this.roomRepository.findOne({
-	//       where: [
-	//         { userOneId: sender, userTwoId: receiver },
-	//         { userOneId: receiver, userTwoId: sender },
-	//       ],
-	//     });
-	//     console.log('room found', room)
-	//     const usere=await this.userService.find_user_by_id(sender);
-	//     if (!room) {
-	//       room = new DirectMessageRoom();
-
-	//       room.userOneId = sender;
-	//       room.userTwoId = receiver;
-
-	//       console.log('bizarre', room)
-	//       await this.roomRepository.save(room);
-	//     }
-
-	//     // Step 3: Add message to room
-	//     const message = new DirectMessage();
-	//     message.room = room;
-	//     message.sendBy = sender;
-	//     message.sendTo = receiver;
-	//     message.message = messageText;
-	//     message.roomId = room.id;
-	//     message.senderLogin = usere.login
-
-	//     await this.dmRepository.save(message);
-
-	//     return message;
-	//   }
-
-	// async findAllRoomsForUser(userId: number): Promise<DirectMessageRoom[]> {
-	//     const rooms = await this.roomRepository.find({
-	//         where: [
-	//             { userOneId: userId },
-	//             { userTwoId: userId },
-	//         ],
-	//     });
-
-	//     // temporary solution
-	//     const enhancedRooms = [];
-	//     for (const room of rooms) {
-	//       const userOne = await this.userService.find_user_by_id(room.userOneId);
-	//       const userTwo = await this.userService.find_user_by_id(room.userTwoId);
-
-	//       if (!userOne || !userTwo) {
-	//           // Log the issue and continue to the next iteration
-	//           console.error(`Missing user details for room ID: ${room.id}`);
-	//           continue;
-	//       }
-
-	//       enhancedRooms.push({
-	//           ...room,
-	//           userOne: {
-	//               userName: userOne.userName,
-	//               avatar: userOne.avatar,
-	//           },
-	//           userTwo: {
-	//               userName: userTwo.userName,
-	//               image: userTwo.avatar,
-	//           },
-	//       });
-	//   }
-
-	// for (const room of rooms) {
-	//     const userOne = await this.userService.find_user_by_id(room.userOneId);
-	//     const userTwo = await this.userService.find_user_by_id(room.userTwoId);
-
-	//     enhancedRooms.push({
-	//         ...room,
-	//         userOne: {
-	//             userName: userOne.userName,
-	//             avatar: userOne.avatar,
-	//         },
-	//         userTwo: {
-	//           userName: userTwo.userName,
-	//           image: userTwo.avatar,
-	//         },
-	//     });
-	// }
-
-	// return enhancedRooms;
-	// }
 
 	async sendMessage(sender: number, receiver: number, messageText: string): Promise<DirectMessage> {
 		const userSender = await this.userService.find_user_by_id(sender);
@@ -194,9 +74,6 @@ export class DirectMessageService {
 
 		return enhancedRooms;
 	}
-
-
-
 
 	async findAllMessagesForRoom(roomId: number): Promise<DirectMessage[]> {
 		const messages = await this.dmRepository.find({

@@ -16,11 +16,11 @@ import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 import * as bcrypt from 'bcrypt';
 
-interface SendMessageData {
-	sendBy: number;
-	sendTo: number;
-	message: string;
-}
+// interface SendMessageData {
+// 	sendBy: number;
+// 	sendTo: number;
+// 	message: string;
+// }
 
 @Injectable()
 @WebSocketGateway(
@@ -48,7 +48,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ EventsGateway ]- *initialized* afterInit( server io )')
 	}
 
-	// handleConnection(client: Socket, ...args: any[]) {
 	handleConnection(client: Socket) {
 		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
 		if (connected) {
@@ -60,8 +59,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log('-[ EventsGateway ]- client.handshake.query.id: ', client.handshake.query.id);
 		this.userIdFindHelper.set(client.id, client.handshake.query.id);
 		console.log(' -[ EventsGateway ]- *connected* :  ', client.id)
-		// console.log(' -[ EventsGateway ]- *Client* :  ', client)
-		// client.emit('receivedGameInvitation', 'TEST ENVOIE client.EMIT');
+		
 	}
 
 	handleDisconnect(client: Socket) {
@@ -100,10 +98,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	////////------------------------------------------------------------DM------------------
 	@SubscribeMessage('getDmRooms')
 	async getDmRooms(client: Socket) {
-		// console.log('test', client.id, this.userIdFindHelper.get(client.id))
 		let str = this.userIdFindHelper.get(client.id);
 		let num = +str;
-		// console.log('NUMMMMMMMMMMMMMMMMMMMM', num)
 		let a = await this.directMessageService.findAllRoomsForUser(num)
 		console.log(a)
 		client.emit('repDmRooms', {
@@ -132,9 +128,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		// Log the received data for debugging
 		console.log('Data received in sendMessage:', data);
 
-		// Your original logic to send a message and get responses
-		// const a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message);
-		// console.log('qqbbbbbbbbbbbbbbbbbbbbbbbbbb',b)
+	
 		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
 		console.log('a', a)
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
@@ -155,15 +149,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('sendMessageN')
 	async sendMessageN(client: Socket, data: any) {
-		console.log("----------here------------------")
+		//console.log("----------here------------------")
 
-		console.log("------------data-------------", data.sendTo)
+		//console.log("------------data-------------", data.sendTo)
 		const sendTo = await this.userService.find_user_by_login(data.sendTo);
-		// console.log('chcao', a)
 
 		data.sendTo = sendTo.id;
 		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
-		console.log('a', a)
+		//console.log('a', a)
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
 		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
 		if (userOne) {
@@ -182,7 +175,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	//--------------------CHAT---------------------------------------------------------------
 	@SubscribeMessage('getChatRooms')
 	async getChatRooms(client: Socket) {
-		console.log('test', client.id, this.userIdFindHelper.get(client.id))
+		//console.log('test', client.id, this.userIdFindHelper.get(client.id))
 		let str = this.userIdFindHelper.get(client.id);
 		let num = +str;
 		let a = await this.chatService.listAllRooms()
@@ -214,7 +207,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			return;
 		}
 		const userOne = this.socketsByUserID.get(this.userIdFindHelper.get(client.id));
-		// let room = data.title;
 		// Encrypt the password if the room is private
 		if (isPrivate && password) {
 			const saltRounds = 10; // or another number of rounds
@@ -246,15 +238,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		if(await this.chatService.eligibleMember(str, id)){
 		  let messages = await this.chatService.listMessages(id);
 		 // let contents = messages.map(message => message.content);
-		  console.log('Extracted contents:', messages);
+		 // console.log('Extracted contents:', messages);
 		  const blockedMembersLogins = roomMembers.filter(member => 
 			member.user.blockedUser && member.user.blockedUser.includes(user.login)
 		).map(member => member.user.login);
 		const blockedByMembersLogins = roomMembers.filter(member => 
 		  member.user.blockedBy && member.user.blockedBy.includes(user.login)
 	  ).map(member => member.user.login);
-		  console.log('blockeeeeeeeeeeeeee',blockedByMembersLogins,blockedMembersLogins)
-		  client.emit('repMessagesInChatRoom', {
+		//  console.log('blockeeeeeeeeeeeeee',blockedByMembersLogins,blockedMembersLogins)
+		 client.emit('repMessagesInChatRoom', {
 			  messages: messages,
 			  blockedMembers: blockedMembersLogins, // logins of members who have blocked the sender
 			  blockedByMembers: blockedByMembersLogins
@@ -264,80 +256,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	  }
 	}
 
-	// @SubscribeMessage('sendMessageChannel')
-	// async sendMessageChannel(client: Socket, payload: { message: string, sendBy: UserEntity, sendBylogin: string, sendTo: string }) {
-	//     console.log('Received payload:', payload);
-	//     console.log('here***-*-*-*-*-2')
-
-	//     // Send the message and get the result
-	//     // console.log('str-----------------', str)
-	//     // if(await this.chatService.eligibleMember(payload.sendBy.id, payload.sendTo)){
-	//     const savedMessage = await this.chatService.sendMessage(payload.message, payload.sendBy, payload.sendBylogin, payload.sendTo);
-	//     console.log('saved------------', savedMessage)
-	//     // Emit the saved message to all clients in the room (assuming sendTo is the room ID)
-	//    // client.to(payload.sendTo).emit('newMessage', savedMessage);
-	//     // client.emit('newMessage', {savedMessage});
-	//     console.log("here-----------------------------", payload.sendTo)
-	//     this.server.to(payload.sendTo).emit('newMessage', {savedMessage});
-	//     // }
-	//     // return savedMessage;
-	// }
-
-	// @SubscribeMessage('sendMessageChannel')
-	// async sendMessageChannel(client: Socket, payload: { message: string, sendBy: UserEntity, sendBylogin: string, sendTo: string }) {
-	//     console.log('Received payload:', payload);
-
-	//     // Send the message and get the result
-	//     const savedMessage = await this.chatService.sendMessage(payload.message, payload.sendBy, payload.sendBylogin, payload.sendTo);
-	//     console.log('saved------------', savedMessage);
-
-	//     // Get the members of the room
-	//     const roomMembers = await this.chatService.findMembersByRoomId(payload.sendTo);
-
-	//     // Identify the blocked users
-	//     const blockedSockets = [];
-	//     for (const member of roomMembers) {
-	//         const hasBlockedRelationship = await this.userService.isBlockedRelationship(payload.sendBy.id, member.id);
-	//         if (hasBlockedRelationship) {
-	//             const memberSocketId = this.socketsByUserID.get(member.id);
-	//             if (memberSocketId) {
-	//                 blockedSockets.push(memberSocketId);
-	//             }
-	//         }
-	//     }
-
-	//     // Broadcast the message to the room but skip blocked users
-	//     this.server.to(payload.sendTo).volatile.emit('newMessage', { savedMessage });
-	//     for (const socketId of blockedSockets) {
-	//         this.server.sockets.sockets.get(socketId)?.volatile.emit('noOp'); // this is a no-op event to skip sending the previous broadcast to this specific socket
-	//     }
-	// }
-
-	// @SubscribeMessage('sendMessageChannel')
-	// async sendMessageChannel(client: Socket, payload: { senderId: string, roomId: string, content: string }) {
-	//     try {
-	//         const { senderId, roomId, content } = payload;
-
-	//         // Retrieve members in the chat room
-	//         const roomMembers = await this.chatService.findMembersByRoomId(roomId);
-
-	//         // Filter out members who have blocked the sender
-	//         const membersToSendTo = roomMembers.filter(member => 
-	//             !(member.user.blockedUser && member.user.blockedUser.includes(senderId))
-	//         );
-
-	//         // Emit the new message to these members
-	//         for (const member of membersToSendTo) {
-	//             const memberSocket = this.socketsByUserID.get(member.user.id.toString());
-	//             if (memberSocket) {
-	//                 memberSocket.emit('newMessage', { senderId, content });
-	//             }
-	//         }
-
-	//     } catch (error) {
-	//         client.emit('messageSendError', { message: error.message });
-	//     }
-	// }
 
 	@SubscribeMessage('sendMessageChannel')
 	async sendMessageChannel(client: Socket, payload: { message: string, sendBy: UserEntity, sendBylogin: string, sendTo: string }) {
@@ -361,7 +279,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 				// Send the message and save it
 				const savedMessage = await this.chatService.sendMessage(message, sendBy, sendBylogin, sendTo);
-				console.log('Saved message:', savedMessage);
+				//console.log('Saved message:', savedMessage);
 
 				// Emit the saved message to the entire room with the list of blocked members
 				this.server.to(sendTo).emit('newMessage', {
@@ -386,7 +304,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			// console.log('**********************', user)
 			const newMember = await this.chatService.joinChatRoom(user, room, role);
 
-			console.log('newmember*-*---------------------', newMember)
+			// console.log('newmember*-*---------------------', newMember)
 			if (this.chatService.eligibleMember(payload.user.id, payload.room.id)) {
 				client.join(payload.room.id);
 			}
@@ -401,7 +319,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('roomIdChatRoom')
 	async getRoomIdChatRoom(client: Socket, roomTitle: string) {
 		let a = await this.chatService.findRoomIdByTitle(roomTitle)
-		console.log('a-----------------', a)
+		// console.log('a-----------------', a)
 		client.emit('repRoomIdChatRoom', {
 			id: a,
 		})
@@ -414,17 +332,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			const members = await this.chatService.findMembersByRoomId(roomId);
 			///-------------------------------
-			// const members = await this.chatService.findMembersByRoomId(roomId);
 			const memberLogins = members.map(member => ({ user: member.user, role: member.role }));
 
 
 			///------------------------------
-			// const memberLogins = members
-			// .filter(member => member.user !== null && member.user !== undefined) // Filter out members with null or undefined users
-			// .map(member => member.user.login)
-			// .filter(login => login !== null && login !== undefined);  // Filter out null or undefined logins
-
-			console.log("-----------------", members)
+			
+			// console.log("-----------------", members)
 			client.emit('membersList', {
 				members: memberLogins,
 			});
@@ -493,91 +406,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			client.emit('kickError', { message: error.message });
 		}
 	}
-
-	// @SubscribeMessage('kickUser')
-	// async handleKickUser(client: Socket, payload: { user: UserEntity, roomId: string, login: string }) {
-	//     try {
-	//         const { user, roomId, login } = payload;
-
-	//         // Find the user to kick
-	//         const userToKick = await this.userService.find_user_by_login(login);
-	//         if (!userToKick) {
-	//             throw new BadRequestException('User not found');
-	//         }
-
-	//         // Find the room
-	//         const room = await this.chatService.findChatRoom(roomId);
-	//         if (!room) {
-	//             throw new BadRequestException('Room not found');
-	//         }
-
-	//         // Find members of the room
-	//         const members = await this.chatService.findMembersByRoomId(roomId);
-	//         // console.log('members----------', members)
-
-	//         // Check if the client is the owner
-	//         // const ownerId = this.userIdFindHelper.get(client.id);
-	//         // console.log('ownerID----------', ownerId)
-	//         const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
-	//         // console.log('isowner----------', isOwner)
-
-	//         if (!isOwner) {
-	//             throw new BadRequestException('Only the room owner or admins can kick users');
-	//         }
-	//         //------------------------------------------------OFFLINE ADDING
-	//         const member = await this.chatService.findMemberInChatRoom(userToKick.id, roomId);
-	//         member.isKicked = true;             
-	//         await this.chatService.updateMember(member);    // userToKick we updaate in member entity
-	//         //-------------------------------------------------------------------------------
-	//         // Notify the user to be kicked
-	//         const userSocket = this.socketsByUserID.get(userToKick.id.toString());
-	//         if (userSocket) {
-	//             userSocket.emit('kickedFromRoom', { roomId });
-	//             userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
-	//         }
-
-	//         // Optional: Remove the user from the server's list of room members if needed.
-
-	//     } catch (error) {
-	//         client.emit('kickError', { message: error.message });
-	//     }
-	// }
-
-
-	// @SubscribeMessage('kickUser')
-	// async handleKickUser(client: Socket, payload: { roomId: string, login: string }) {
-	//     try {
-	//       console.log("----------KICK MEMBBERSSSS-------")
-
-	//         const { roomId, login } = payload;
-	//         const user = await this.userService.find_user_by_login(login)
-	//         const userIdToKick = user.id
-	//         // Check if the user issuing the kick command is the owner
-	//         const room = await this.chatService.findChatRoom(roomId);
-	//         const members = await this.chatService.findMembersByRoomId(roomId);    
-	//     const memberLogins = members
-	//     .filter(member => member.user !== null && member.user !== undefined) // Filter out members with null or undefined users
-	//     .map(member => member.user.login)
-	//     .filter(login => login !== null && login !== undefined);  // Filter out null or undefined logins
-
-	//     console.log("----------KICK MEMBBERSSSS-------", members)
-	//     const owner = members
-	//     .map(member => member.role)
-	//     .filter(role => role === 'owner' )
-	//         if (owner !== this.userIdFindHelper.get(client.id)) {
-	//             throw new BadRequestException('Only the room owner can kick users');
-	//         }
-
-	//         // Here, we'll just notify the user that they've been kicked out.
-	//         // The frontend should handle the actual "leaving" of the room based on this event.
-	//         const userSocket = this.socketsByUserID.get(userIdToKick.toString());
-	//         if (userSocket) {
-	//             userSocket.emit('kickedFromRoom', { roomId });
-	//         }
-	//     } catch (error) {
-	//         client.emit('kickError', { message: error.message });
-	//     }
-	// }
 
 	@SubscribeMessage('banUser')
 	async handleBanUser(client: Socket, payload: { user: UserEntity, roomId: string, login: string }) {
@@ -725,7 +553,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			// console.log('members----------', members)
 
 			// Check if the client is the owner
-			// const ownerId = this.userIdFindHelper.get(client.id);
 			// console.log('ownerID----------', ownerId)
 			const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
 			// console.log('isowner----------', isOwner)
@@ -792,7 +619,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			}
 			const updatedRoom = await this.chatService.updateRoomPassword(room.id, newPassword);
 
-			// await this.roomsService.updatePassword(roomId, newPassword);
 			this.server.to('1').emit('roomUpdated', updatedRoom);
 
 			// Notify the client of success
@@ -819,7 +645,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			const updatedRoom = await this.chatService.cancelRoomPassword(room.id);
 
-			// await this.roomsService.updatePassword(roomId, newPassword);
 			this.server.to('1').emit('roomUpdated', updatedRoom);
 
 			// Notify the client of success
@@ -835,7 +660,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log('userdataaaaa')
 
 		try {
-			console.log('here', username)
+			// console.log('here', username)
 
 			// Replace the below code with actual logic for fetching user details.
 			const userData = await this.userService.find_user_by_userName(username);
@@ -845,7 +670,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			}
 
 			// Sending back the user data to the client
-			console.log('userdataaaaa', userData)
+			// console.log('userdataaaaa', userData)
 			client.emit('userResponse', { username: username, user: userData });
 
 		} catch (error) {

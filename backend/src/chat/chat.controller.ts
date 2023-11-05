@@ -12,7 +12,6 @@ export class ChatController {
 
 	async verifyRoomPassword(@Body() data: VerifyRoomDto): Promise<any> {
 		const { roomId, password } = data;
-		// console.log('passsssss', password)
 
 		// Fetch hashed password for the room by roomId from the database
 		const hashedPassword = await this.chatService.getRoomHashedPassword(roomId);

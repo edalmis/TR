@@ -3,16 +3,6 @@
     import { session, user ,kickEndTimes, muteEndTimes} from "$lib/store/store";
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte"
-    // import { browser } from "$app/environment";
-    // import { goto } from "$app/navigation";
-    // import Disable2Fa from "$lib/profile/Disable2Fa.svelte";
-    // import type { AnyNode } from "postcss";
-    // import { openModal, selectedPage } from "$lib/store/ModalValues";
-	// import { closeModal } from "$lib/store/ModalValues";
-	// import { showModal } from "$lib/store/ModalValues";
-    // import { writable } from 'svelte/store';
-    // import * as bcrypt from 'bcrypt';
-    // import bcrypt from 'bcrypt';
 
 
     let title = "";
@@ -24,16 +14,12 @@
     let selectedChatRoom: any = null;
     let selectedChatRoomid :string = "";
     let chatMessages: any[] = [];
-    
     let showChatWindow = true;
-    // let isAdmin = $user.isAdmin;
     let showChatHistory = true;
     let showSendMessage= true;
     let userId = $user.id42;
     let usere = $user;
-    // let userLogin= $user.login;
     let usersInRoom: any[] = [];
-    // let isUserOwner = true;
     let showEmojiPicker: boolean = false;
 
     interface ISocketValue{
@@ -57,15 +43,7 @@
 }
 
 let chatMessagesPerRoom: { [roomId: string]: Message[] } = {};
-// let kickEndTimes = {};
-// let muteEndTimes = {};
-// const kickEndTimesFromStorage = localStorage.getItem('kickEndTimes');
-// export const kickEndTimes = writable(kickEndTimesFromStorage ? JSON.parse(kickEndTimesFromStorage) : {});
-// const muteEndTimesFromStorage = localStorage.getItem('muteEndTimes');
-// export const muteEndTimes = writable(muteEndTimesFromStorage ? JSON.parse(muteEndTimesFromStorage) : {});
-// Define a type for the end times data
 
-// Define a type for the end times data
 
 // Define a type for the end times data
 type EndTimesData = Record<string, number>;
@@ -73,8 +51,7 @@ const kickEndTimesData: EndTimesData = $kickEndTimes;
 const muteEndTimesData: EndTimesData = $muteEndTimes;
 
 
-// let userToDisplay: string;
-let chatRoomms = []; // Example initialization
+
 let isProfileModalOpen = false;
 let userToDisplay: any = null;
 let isModalVisible = false;
@@ -86,8 +63,7 @@ function promptPasswordAndEnter(room: any) {
     enteredPassword = prompt("Enter password for room:");
     
     if (enteredPassword) {
-        // const saltRounds = 10; // or another number of rounds
-        // enteredPassword =  bcrypt.hash(enteredPassword, saltRounds);
+        
         fetch("http://localhost:3000/chat/verify-room-password", {
             method: 'POST',
             headers: {
@@ -121,42 +97,7 @@ function promptPasswordAndEnter(room: any) {
             console.error("An error occurred:", error.message);
         });
     }
-}  
-
-// function promptPasswordAndEnter(room) {
-//     const enteredPassword = prompt("Enter password for room:");
-
-//     if (enteredPassword) {
-//         fetch("http://localhost:3000/chat/verify-room-password", {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify({
-//                 roomId: room.id,
-//                 password: enteredPassword
-//             })
-//         })
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error("Server returned an error.");
-//             }
-//             return response.json();  // Directly parse the response as JSON
-//         })
-//         .then(parsedData => {
-//             if (parsedData.success) {
-//                 selectChatRoom(room);
-//             } else {
-//                 alert("Incorrect password");
-//             }
-//         })
-//         .catch(error => {
-//             // Handle the error
-//             console.error("An error occurred:", error.message);
-//         });
-//     }
-// }
-
+    }  
 
     onMount(() => {
         $session.emit("getChatRooms");
@@ -192,44 +133,7 @@ function promptPasswordAndEnter(room: any) {
         console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
         });
 
-        // })
-//         $session.on("newMessage", (data:any) => {
-//             // console.log('Received new message:', data);
-//             // if (selectedChatRoom && data.savedMessage.roomId === selectedChatRoom.id) {
-//             //     chatMessages = [...chatMessages, data.savedMessage];
-//             //     scrollToBottom();
-//             // }
-//     //         const roomId:string = data.savedMessage.roomId;
-//     // if (!chatMessagesPerRoom[roomId]) {
-//     //     chatMessagesPerRoom[roomId] = [];
-//     // }
-//     // chatMessagesPerRoom[roomId].push(data.savedMessage);
-//     // if (selectedChatRoom && roomId === selectedChatRoom.id) {
-//     //     scrollToBottom();
-//     // }
-//     console.log('Received new message:', data);
-//     if (selectedChatRoom && data.savedMessage.roomId === selectedChatRoom.id) {
-//         if (!chatMessagesPerRoom[selectedChatRoomid]) {
-//             chatMessagesPerRoom[selectedChatRoomid] = [];
-//         }
-//         chatMessagesPerRoom[selectedChatRoomid].push(data.savedMessage);
-//         chatMessagesPerRoom = {...chatMessagesPerRoom}; // Trigger Svelte's reactivity
-//         scrollToBottom();
-//     }
-// });
-// $session.on("newMessage", (data:any) => {
-//     // Check if data.savedMessage exists before accessing it
-//     if (data && data.savedMessage && selectedChatRoom && data.savedMessage.roomId === selectedChatRoom.id) {
-//         if (!chatMessagesPerRoom[selectedChatRoomid]) {
-//             chatMessagesPerRoom[selectedChatRoomid] = [];
-//         }
-//         chatMessagesPerRoom[selectedChatRoomid].push(data.savedMessage);
-//         chatMessagesPerRoom = {...chatMessagesPerRoom}; // Trigger Svelte's reactivity
-//         scrollToBottom();
-//     } else {
-//         console.error("Error: received message without savedMessage property:", data);
-//     }
-// });
+      
 $session.on("newMessage", (data:any) => {
     console.log('Received new message:', data);
     
@@ -282,25 +186,12 @@ $session.on("newMessage", (data:any) => {
 });
 
 $session.on('kickedFromRoom', ({ roomId, duration }: any) => {
-    // kickEndTimes[roomId] = new Date().getTime() + duration * 60 * 1000;  // Set the kick end time for that specific room
     const newEndTime = new Date().getTime() + duration * 60 * 1000;
-    // kickEndTimes.update(kickEndTimesData => ({ ...kickEndTimesData, [roomId]: newEndTime }));
-    // localStorage.setItem('kickEndTimes', JSON.stringify(kickEndTimes));
     kickEndTimes[roomId] = newEndTime;
     if (roomId === selectedChatRoomid) {
         // Calculate the time at which the kicked duration will end.
-        // kickEndTime = new Date().getTime() + duration * 60 * 1000;  // Convert duration to milliseconds
         showChatHistory = false;
         showSendMessage= false;
-
-    //     setTimeout(() => {
-    //         if (new Date().getTime() > kickEndTimes[roomId]) {
-    //         showChatHistory = true; 
-    //         showSendMessage= true;}
-    //     }, duration * 60 * 1000);  // The duration until chat history will be closed
-    // }
-    // For kickEndTimes
-// setTimeout(() => {
     const timer = setTimeout(() => {
     if (new Date().getTime() > (kickEndTimes[roomId] || 0)) {
         showChatHistory = true; 
@@ -311,27 +202,10 @@ $session.on('kickedFromRoom', ({ roomId, duration }: any) => {
 }});
 
 $session.on('mutedFromRoom', ({ roomId, duration }: any) => {
-    // muteEndTimes[roomId] = new Date().getTime() + duration * 60 * 1000;  // Set the kick end time for that specific room
     const newEndTime = new Date().getTime() + duration * 60 * 1000;
-    // muteEndTimes.update(muteEndTimesData => ({ ...muteEndTimesData, [roomId]: newEndTime }));
-    // localStorage.setItem('muteEndTimes', JSON.stringify(muteEndTimes));
     muteEndTimes[roomId] = newEndTime;
     if (roomId === selectedChatRoomid) {
-        // Calculate the time at which the kicked duration will end.
-        // kickEndTime = new Date().getTime() + duration * 60 * 1000;  // Convert duration to milliseconds
-        // showChatHistory = false;
         showSendMessage= false;
-
-    //     setTimeout(() => {
-    //         if (new Date().getTime() > muteEndTimes[roomId]) {
-
-    //         // showChatHistory = true; 
-    //         showSendMessage= true;}
-    //     }, duration * 60 * 1000);  // The duration until chat history will be closed
-    // }
-
-// For muteEndTimes
-// setTimeout(() => {
     const timer = setTimeout(() => {
     if (new Date().getTime() > (muteEndTimes[roomId] || 0)) {
         showSendMessage = true;
@@ -474,25 +348,7 @@ $session.once("userStatus", (data: any) => {
 
         $session.emit("getMessagesInChatRoom", selectedChatRoomid);
         });
-    }
-
-
-    // async function selectChatRoom(room) {
-
-    //     selectedChatRoom  = room;
-    //     selectedChatRoomid=room.id;
-    //     let role = 'Participant'
-    //     fetchMembersInRoom(selectedChatRoomid)
-
-    //     const isMember = usersInRoom.some(members => members.user.id == usere.id);
-    //     if (!isMember)
-    //     {
-    //         const payload = { user: usere, room: selectedChatRoom, role :role};
-    //         $session.emit("joinChatRoom", payload);
-    //     }
-
-    //      $session.emit("getMessagesInChatRoom", selectedChatRoomid);
-    // }                                                    
+    }                                                 
 
     function handleEmojiSelect(event: any) {
     const selectedEmoji = event.detail.emoji;
@@ -610,32 +466,6 @@ $session.once("userStatus", (data: any) => {
         console.warn("Password cancel aborted..");        }
     
     }
-
-    // async function handleSeeProfil(username: string) {
-	// 	//console.log("+page.Friends - username: ", username);
-	// 	userToDisplay = username;
-	// 	openModal("OtherProfile");
-    //     closeModal();
-	// 	// goto("/Friends");
-	// }
-
-//     function openProfileModal(username) {
-//     userToDisplay = username;
-//     isProfileModalOpen = true;
-// }
-
-// function closeProfileModal() {
-//     isProfileModalOpen = false;
-//     userToDisplay = null;
-// }
-    
-//     // function toggleModal() {
-//     //     isModalVisible = !isModalVisible;
-//     // }
-//     function toggleModal() {
-//     isModalVisible = !isModalVisible;
-//     console.log("Toggling modal: ", isModalVisible);
-// }
 
 function openProfileModal(username: any) {
         userToDisplay = username;
@@ -1084,7 +914,6 @@ div.users-container ul#userList li .user-list button {
                     </button>
                     {/if}
                         {#if ((user.role == 'Participant')&&(usere.login != user.user.login)) || ((user.role == 'Admin') && (usere.login != user.user.login))} 
-                            <!-- <button on:click={() => kickUser(usere, user.user.login, selectedChatRoomid)}>Kick</button>  -->
                            
                             <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" />
                             <button on:click={() => kickUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Kick</button>  
@@ -1092,32 +921,10 @@ div.users-container ul#userList li .user-list button {
 
                             <button on:click={() => banUser(usere, user.user.login, selectedChatRoomid)}>Ban</button>
                             <button on:click={() => unbanUser(usere, user.user.login, selectedChatRoomid)}>Unban</button>
-                            <!-- <button on:click={() => {handleSeeProfil(user.user.login);}}>See Profile</button> -->
-                            <!-- {#if isProfileModalOpen}
-                            
-                                <button on:click={(e) => { e.stopPropagation(); openProfileModal(user.user.login); }}>View Profile</button>
-                            {/if} -->
+                           
                           
                             <button on:click={() => makeAdmin(usere, user.user.login, selectedChatRoomid)}>Make Admin</button>
-                            <!-- Always display the button -->
-
-                            
-                                <!-- <button on:click={toggleModal}>Show Modal</button>
-                           
-                            
-<div class="modal content" style="display: {isModalVisible ? 'block' : 'none'}">
-    <div class="modal-content">
-        <h2>User Profile</h2>
-                            <button on:click={(e) => { e.stopPropagation(); openProfileModal(user.user.username); }}>View Profile</button>
-
-     Only display the modal if isProfileModalOpen is true -->
-                                <!-- {#if isProfileModalOpen}
-                                <UserProfileModal username={userToDisplay} onClose={closeProfileModal} />
-                            {/if}
-                            <button on:click={toggleModal}>Close</button>
-                        </div>
-                    </div>  -->
-<!-- Main Modal -->
+                          
 
                         {/if}  
                      
@@ -1134,7 +941,6 @@ div.users-container ul#userList li .user-list button {
             <button on:click={passChatRoom}>Change Channel Password</button>
             <button on:click={cancelpassChatRoom}>Cancel Channel Password</button>
 
-            <!-- <button on:click={() => fetchMembersInRoom(selectedChatRoomid)}>Get Users</button> -->
         </div>
        
     </div>

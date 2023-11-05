@@ -27,21 +27,20 @@ export class ChatService {
 
 	// 1. Create a chat room
 	async createChatRoom(payload: { title: string, isPrivate: boolean, password?: string, hashedPassword: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
-		// const room = await this.chatRoomRepository.findBy({title:title});
-		// if(!room){ 
+		
 		const newRoom = this.chatRoomRepository.create(payload);
 
 		const savedRoom = await this.chatRoomRepository.save(newRoom);
-		// const user = await this..findOne(payload.userId);
+		
 		// Assigning the user as the owner of the room in ChatRoomMember entity
-		// console.log("member details")
+		
 		console.log("USERRR", payload.user)
 		const newOwner = this.chatRoomMemberRepository.create({
 			user: payload.user,
 			chatRoom: savedRoom,
 			role: 'Owner',
 		});
-		// console.log("member details", newOwner)
+		
 		await this.chatRoomMemberRepository.save(newOwner);
 
 		return savedRoom;
@@ -55,8 +54,7 @@ export class ChatService {
 		role: string,
 	): Promise<ChatRoomMember> {
 		// Verify that the user and room exist
-		// const user = await this.UserService.find_user_by_id( User.id);
-		// let num = parseInt(roomId);
+		
 		const roome = await this.findChatRoom(room.id);
 		// console.log('MY USER ', user)
 
@@ -74,12 +72,11 @@ export class ChatService {
 		console.log('a', a)
 		if (a != false) {
 			console.log('existing member')
-			// return await this.chatRoomMemberRepository.findOne({where: {user:{id : user.id}, chatRoom:{id: room.id}}});}
-			// console.error('Error checking room membership:');
+			
 			return;
 		}
 		else {
-			// throw new Error('User is already a member of this room');
+			
 			console.log('new member')
 
 			//-----------------
@@ -131,7 +128,6 @@ export class ChatService {
 			throw new Error("Sender not found in chat room members.");
 		}
 
-		// const senderId = chatRoomMember.id;  // This is the ID you should use as senderId for ChatMessage
 		const senderId = senderUser.id
 		const senderLogin = login
 		// Create the new message
@@ -161,7 +157,6 @@ export class ChatService {
 		return await this.chatRoomRepository.find();
 	}
 
-	//---------------
 
 	async findRoomIdByTitle(title: string): Promise<string | null> {
 		const room = await this.chatRoomRepository.findOne({ where: { title: title } });
@@ -183,21 +178,16 @@ export class ChatService {
 	async findMembersByRoomId(roomId: string): Promise<ChatRoomMember[]> {
 		const room = await this.chatRoomRepository.findOne({
 			where: { id: roomId },
-			// relations: ['members', 'members.user'], // Notice the nested relation
 			relations: ['members', 'members.user'], // Notice the nested relation
 
 		});
 
-		// room.members.forEach(member => {
-		//   console.log("Member's user:", member.user);
-		// });
-
+		
 		if (!room) {
 			// Handle the case where the room is not found
 			throw new Error(`Room with ID ${roomId} not found`);
 		}
 
-		// console.log('all+---------------+-+------------', room.members);
 		return room.members;
 	}
 
@@ -300,7 +290,6 @@ export class ChatService {
 
 		try {
 			// Remove user from the chat room
-			// await this.chatRoomMemberRepository.delete(usere, room );
 			console.log('User successfully left the room');
 		} catch (error) {
 			console.error('Error while removing user from room:', error.message);

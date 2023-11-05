@@ -419,31 +419,23 @@
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">{user}</p>
 								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-									<button
-										on:click={() => { handleSeeProfil(user);}}>See Profile
+									<button 
+										on:click={() => { handleSeeProfil(user);}}>See Profile 
 									</button>
 								</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500" >
+									<button on:click={resetMessagedUsers}>Reset DM</button>
+								</p>
 							</div>
+							<button on:click={() => handleButtonClick(user)}> Send DM</button>
 						</div>
-						<!--<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							 <p class="mt-1 truncate text-xs leading-5 text-gray-500">
-								<button
-									on:click={() => { handleSeeProfil(user);}}>See Profile
-								</button>
-							</p> -->
+			
 							<div class="mt-1 flex items-center gap-x-1.5">
 								<div class="flex-none rounded-full bg-emerald-500/20 p-1">
 								<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
 								</div>
 								<p class="text-xs leading-5 text-gray-500" style="margin-right: 130px;">Online</p>
 							</div>
-						<!-- </div>  -->
-						<!-- <div class="mt-1 flex items-center gap-x-1.5">
-							<div class="flex-none rounded-full bg-emerald-500/20 p-1">
-							<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
-							</div>
-							<p class="text-xs leading-5 text-gray-500">Online</p>
-						</div> -->
 						</li>
 					{/each}
 				{/if}
@@ -474,10 +466,7 @@
 										<button on:click={resetMessagedUsers}>Reset DM</button>
 									</p>
 								</div>
-
-								<button on:click={() => handleButtonClick(user)}>
-									Send DM
-								</button>
+								<button on:click={() => handleButtonClick(user)}> Send DM</button>
 							</div>
 						
 							<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
