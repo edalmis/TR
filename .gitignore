@@ -4,7 +4,6 @@ npm-debug.log
 yarn-error.log
 
 # Compiled TypeScript files
-*.js
 *.js.map
 *.d.ts
 
@@ -18,7 +17,6 @@ __sapper__/build/
 dist/
 
 # Environment variables
-.env
 
 # Logs
 logs/

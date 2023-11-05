@@ -513,12 +513,13 @@ function openProfileModal(username: any) {
 
 
 <style>
-    body {
+    /* body {
         font-family: Arial, sans-serif;
-    }
+    } */
+
     .chat-message p {
     white-space: pre-wrap;
-}
+    }
 
     .chat-window {
         position: fixed;
@@ -603,7 +604,7 @@ function openProfileModal(username: any) {
         background-color: #990000;
     }
 
-    input[type="text"], input[type="password"] {
+    /* input[type="text"], input[type="password"] {
         padding: 10px;
         border-radius: 5px;
         border: 1px solid #999;
@@ -611,7 +612,7 @@ function openProfileModal(username: any) {
         box-sizing: border-box;
         background-color: rgb(231, 210, 210);
         color: black;
-    }
+    } */
 
     .message-input {
         margin-top: 10px;
@@ -623,24 +624,24 @@ function openProfileModal(username: any) {
     .message-input input {
         flex-grow: 1;
     }
-    .user-list {
+    /* .user-list {
     background-color: #9c9494;
     border: 1px solid #1a1515;
     color:red;
     border-radius: 5px;
     margin-top: 15px;
     padding: 10px;
-}
+} */
 
-.user-list ul {
+/* .user-list ul {
     list-style-type: none;
     padding: 0;
 
-}
+} */
 
-.user-list li  {
+/* .user-list li  {
     margin-bottom: 5px;
-}
+} */
 .users-container {
     position: fixed;
     top: 35%;
