@@ -1,21 +1,21 @@
-FROM node:alpine AS development
+FROM node:alpine
 
 WORKDIR /backend/src/app
 
 COPY package*.json ./
 
-RUN npm install 
-
-#RUN npm run start:dev
-RUN npm run build
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
-#RUN npm run start:dev
+RUN npm run build
 
 EXPOSE 3000
 
-CMD [ "node", "dist/main" ]
+EXPOSE 3001
+
+CMD [ "npm", "run", "start:dev"]
+# CMD  npm run start
 
 # FROM node:alpine AS production
 
@@ -24,8 +24,13 @@ CMD [ "node", "dist/main" ]
 
 # WORKDIR /backend/src/app
 
-# COPY --from=development /backend/src/app/ .
+# COPY package*.json ./
 
-# EXPOSE 3000
+# # COPY --from=development /backend/src/app/ .
+# RUN npm install --legacy-peer-deps --only=production
+
+# COPY . .
+
+# COPY --from=development /backend/src/app/dist ./dist
 
 # CMD [ "node", "dist/main" ]

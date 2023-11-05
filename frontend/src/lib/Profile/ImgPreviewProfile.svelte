@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div>
+<div >
 	<h3>That is your Cookie Bro, Enjoy !!!</h3>
 	<div>
 		<img class="profile-pic" src={image} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
@@ -70,4 +70,5 @@
 		border-color: black;
 		border-width: 2px;
 	}
+
 </style>

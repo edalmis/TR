@@ -1,30 +1,27 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
+	// import { goto } from "$app/navigation";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
 	import { clientColyseus } from "$lib/store/store";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
+	// import { PaddleDirection } from "$lib/game/PaddleDirection";
 	import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
-		actualUsername,
-		ballSpeed,
-		inGame,
-		session,
-		userId,
-		userLogin,
-		winnerScore,
-		launchedGame,
-		navbar,
+		actualUsername, ballSpeed,
+		inGame, session, userId,
+		userLogin, winnerScore, launchedGame, navbar,
 	} from "$lib/store/store";
 
 	let state: GameState;
 	let room: Room<GameState>;
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
-	let isDisconnected = false;
+	// let isDisconnected = false;
 	let isGamePaused = false;
+	// let isModalOpen = false;
 
 	// Game options writables
 	let speed: number;
@@ -58,7 +55,6 @@
 		winnerScore.set(3);
 		ballSpeed.set(3);
 		// // // // // // // // // // // // // // // // // // // // // // // // // // // //
-		console.log("Connection Ws Colyseus [ 3001 ]");
 
 		client = new Colyseus.Client("ws://localhost:3001");
 		clientColyseus.set(client);
@@ -118,7 +114,7 @@
 				// Normal closure, not a disconnection
 				return;
 			}
-			handleDisconnection();
+			// handleDisconnection();
 		});
 
 		// Add event listeners for key events
@@ -213,33 +209,38 @@
 			room.onMessage("scoreHistory", (data: any) => {
 				registerScoreHistory(data);
 			});
-			// room.onMessage("gameFinished", (data: any) => {
-			// 	alert(data.message);
-			// 	LeaveGame();
-			// });
+		
 			room.onMessage("gameFinished", (message: any) => {
 				// alert(message.winner);
 				if (message.winnerLogin) {
-					alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
-				}
+       				alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
+    			}
 				LeaveGame();
+				
 			});
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);
 		}
 	}
-	function handleDisconnection() {
-		// if (isDisconnected = true)
-		// {
-		//   state = INTERRUPTE;
-		// }
-		isDisconnected = true;
-		isGamePaused = true; // Pause the game on disconnection
-	}
-	function handleReconnection() {
-		isDisconnected = false;
-		isGamePaused = false; // Resume the game on reconnection
-	}
+	// function handleDisconnection() {
+	// 	isDisconnected = true;
+	// 	isGamePaused = true; // Pause the game on disconnection
+	// 	isModalOpen = true;
+	// 	goto("/game");
+	// }
+	// function handleReconnection() {
+	// 	isDisconnected = false;
+	// 	isGamePaused = false; // Resume the game on reconnection
+	// 	isModalOpen = true;
+	// }
+
+	// function GameOver() {
+	// 	isModalOpen = false; // Close the modal
+	// 	goto("/"); // Redirect to the home page
+	// }
+	// export function handleCancelLeaveGame(){
+	// 	isModalOpen = false
+	// }
 
 	// ... [Handle key events]
 	function handleKeydown(e: KeyboardEvent) {
@@ -248,7 +249,7 @@
 		}
 		switch (e.key) {
 			case "ArrowUp":
-				//room.send({ newDirection: PaddleDirection.UP } as PaddleMoveMessage);
+				//room.send({ newDirection: tion.UP } as PaddleMoveMessage);
 				room.send("paddleMove", { newDirection: PaddleDirection.UP });
 
 				break;
@@ -287,14 +288,14 @@
 		//gameRender();
 		gameRender(ctx, state);
 	}
+
 </script>
 
-{#if isDisconnected}
+<!-- {#if isDisconnected}
 	<div class="disconnected-message">
-		<h2>Opponent Left</h2>
-		<button on:click={handleReconnection}>Reconnect</button>
-	</div>
-{/if}
+		<h2>Opponent Left, click to Leave</h2>
+	</div> 
+{/if} -->
 <svelte:window
 	on:resize={resizeCanvas}
 	on:keydown={handleKeydown}
@@ -303,13 +304,13 @@
 <canvas bind:this={canvas} id="rendering-canvas" />
 
 <style>
-	#canvas-container {
+	/* #canvas-container {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 100%;
 		height: 100vh;
-	}
+	} */
 	canvas#rendering-canvas {
 		max-width: 100%;
 		max-height: 100%;

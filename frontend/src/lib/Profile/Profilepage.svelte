@@ -222,7 +222,7 @@
 						}
 					}}
 				>
-					Try
+					Preview
 				</button>
 				{#if indication_avatar !== ""}
 					<div class="indication">{indication_avatar}</div>
@@ -280,28 +280,57 @@
 		/* height: 2500px;
 		width: 2500px; */
 		align-items: center;
+		color:  rgb(244, 237, 237);
+		margin-left: 300px;
 	}
 	.profile-pic {
-		max-width: 20%;
-		max-height: 20%;
+		max-width: 50%;
+		max-height: 50%;
 		border-radius: 50%;
+		align-items: center;
+		/* position: relative; */
+		border-color: rgb(111, 151, 142);
+		border-width: 2px;
+		/* margin: 0 auto; */
 	}
-	img {
+	/* img {
 		align-items: center;
 		position: relative;
-		border-color: black;
+		border-color: rgb(111, 151, 142);
 		border-width: 2px;
-	}
+		margin: 0 auto;
+	} */
 	p {
 		margin-top: 2px;
+		color: rgb(77, 60, 60);
+		margin-left: 0px;
+	
+		
 	}
+
+	/* .box {
+		width: 1000px;
+		height: 1000;
+		border: 1px solid #aaa;
+		border-radius: 30px;
+		box-shadow: 20px 300px 100px rgba(255, 5, 5, 0.1);
+		padding: 3em;
+		margin: 0 0 1em 0;
+		margin: 0 auto; 
+        position: fixed;
+        top: 50%; 
+        left: 50%; 
+        transform: translate(-50%, -50%); 
+	} */
+
 	h1 {
 		align-items: center;
-		color: black;
+		color: rgb(237, 228, 228);
+		
 	}
 
 	h3 {
 		align-items: center;
-		color: rgb(30, 30, 255);
+		color: rgb(207, 245, 71);
 	}
 </style>

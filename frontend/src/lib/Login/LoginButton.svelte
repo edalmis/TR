@@ -49,9 +49,9 @@
 		max-width: 400px;
 	}
 
-	h3 {
+	/* h3 {
 		align-items: center;
-	}
+	} */
 	.pick-a-color {
 		margin-top:400px;
 		align-items: center;

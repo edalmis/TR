@@ -59,15 +59,17 @@
 
 	h2 {
 		color: green;
-		font-size: 14px;
-		margin-top: 2%;
-		margin-bottom: 1%;
+		font-size: 180px;
+		margin-top: 100;
+		/* margin-bottom: 0; */
+		font-family: fantasy;
 	
 	}
 	/* Create the overlay with the background image */
 	.content::before {
 		content: "";
 		position: absolute;
+		margin: 0;
 		top: 0;
 		left: 0;
 		width: 100%;

@@ -1,52 +1,9 @@
-// // import { sveltekit } from '@sveltejs/kit/vite';
-// // import { defineConfig } from 'vite';
-
-// // export default defineConfig({
-// // 	plugins: [sveltekit()]
-// // });
-
-// import { sveltekit } from '@sveltejs/kit/vite'
-// //import { ViteDevServer, defineConfig } from 'vite'
-// import { defineConfig } from 'vite'
-// import type { ViteDevServer } from 'vite';
-// import { Server } from 'socket.io'
-
-// const webSocketServer = {
-// 	name: 'webSocketServer',
-// 	configureServer(server: ViteDevServer) {
-// 		if (!server.httpServer) return
-
-// 		const io = new Server(server.httpServer)
-
-// 		io.on('connection', (socket) => {
-// 			socket.emit('eventFromServer', 'Hello, World 👋')
-// 		})
-// 	}
-// }
-
-// export default defineConfig({
-// 	plugins: [sveltekit(), webSocketServer],
-// 	server: {
-// 		fs: {
-// 			// Allow serving files from the backend directory
-// 			allow: ['./lib/game/game.schema.ts']
-// 		}
-// 	}
-// });
-
-
-
-
-
-
-
-
-
 import { sveltekit } from '@sveltejs/kit/vite'
 //import { ViteDevServer, defineConfig } from 'vite'
 import { defineConfig } from 'vite'
 import type { ViteDevServer } from 'vite';
 import { Server } from 'socket.io'
+import path from 'path';
 
 const webSocketServer = {
 	name: 'webSocketServer',
@@ -62,50 +19,17 @@ const webSocketServer = {
 }
 
 export default defineConfig({
-	plugins: [sveltekit(), webSocketServer],
+	plugins: [sveltekit(),],
 	server: {
 		fs: {
 			// Allow serving files from the backend directory
-			allow: ['./lib/game/game.schema.ts']
-		}
-	}
+			allow: ['./lib/game/game.clientSchema.ts']
+		  }
+	},
+	resolve: {
+		alias: {
+		  'PaddleDirection': path.resolve(__dirname, './frontend/src/lib/game/PaddleDirection.ts'),
+		},
+	  },
+	clearScreen: false,
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { sveltekit } from '@sveltejs/kit/vite';
-// import { defineConfig } from 'vite';
-
-// export default defineConfig({
-// 	plugins: [sveltekit(),],
-// 	server: {
-// 		host: '0.0.0.0',
-// 		port: 5173,
-// 		fs: {
-// 			// Allow serving files from the backend directory
-// 			allow: ['./lib/game/game.clientSchema.ts']
-// 		  }
-// 	},
-
-// 	clearScreen: false,
-// });

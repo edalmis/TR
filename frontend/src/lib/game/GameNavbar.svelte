@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { navbar } from "$lib/store/store";
+	// import { navbar } from "$lib/store/store";
     import { onMount } from "svelte";
 
 	let isModalOpen = false;
@@ -9,14 +9,14 @@
 	// function toggleModal() {
 	// isModalOpen = !isModalOpen;
 	// }
-	function handleBackHomeModal() {
+	export function handleBackHomeModal() {
 		isModalOpen = true;
 	}
-	function handleCancelLeaveGame(){
+	export function handleCancelLeaveGame(){
 		isModalOpen = false
 	}
 
-	function leaveGame() {
+	export function leaveGame() {
 		isModalOpen = false; // Close the modal
 		goto("/"); // Redirect to the home page
 	}
@@ -54,7 +54,7 @@
 			  <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
 				<h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Leave Game</h3>
 				<div class="mt-2">
-				  <p class="text-sm text-gray-500">Are you sure you want to leave this game? Once you leave, you are lost as well. This action cannot be undone.</p>
+				  <p class="text-sm text-gray-500">Are you sure you want to leave game? Once you leave, you are lost as well. This action cannot be undone.</p>
 				</div>
 			  </div>
 			</div>

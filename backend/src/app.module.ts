@@ -109,7 +109,7 @@ export class AppModule implements OnModuleInit {
 
 // // * * *  -[ CORS PB ]-  * * * 
 // import { CorsModule } from '@nestjs/cors';
-import { ChatModule } from './chat/chat.module';
+// import { ChatModule } from './chat/chat.module';
 
 // @Module({
 //   imports: [

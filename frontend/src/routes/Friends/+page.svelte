@@ -292,29 +292,6 @@
 		}
 	});
 
-	// async function fetchData<T>(url: string, options: RequestInit = {}): Promise<T | undefined> {
-	// 	try {
-	// 			const jwt = localStorage.getItem("jwt");
-	// 			if (!jwt) {
-	// 			goto("/");
-	// 			return;
-	// 			}
-
-	// 			const response = await fetch(url, {
-	// 			method: "GET",
-	// 			headers: {
-	// 				Authorization: `Bearer ${jwt}`,
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 		});
-
-	// 		if (response.ok) {
-	// 			return await response.json();
-	// 		}
-	// 	} catch (error) {
-	// 		console.error("Error fetching data:", error);
-	// 	}
-	// }
 	async function handleSeeProfil(username: string) {
 		//console.log("+page.Friends - username: ", username);
 		userToDisplay = username;
@@ -432,25 +409,35 @@
 					{#each onlineUsers as user}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-13 flex-none rounded-full bg-gray-50" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+							<img class="h-12 w-13 flex-none rounded-full bg-gray-50" style="margin-left: 20px;" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">{user}</p>
-								<p class="mt-1 truncate text-xs leading-5 text-gray-500">{user}</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button
+										on:click={() => { handleSeeProfil(user);}}>See Profile
+									</button>
+								</p>
 							</div>
 						</div>
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+						<!--<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							 <p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button
 									on:click={() => { handleSeeProfil(user);}}>See Profile
 								</button>
-							</p>
-						</div> 
-						<div class="mt-1 flex items-center gap-x-1.5">
+							</p> -->
+							<div class="mt-1 flex items-center gap-x-1.5">
+								<div class="flex-none rounded-full bg-emerald-500/20 p-1">
+								<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+								</div>
+								<p class="text-xs leading-5 text-gray-500" style="margin-right: 130px;">Online</p>
+							</div>
+						<!-- </div>  -->
+						<!-- <div class="mt-1 flex items-center gap-x-1.5">
 							<div class="flex-none rounded-full bg-emerald-500/20 p-1">
 							<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
 							</div>
 							<p class="text-xs leading-5 text-gray-500">Online</p>
-						</div>
+						</div> -->
 						</li>
 					{/each}
 				{/if}
@@ -469,23 +456,28 @@
 						{#each onlineFriendsList as user}
 						<li class="flex justify-between gap-x-6 py-5">
 							<div class="flex min-w-0 gap-x-4">
-								<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+								<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 								<div class="min-w-0 flex-auto">
 									<p class="text-sm font-semibold leading-6 text-gray-900">{user}</p>
+									<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+										<button 
+											on:click={() => { handleSeeProfil(user);}}>See Profile 
+										</button>
+									</p>
 								</div>
 							</div>
-							<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 									<button 
 										on:click={() => { handleSeeProfil(user);}}>See Profile 
 									</button>
 								</p>
-							</div>
+							</div> -->
 							<div class="mt-1 flex items-center gap-x-1.5">
 								<div class="flex-none rounded-full bg-emerald-500/20 p-1">
 								<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
 								</div>
-								<p class="text-xs leading-5 text-gray-500">Online</p>
+								<p class="text-xs leading-5 text-gray-500" style="margin-right: 130px;">Online</p>
 							</div>
 						</li>
 						{/each}	
@@ -504,25 +496,28 @@
 					{#each inGameFriendsList as user}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 							<div class="min-w-0 flex-auto">
-								<p class="text-sm font-semibold leading-6 text-gray-900">
-									{user}
+								<p class="text-sm font-semibold leading-6 text-gray-900">{user}</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button 
+										on:click={() => { handleSeeProfil(user);}}>See Profile 
+									</button>
 								</p>
 							</div>
 						</div>
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button 
 									on:click={() => { handleSeeProfil(user);}}>See Profile 
 								</button>
 							</p>
-						</div>
+						</div> -->
 						<div class="mt-1 flex items-center gap-x-1.5">
 							<div class="flex-none rounded-full bg-emerald-500/20 p-1">
 							  <div class="h-1.5 w-1.5 rounded-full bg-emerald-500"></div>
 							</div>
-							<p class="text-xs leading-5 text-gray-500">Game-On</p>
+							<p class="text-xs leading-5 text-gray-500" style="margin-right: 130px;">Game-On</p>
 						</div>
 					</li>
 					{/each}
@@ -541,23 +536,28 @@
 					{#each friendsList as friendUser}
 						<li class="flex justify-between gap-x-6 py-5">
 							<div class="flex min-w-0 gap-x-4">
-								<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+								<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 								<div class="min-w-0 flex-auto">
 									<p class="text-sm font-semibold leading-6 text-gray-900">
 										{friendUser}
 									</p>
+									<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+										<button 
+											on:click={() => {handleSeeProfil(friendUser);}}>See Profile
+										</button>
+									</p>
 								</div>
 							</div>
-							<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 									<button 
 										on:click={() => {handleSeeProfil(friendUser);}}>See Profile
 									</button>
 								</p>
-							</div>
+							</div> -->
 
-							<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+							<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end" >
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500" style="margin-right: 130px;">
 									<button
 										on:click={() => {handleRemoveFriend(friendUser);}}>Undo Friendship
 									</button>
@@ -568,14 +568,14 @@
 										<div class="flex-none rounded-full bg-emerald-500/20 p-1">
 										<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
 										</div>
-										<p class="text-xs leading-5 text-gray-500">Online</p>
+										<p class="text-xs leading-5 text-gray-500" style="margin-right:130px;">Online</p>
 									</div>
 									{:else}
 									<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-center">
-										<p class="text-sm leading-6 text-gray-900">
+										<!-- <p class="text-sm leading-6 text-gray-900">
 										level
-										</p>
-										<p class="mt-1 text-xs leading-5 text-gray-500">
+										</p> -->
+										<p class="mt-1 text-xs leading-5 text-gray-500" style="margin-right: 130px;">
 										Last seen {calculateTimeDifference()}h ago
 										</p>
 									</div>
@@ -597,31 +597,36 @@
 					{#each pendingList as pendingUser}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">
 									{pendingUser}
 								</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button
+									on:click={() => {handleSeeProfil(pendingUser);}}>See Profile
+									</button>
+								</p>
 							</div>
 						</div>
 
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button
 								on:click={() => {handleSeeProfil(pendingUser);}}>See Profile
 								</button>
 							</p>
-						</div>
+						</div> -->
 
 						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+							<p class="mt-1 truncate text-xs leading-5 text-gray-500" style="margin-right:500px;">
 								<button
 								on:click={() => {handleAcceptFriend(pendingUser);}}>Accept
 								</button>
 							</p>
 						</div>
 						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+							<p class="mt-1 truncate text-xs leading-5 text-gray-500" style="margin-right:390px;">
 								<button 
 									on:click={() => {handleRefuseFriendRequest(pendingUser);}}>Refuse
 								</button>
@@ -656,21 +661,26 @@
 					{#each sentRequestsList as requestedUser}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">
 									{requestedUser}
 								</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button
+									on:click={() => {handleSeeProfil(requestedUser);}}>See Profile
+									</button>
+								</p>
 							</div>
 						</div>
 
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button
 								on:click={() => {handleSeeProfil(requestedUser);}}>See Profile
 								</button>
 							</p>
-						</div>
+						</div> -->
 					</li>
 					{/each}
 				{/if}
@@ -687,22 +697,28 @@
 					{#each usersIBlockedList as blockedUser}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">
 									{blockedUser}
 								</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button
+									on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
+									
+									</button>
+								</p>
 							</div>
 						</div>
 
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button
 								on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
 								
 								</button>
 							</p>
-						</div>
+						</div> -->
 					</li>
 						<!-- <div class="user-card">
 							<p>{blockedUser}</p>
@@ -727,21 +743,26 @@
 					{#each usersWhoBlockedMeList as blockedUser}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+							<img class="h-12 w-12 flex-none rounded-full bg-gray-50" style="margin-left: 20px;"  src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">
 									{blockedUser}
 								</p>
+								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+									<button
+									on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
+									</button>
+								</p>
 							</div>
 						</div>
 
-						<div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 								<button
 								on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
 								</button>
 							</p>
-						</div>
+						</div> -->
 					</li>
 						<!-- <div class="user-card">
 							<p>{blockedUser}</p>

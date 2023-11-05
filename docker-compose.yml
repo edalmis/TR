@@ -9,16 +9,17 @@ services:
   #   volumes:
   #       - ./backend:/backend/src/app
   #       - /backend/src/app/node_modules/
-  #   command: npm run start:dev
+  #   # command: npm run start:dev
   #   depends_on: 
   #       - db
   #   environment:
   #       #DATABASE_URL: postgres://user:password@postgres:5432/db
-  #       NODE_ENV: development
+  #       # NODE_ENV: development
   #       #JWT_SECRET: hard_to_guess_secret_123
-  #       PORT: 3000
+  #       PORT: 3000, 3001
   #   ports:
   #       - 3000:3000
+  #       - 3001:3001
 
   ### [ postgres ]:
   db:

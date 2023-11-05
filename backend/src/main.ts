@@ -12,7 +12,7 @@ import { privateRoom } from './game/game.privateroom';
 
 async function gameServer() {
   const gameServer = new Server();
-  gameServer.listen(3001);
+  gameServer.listen(3000);
   gameServer.define("pong", PongRoom);
   gameServer.define("privateRoom", privateRoom);
 }
@@ -36,8 +36,7 @@ async function bootstrap() {
 
 
   console.log(`Backend is running on port 3000.`);
-  console.log(`io.listen(3002).`);
+  console.log(`io.listen(3001).`);
 }
 bootstrap();
 gameServer();
-

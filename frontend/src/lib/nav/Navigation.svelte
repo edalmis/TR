@@ -99,9 +99,12 @@
 	<!-- <button on:click={() => openModal("profile")}>Profile</button> -->
 	<button on:click={handleProfile}>Profile</button>
 	<button on:click={handleGame}>Game</button>
+	<button on:click={() => {goto("/Chat");}}>Chat</button>
+	<!-- <button on:click={() => goto("/game/matchmaking")}>Matchmaking</button> -->
 
-		<button on:click={() => {goto("/Chat");}}>Chat</button>
-
+	<!-- <button on:click={() => { goto("/"); openModal("chat"); }}>Chat</button -->
+	>
+	<!-- <button on:click={() => { goto("/"); openModal("findFriends"); }}>Find Friends</button> -->
 	<button on:click={handleFriends}>Friends</button>
 	<button on:click={() => goto("/DM")}>DM</button>
 	<button on:click={handleLoggoutModal}>Logout</button>

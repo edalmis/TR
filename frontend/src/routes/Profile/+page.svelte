@@ -2,15 +2,49 @@
 	import Profilepage from "$lib/Profile/Profilepage.svelte";
 </script>
 
-<main>
-	<div class="Profil-Layout">
-		<Profilepage />
+<div class="background" > </div>
+
+
+<main >
+	<!-- <main> -->
+	<div class='box'>
+		<!-- <div class="background" ></div> -->
+			<Profilepage />
 	</div>
 </main>
 
+
 <style>
-	.Profil-Layout {
+	/* .Profil-Layout {
 		max-height: 90%;
 		max-width: 90%;
+	} */
+	.background {
+		background-image: url("/images/milky_galaxy.jpg"); /* Add your image URL here */
+        background-size: cover; /* Adjust background-size property as needed */
+        background-position: center; /* Center the background image */
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: -1; /* Place the background behind the .box */
+    }
+
+	.box {
+		/* background-image: url("/images/milky_galaxy.jpg"); */
+		width: 1000px;
+		height: 650px;
+		border: 1px solid #aaa;
+		border-radius: 6px;
+		box-shadow: 20px 300px 100px rgba(255, 5, 5, 0.1);
+		padding: 3em;
+		margin: 0 0 1em 0;
+		margin: 0 auto; /* Center horizontally */
+        position: fixed;
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); 
+		
 	}
 </style>

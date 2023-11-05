@@ -1,6 +1,8 @@
 // import { CollectionSchema } from "@colyseus/schema";
 import { Ball, Paddle, GameState, GameStatus, GameDimensions, Scoreboard } from "./game.clientSchema";
 import { InvitedUserLogin, backgroundColor, paddleSize } from "$lib/store/store";
+import { onMount } from "svelte";
+import { goto } from "$app/navigation";
 
 // Constants for background and paddle colors
 const BackgroundColors: any = {
@@ -108,6 +110,19 @@ export function renderScoreboard(ctx: CanvasRenderingContext2D, scoreboard: Scor
 	ctx.fillText(scoreboard.right.toString(), GameDimensions.width * (3 / 4), 100);
 }
 
+let isModalOpen = false;
+
+export function handleBackHomeModal() {
+	isModalOpen = true;
+}
+export function handleCancelLeaveGame(){
+	isModalOpen = false
+}
+
+export function leaveGame() {
+	isModalOpen = false; // Close the modal
+	goto("/game"); // Redirect to the home page
+}
 export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 	let backgroundColor: string;
     let paddleColor: string;
@@ -161,4 +176,6 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 			drawTextCenter(ctx, 'Opponent left');
 			break;
 	}
+
 }
+

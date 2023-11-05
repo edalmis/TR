@@ -24,7 +24,7 @@ interface SendMessageData {
 
 @Injectable()
 @WebSocketGateway(
-	3002,
+	3001,
 	{
 		cors: {
 			origin: 'http://localhost:5173',
@@ -843,7 +843,4 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			client.emit('messageError', { message: error.message });
 		}
 	}
-
-
-
 }

@@ -32,4 +32,3 @@ export class EventsModule { }
 //   imports: [DirectMessageModule, ChatModule, UserModule]
 // })
 // export class EventsModule { }
-

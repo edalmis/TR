@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onDestroy, onMount } from "svelte";
+	import { onDestroy} from "svelte";
 	import {
 		winnerScore, 
 		ballSpeed, 
@@ -9,13 +9,12 @@
 		paddleSize,
 	 } from "$lib/store/store";
     import GameModal from "$lib/game/gameModal.svelte";
-    // import { GameState } from "$lib/game/game.schema";
+    import { showModal } from "$lib/store/ModalValues";
 	let speed:number = 1; // Default value for speed
 	let scoreToWin: string = "3"; // Default value for score to win
 	let isModalOpen = false;
 	let colorMode: string = 'blue';
 	let paddle: string = 'normal';
-
 
 	let borderColors: Record<string, string> = {
         green: 'rgb(0,100,0)',
@@ -41,50 +40,27 @@
 		isModalOpen = false;
 	};
 	
-	onMount(() => {});
-
+	function openGameRuleModal(){
+		showModal.set(true);
+	}
+	function closeGameRuleModal() {
+        showModal.set(false);
+    }
 	function redirectToMatchmaking() {
     	goto('/game/matchmaking');
   	}
 
 	const onSubmit = () => {
 
-		// console.log("scoreToWin:", scoreToWin);
-		// if (scoreToWin == "3") {
-		// 	const winnerScoreValue = winnerScore.set(3);
-		// 	console.log("winnerScoreValue:", winnerScoreValue); 
-
-		// } else {
-		// 	const winnerScoreValue = winnerScore.set(5);
-		// 	console.log("winnerScoreValue:", winnerScoreValue); 
-
-		// }
-
-		// if (paddle == 'small')
-		// 	paddleSize.set('small');
-		// else {
-		// 	paddleSize.set('normal');
-		// }
-
 		const winnerScoreMap: Record<string, number> = {
 			"3": 3,
 			"5": 5,
 		}
 		winnerScore.set(winnerScoreMap[scoreToWin]);
-// /// //// /// debug
-		//console.log("scoreToWin:", scoreToWin);
+
 		const winnerScoreValue = winnerScoreMap[scoreToWin];
 		winnerScore.set(winnerScoreValue);
-		// console.log("winnerScoreValue:", winnerScoreValue); 
-// /// //// /// debug
-		// const  paddleSizeMap:  Record<string, string>  = {
-		// 	"small": "small",
-        // 	"normal": "normal",
-		// }
-		//console.log("paddle:", paddle); // Log the value of paddle
-        // const paddleSizeValue = paddleSizeMap[paddle];
-        // console.log("paddleSizeValue:", paddleSizeValue); // Log the value being set
-        // paddleSize.set(paddleSizeValue);
+
 
 		paddleSize.set(paddle);
 		backgroundColor.set(colorMode);
@@ -98,25 +74,43 @@
 	});
 </script>
 
-
-<div style="margin-top: 10px;">
-	<button
-	 on:click={redirectToMatchmaking} class="create-privateRoom-button"> Matchmaking 🏓 </button>
-</div>
-
-<div style="margin-top: 10px;">
-	<!-- <button on:click={openModal}>
-		<span class="create-privateRoom-button">Create PrivateGame with  🏓 {invited} 🏓 </span>
-	</button> -->
-	<button on:click={openModal} class="create-privateRoom-button">Create PrivateGame with 🏓 '{invited}'🏓 </button>
-</div>
-
+<main class="game-background">
+	<div class ='button-container'>
+		<button style="margin-top: 2px"
+		on:click={redirectToMatchmaking} class="create-privateRoom-button" > MatchMaking 
+		</button>
+		<button style="margin-top: 2px" on:click={openModal} class="create-privateRoom-button">Create PrivateGame with '{invited}' </button>
+		<button style="margin-top: 2px"on:click={openGameRuleModal} class="create-privateRoom-button">
+			Game Rules
+		  </button>
+	</div>
+</main>
 <!-- <h1>[Create Game] with 🎋 * {invited} * 🏓</h1> -->
+
+{#if $showModal}
+<div class="modal">
+    <div class="modal-content">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
+        <span class="close" on:click={closeGameRuleModal}>&times;</span>
+        <h2 class="py-2 text-4xl text-white">Game Rules</h2>
+
+            <p >To win, be the first to reach the winning score.</p>
+			<p>Designate right and left players; left player starts.</p>
+			<p>Use 'up' and 'down' to move your paddle and hit the ball.</p>
+			<p>Invitations initiated by the left player.</p>
+			<p>Choose between 3vs3 or 5vs5 games.</p>
+			<p>Select game speed (0-3).</p>
+			<p>Customize your paddle size.</p>
+           	<p>Stay in the game; disconnecting forfeits the match to your opponent.</p>
+    </div>
+</div>
+{/if}
 
 <GameModal bind:isOpen={isModalOpen} on:close={closeModal}>
 <form on:submit|preventDefault={onSubmit}>
 	<div class="onSubmitPrivateRoom-container">
-		<h2>Let's Play with 🎋 * {invited} * 🏓</h2>
+		<h2 class="py-2 text-4xl text-white">Let's Play with '{invited}'</h2>
 		<label>
 			Choose ping-pong court color :
 			<select bind:value={colorMode}>
@@ -159,6 +153,12 @@
 
 <style>
 
+	.button-container {
+		display: flex;
+		justify-content: center; /* Center horizontally */
+		align-items: center; /* Center vertically */
+	}
+
 	.onSubmitPrivateRoom-container {
 		width: 100%; /* Set width as needed */
 		height: 100%; /* Set height as needed */
@@ -175,6 +175,7 @@
 
 	.create-privateRoom-button {
 		background-color: #03080cbd; /* Blue background color */
+		font-family: 'fantasy';
 		color: white; /* White text color */
 		border: none;
 		padding: 10px 20px; /* Add padding to make the button larger */
@@ -185,6 +186,7 @@
 		/* Center the button horizontally */
 		display: block;
 		margin: 0 auto;
+
 		}
 		
 	.create-privateRoom-button:hover {
@@ -229,7 +231,9 @@
     padding: 10px;
     border-radius: 20px;
 }
-
+.py-2{
+	font-family: fantasy;	
+}
 	button {
     cursor: pointer;
     color: white; /* Change text color to white */
