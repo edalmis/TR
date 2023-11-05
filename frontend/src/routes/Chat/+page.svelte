@@ -1148,7 +1148,7 @@ div.users-container ul#userList li .user-list button {
         
         <!-- Display the Profile Information Here -->
         {#if isProfileModalOpen}
-            <UserProfileModal username={userToDisplay} onClose={closeProfileModal} />
+            <UserProfileModal username={userToDisplay}/>
         {/if}
         
         <button on:click={toggleModal}>Close</button>

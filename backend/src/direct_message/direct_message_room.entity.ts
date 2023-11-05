@@ -1,7 +1,6 @@
 import {
     Entity,
     PrimaryGeneratedColumn,
-    Column,
     UpdateDateColumn,
     OneToMany,
     JoinColumn,
@@ -20,11 +19,6 @@ export class DirectMessageRoom {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    // @Column()
-    // userOneId: number;
-
-    // @Column()
-    // userTwoId: number;
     @ManyToOne(() => UserEntity)
     @JoinColumn()
     userOne: UserEntity;

@@ -1,13 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository, InjectEntityManager } from '@nestjs/typeorm';
-import { LockNotSupportedOnGivenDriverError, Repository, EntityManager } from 'typeorm';
+import { InjectRepository} from '@nestjs/typeorm';
+import {  Repository, EntityManager } from 'typeorm';
 import { ChatRoom } from './chat_room.entity';
 import { ChatMessage } from './chat_message.entity';
 import { ChatRoomMember } from './chat_room_member.entity';
 import { UserEntity } from 'src/users/orm/user.entity';
-import { title } from 'process';
 import { UserService } from 'src/users/user.service';
-import { RouterModule } from '@nestjs/core';
 import * as bcrypt from 'bcrypt';
 
 
@@ -51,7 +49,6 @@ export class ChatService {
 	}
 
 	// 2. Join a chat room
-
 	async joinChatRoom(
 		usere: UserEntity,
 		room: ChatRoom,
@@ -118,9 +115,6 @@ export class ChatService {
 		await this.chatRoomMemberRepository.delete(memberId);
 	}
 
-	// 4. Send a message in a chat room
-
-
 	async sendMessage(content: string, senderUser: UserEntity, login: string, roomId: string): Promise<ChatMessage> {
 		// Ensure room exists
 
@@ -150,36 +144,19 @@ export class ChatService {
 			roomId: roomId,
 			senderLogin: senderLogin
 		});
-
-		// Save the message
 		return await this.chatMessageRepository.save(newMessage);
 	}
 
 
-	// 5. List all messages in a chat room
 	async listMessages(id: string): Promise<ChatMessage[]> {
-		// console.log('---ID----',id)
 		return await this.chatMessageRepository.find({ where: { roomId: id } });
 	}
 
-	// 6. List all chat rooms a user is part of
-	// async listUserRooms(userId: number): Promise<ChatRoom[]> {
-	//   const memberEntities = await this.chatRoomMemberRepository.find({where: {memberId: userId}, relations: ['room']});
-	//   return memberEntities.map(member => member.chatRoom);
-	// }
-
-	// 7. Update chat room details
 	async updateRoom(roomId: string, updatedFields: Partial<ChatRoom>): Promise<ChatRoom> {
 		await this.chatRoomRepository.update(roomId, updatedFields);
 		return await this.chatRoomRepository.findOne({ where: { id: roomId } });
 	}
 
-	// 8. Delete a chat room
-	//   async deleteRoom(roomId: number): Promise<void> {
-	//     await this.chatRoomRepository.delete(roomId);
-	//   }
-
-	// 9.List all rooms on server
 	async listAllRooms(): Promise<ChatRoom[]> {
 		return await this.chatRoomRepository.find();
 	}
@@ -190,25 +167,7 @@ export class ChatService {
 		const room = await this.chatRoomRepository.findOne({ where: { title: title } });
 		return room ? room.id : null;
 	}
-	//-----------
-	//  10. List all users in channel
-	// async getAllUsersInRoomWithRoles(roomId: string): Promise<number[]> {
-	//   console.log('here-*-*-*-*-**-*-*-')
-	//   // return await this.chatRoomMemberRepository.find({ where: { roomId }});
-
-	//   const room = await this.chatRoomRepository.findOne({where: {id: roomId}});
-	//   console.log('room-------------------------------------------->>' , room)
-	//   return room.id42s;
-	//   // try {
-	//   return await this.chatRoomMemberRepository.find({
-	//     where: { roomId },
-	//     relations: ['user', 'room'], // Ensure these relations exist and adjust as needed
-	//   });
-	// } catch (error) {
-	//   console.error("An error occurred while fetching users:", error);
-	//   throw error;  // Re-throwing the error to be handled by the calling function
-	// }
-	// }
+	
 	async findByRoomId(roomId: string): Promise<ChatRoomMember> {
 		const room = await this.chatRoomMemberRepository.findOne({
 			where:
@@ -277,21 +236,6 @@ export class ChatService {
 			throw new Error(`Room with ID ${roomId} not found`);
 		}
 	}
-
-	// async findChatRoomBanned(roomId: string): Promise<any> {
-
-	//     const room = await this.chatRoomRepository.findOne({
-	//       where: { id: roomId },
-	//       relations: ['bannedUsers']
-	//     });
-
-	//     if (room && room.bannedUsers) {
-	//       return room.bannedUsers.some(bannedUser => bannedUser.id === userId);
-	//   } else {
-	//       // Handle case where room or bannedUsers is undefined
-	//       return false;
-	//   }
-	//   }
 
 	async incrementUtilisateurs(roomId: string): Promise<void> {
 		try {

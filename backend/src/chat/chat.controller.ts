@@ -8,42 +8,9 @@ export class ChatController {
 
 	constructor(private readonly chatService: ChatService) { }
 
-	// @Post('verify-room-password')
-	// async verifyRoomPassword(@Body() data: VerifyRoomDto): Promise<any> {
-	//     const { roomId, password } = data;
-
-	//     // Fetch room by roomId and compare passwords
-	//     const room = await this.chatService.verifyPassword(roomId, password);
-
-	//     if (room) {
-	//         return { success: true };
-	//     } else {
-	//         return { success: false };
-	//     }
-	// }
-
-	// ... add other chat-related methods here
-	// @Post('verify-room-password')
-	// async verifyRoomPassword(@Body()data:  VerifyRoomDto): Promise<any> {
-	//     // console.log("Received request to verify room password", verifyRoomDto);
-	//     // Implementation goes here.
-	//     const { roomId, password } = data;
-
-	//     //     // Fetch room by roomId and compare passwords
-	//         const room = await this.chatService.verifyPassword(roomId, password);
-
-	//         if (room) {
-	//             return { success: true };
-	//         } else {
-	//             return { success: false };
-	//         }
-	//     }
 	@Post('verify-room-password')
 
 	async verifyRoomPassword(@Body() data: VerifyRoomDto): Promise<any> {
-		//   console.log("Received request to verify room password", VerifyRoomDto);
-		// Implementation goes here.
-		//     const { roomId, password } = data;
 		const { roomId, password } = data;
 		// console.log('passsssss', password)
 
@@ -63,7 +30,4 @@ export class ChatController {
 			return { success: false };
 		}
 	}
-	// If successful verification:
-	//   return { success: true };
-
 }
