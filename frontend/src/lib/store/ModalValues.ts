@@ -12,6 +12,7 @@ export function openModal(page: string) {
 	showModal.set(true);
 	selectedPage.set(page);
 }
+
 export function closeModal() {
 	showModal.set(false);
 	selectedPage.set("none");

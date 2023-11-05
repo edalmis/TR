@@ -26,8 +26,13 @@ export class ChatService {
 	) { }
 
 	// 1. Create a chat room
-	async createChatRoom(payload: { title: string, isPrivate: boolean, password?: string, hashedPassword: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
+	// async createChatRoom(payload: { title: string, isPrivate: boolean, 
+	// 	password?: string, hashedPassword: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
 		
+
+	// ethem
+	async createChatRoom(payload: { title: string, isPrivate: boolean, 
+		hashedPassword?: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
 		const newRoom = this.chatRoomRepository.create(payload);
 
 		const savedRoom = await this.chatRoomRepository.save(newRoom);

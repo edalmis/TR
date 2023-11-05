@@ -216,7 +216,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const channel = await this.chatService.createChatRoom({
 			title,
 			isPrivate,
-			password,
+			// password,  // ethem
 			hashedPassword,
 			userId,
 			user
