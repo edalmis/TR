@@ -45,8 +45,8 @@
 	});
 
 	function connectSocket(id: number) {
-		console.log(" -[ Layout ]- Ws Connection ( 3000 ) ...");
-		const socket = io("http://localhost:3000", {
+		console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
+		const socket = io("http://localhost:3002", {
 			withCredentials: true,
 			extraHeaders: {
 				Accept: "abcd",

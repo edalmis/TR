@@ -30,7 +30,6 @@
 </script>
 
 <main>
-	 
 		<div class="main">
 		<autoTyping>
 			<Typewriter loopRandom>
@@ -105,11 +104,12 @@ on:orientationchangeend={() => { console.log(
 		justify-content: center;
 	}
 
-	autoTyping{ 
+	.autoTyping{ 
 		content: "";
 		margin-top: -620px;
 		font-size: 2rem;
 		text-align: center;
+		position: relative;
 	}
 	.py-2, .py-1, .py-0{
 		font-family: fantasy;

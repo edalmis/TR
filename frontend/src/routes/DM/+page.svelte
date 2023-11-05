@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
 	import { session, user } from "$lib/store/store";
 	import { browser } from "$app/environment";
-	import EmojiPicker from "svelte-emoji-picker";
+	import EmojiPicker from "../../components/EmojiPicker.svelte";
 
 	let isPageFocused = true;
 	let rooms: Array<any> = [];
@@ -77,46 +77,46 @@
 			}
 
 			//--------------------------------------------------------
-			const blockedUsersid42ListResponse = await fetch(
-				`http://localhost:3000/user/blockUserid42List`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			if (blockedUsersid42ListResponse.ok) {
-				usersid42IBlockedList =
-					await blockedUsersid42ListResponse.json();
-				// if (usersid42IBlockedList.length === 0) {
-				// 	usersIBlockedEmptyArray = true;
-				// }
-				console.log("usersid42IblockedList: ", usersid42IBlockedList);
-			}
+			// const blockedUsersid42ListResponse = await fetch(
+			// 	`http://localhost:3000/user/blockUserid42List`,
+			// 	{
+			// 		method: "GET",
+			// 		headers: {
+			// 			Authorization: `Bearer ${jwt}`,
+			// 			"Content-Type": "application/json",
+			// 		},
+			// 	}
+			// );
+			// if (blockedUsersid42ListResponse.ok) {
+			// 	usersid42IBlockedList =
+			// 		await blockedUsersid42ListResponse.json();
+			// 	// if (usersid42IBlockedList.length === 0) {
+			// 	// 	usersIBlockedEmptyArray = true;
+			// 	// }
+			// 	console.log("usersid42IblockedList: ", usersid42IBlockedList);
+			// }
 			//----------------------
-			const blockedByUsersid42ListResponse = await fetch(
-				`http://localhost:3000/user/blockedByUserid4List`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
-			if (blockedByUsersid42ListResponse.ok) {
-				usersid42IBlockedByList =
-					await blockedByUsersid42ListResponse.json();
-				// if (usersid42IBlockedList.length === 0) {
-				// 	usersIBlockedEmptyArray = true;
-				// }
-				console.log(
-					"usersid42IblockedBYList: ",
-					usersid42IBlockedByList
-				);
-			}
+			// const blockedByUsersid42ListResponse = await fetch(
+			// 	`http://localhost:3000/user/blockedByUserid4List`,
+			// 	{
+			// 		method: "GET",
+			// 		headers: {
+			// 			Authorization: `Bearer ${jwt}`,
+			// 			"Content-Type": "application/json",
+			// 		},
+			// 	}
+			// );
+			// if (blockedByUsersid42ListResponse.ok) {
+			// 	usersid42IBlockedByList =
+			// 		await blockedByUsersid42ListResponse.json();
+			// 	// if (usersid42IBlockedList.length === 0) {
+			// 	// 	usersIBlockedEmptyArray = true;
+			// 	// }
+			// 	console.log(
+			// 		"usersid42IblockedBYList: ",
+			// 		usersid42IBlockedByList
+			// 	);
+			// }
 
 			// getUsersWhoBlockedMeListId42
 
@@ -213,10 +213,10 @@
 		//     }
 		//     scrollToBottom();
 		// });
-		$session.on("newMessage", (data) => {
+		$session.on("newMessage", (data: any) => {
 			messages = [...messages, data.messages];
 			if (!isPageFocused) {
-				showNotification(data.message);
+				showNotification(data.messages.message);
 			}
 			scrollToBottom();
 		});
@@ -227,40 +227,47 @@
 			$session.off("newMessage");
 		};
 	});
-	function handleClick(use: number) {
-		console.log("use----------", use);
-		if (
-			!(blockedUsername = usersid42IBlockedList.some(
-				(blockedUser) => blockedUser == use
-			))
-		)
-			blockedUsername = usersid42IBlockedByList.some(
-				(blockedBy) => blockedBy == use
-			);
 
-		console.log("blockedusername--", blockedUsername);
-		if (blockedUsername) {
-			alert("Sending direct message blocked!");
-		} else {
-			$session.emit("sendMessage", {
-				message: chatMessage,
-				sendBy: $user.id,
-				sendTo: use,
-			});
-			chatMessage = "";
-			showEmojiPicker = false;
-		}
-	}
-	function handleKeyPress(event: any) {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			handleClick(
-				rooms[roomSelected].userOne.id == $user.id
-					? rooms[roomSelected].userTwo.id
-					: rooms[roomSelected].userOne.id
-			);
-		}
-	}
+	function handleClick(use: number, logine:string) {
+        console.log('use----------',use)
+        if (!(
+            blockedUsername = usersIBlockedList.some(blockedUser => blockedUser == logine)
+        )) blockedUsername = usersWhoBlockedMeList.some(blockedBy => blockedBy == logine);
+        
+        console.log('blockedusername--', blockedUsername);
+        if (blockedUsername) {
+            alert('Sending direct message blocked!');
+        }
+        else{
+            $session.emit('sendMessage', {
+                        message: chatMessage,
+                        sendBy: $user.id,
+                        sendTo: use
+                    })
+                    chatMessage = '';
+                    showEmojiPicker = false;
+        }
+    }
+
+ function handleKeyPress(event: any) {
+	if (event.key === "Enter" && !event.shiftKey) {
+				event.preventDefault();
+				handleClick(
+	(rooms[roomSelected].userOne.id === $user.id)
+		? rooms[roomSelected].userTwo.id
+		: rooms[roomSelected].userOne.id,
+	(rooms[roomSelected].userOne.id === $user.id)
+		? rooms[roomSelected].userTwo.login
+		: rooms[roomSelected].userOne.login
+	);        }
+    }
+
+	function handleEmojiSelect(event: any) {
+    const selectedEmoji = event.detail.emoji;
+    chatMessage += selectedEmoji;
+    console.log('emo',selectedEmoji)
+    // Do something with the selectedEmoji
+  }
 </script>
 
 <svelte:window
@@ -281,6 +288,8 @@
 <div class="w-full h-full flex">
 	<div class="room-list">
 		{#each rooms as room, i}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<div
 				class="room"
 				on:click={() => {
@@ -303,37 +312,21 @@
 				class="message-list overflow-y-scroll"
 				bind:this={messageListContainer}
 			>
-				<!-- {#each messages as msg} -->
-				<!-- //----------------------------------------------------------------------- -->
-
-				<!-- <div class="relative w-full h-40 p-2">
-                    <div class="message {msg.sendBy == $user.id ? 'right-0' : 'left-0'}">{msg.message}</div>
-                </div> -->
-				<!-- //----------------------------------------------------------------------- -->
-				<!-- <div class="relative w-full h-40 p-2">
+			{#each messages.filter(msg => 
+                !usersIBlockedList.includes(msg.senderLogin) && 
+                !usersWhoBlockedMeList.includes(msg.senderLogin)) as msg}
+                <div class="relative w-full h-40 p-2">
                     <div class="message {msg.sendBy == $user.id ? 'right-0' : 'left-0'}">
-                        <strong>"|"{msg.senderLogin}"|"</strong><br>
-                        {msg.message}<br>
-                        <small>{msg.date}</small>
+                        <strong>|{msg.senderLogin}|</strong>
+                        <strong style="margin-right: 1rem;">:</strong>
+                        <br>{msg.message}<br>
+                        <strong style="margin-right: 1rem;"></strong>
+                        <small>[{msg.date}]</small>
                     </div>
                 </div>
-            {/each} -->
-				{#each messages.filter((msg) => !usersIBlockedList.includes(msg.senderLogin) && !usersWhoBlockedMeList.includes(msg.senderLogin)) as msg}
-					<div class="relative w-full h-40 p-2">
-						<div
-							class="message {msg.sendBy == $user.id
-								? 'right-0'
-								: 'left-0'}"
-						>
-							<strong>|{msg.senderLogin}|</strong>
-							<strong style="margin-right: 1rem;">:</strong>
-							<br />{msg.message}<br />
-							<strong style="margin-right: 1rem;" />
-							<small>[{msg.date}]</small>
-						</div>
-					</div>
-				{/each}
+            {/each}
 			</div>
+
 			<div class="chat-wrapper">
 				<textarea
 					class="w-full h-full"
@@ -342,26 +335,24 @@
 				/>
 				<button
 					class="absolute right-5 top-1/2 -translate-y-1/2 p-3 bg-blue-400"
-					on:click={() =>
-						handleClick(
-							rooms[roomSelected].userOne.id == $user.id
-								? rooms[roomSelected].userTwo.id
-								: rooms[roomSelected].userOne.id
-						)}>send</button
-				>
-				<button
-					class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400"
-					on:click={() => (showEmojiPicker = !showEmojiPicker)}
-				>
+					on:click={() => handleClick(
+					(rooms[roomSelected].userOne.id === $user.id)
+						? rooms[roomSelected].userTwo.id
+						: rooms[roomSelected].userOne.id,
+					(rooms[roomSelected].userOne.id === $user.id)
+						? rooms[roomSelected].userTwo.login
+						: rooms[roomSelected].userOne.login)
+						}
+                    >send
+				</button>
+				<button class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400" on:click={() => showEmojiPicker = !showEmojiPicker}>
 					😀
 				</button>
-				{#if showEmojiPicker}
-					<div
-						class="absolute bottom-20 border border-solid border-white right-20"
-					>
-						<EmojiPicker {addEmoji} />
-					</div>
-				{/if}
+				 {#if showEmojiPicker}
+								<div class="custom-div">  
+									<EmojiPicker on:emojiSelect={handleEmojiSelect} />
+								</div>
+				{/if}  
 			</div>
 		</div>
 	{/if}
@@ -450,10 +441,25 @@
 	}
 
 	.room:hover {
-		brightness: 0.9;
-	}
-	.room:hover {
-		background-color: red;
-		color: white;
-	}
+        brightness: 0.9;
+    }
+
+    .room:hover {
+        background-color: red;
+        color: white;
+    }
+    .custom-div {
+        position: absolute;
+        bottom: 70px;
+        right: 20px;
+        border: 1px solid #000; /* Black border */
+        padding: 10px;
+        transition: background-color 0.3s; /* Smooth background color transition */
+        cursor: pointer;
+    }
+
+    /* Define hover styles */
+    .custom-div:hover {
+        background-color: #555; /* Change the background color on hover */
+    }
 </style>

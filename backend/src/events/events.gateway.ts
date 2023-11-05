@@ -24,7 +24,7 @@ interface SendMessageData {
 
 @Injectable()
 @WebSocketGateway(
-	3001,
+	3002,
 	{
 		cors: {
 			origin: 'http://localhost:5173',
@@ -237,21 +237,31 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('getMessagesInChatRoom')
 	async getMessagesInChatRoom(client: Socket, id: any) {
-		try {
-			let str = this.userIdFindHelper.get(client.id);
-			// console.log('str-----------------', str)
-			if (await this.chatService.eligibleMember(str, id)) {
-				let messages = await this.chatService.listMessages(id);
-				// let contents = messages.map(message => message.content);
-				console.log('Extracted contents:', messages);
-
-				this.server.to(id).emit('repMessagesInChatRoom', {
-					messages: messages,
-				});
-			}
-		} catch (error) {
-			console.error("Error fetching messages:", error);
-		}
+	  try {
+		let str= this.userIdFindHelper.get(client.id);
+		// console.log('str-----------------', str)
+		let user= await this.userService.find_user_by_id(str);
+		const roomMembers = await this.chatService.findMembersByRoomId(id);
+	
+		if(await this.chatService.eligibleMember(str, id)){
+		  let messages = await this.chatService.listMessages(id);
+		 // let contents = messages.map(message => message.content);
+		  console.log('Extracted contents:', messages);
+		  const blockedMembersLogins = roomMembers.filter(member => 
+			member.user.blockedUser && member.user.blockedUser.includes(user.login)
+		).map(member => member.user.login);
+		const blockedByMembersLogins = roomMembers.filter(member => 
+		  member.user.blockedBy && member.user.blockedBy.includes(user.login)
+	  ).map(member => member.user.login);
+		  console.log('blockeeeeeeeeeeeeee',blockedByMembersLogins,blockedMembersLogins)
+		  client.emit('repMessagesInChatRoom', {
+			  messages: messages,
+			  blockedMembers: blockedMembersLogins, // logins of members who have blocked the sender
+			  blockedByMembers: blockedByMembersLogins
+		  });}
+	  } catch (error) {
+		  console.error("Error fetching messages:", error);
+	  }
 	}
 
 	// @SubscribeMessage('sendMessageChannel')

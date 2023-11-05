@@ -10,7 +10,6 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtAuthService } from './jwt/jwt.service';
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
-// import { EventsGateway } from 'src/events/events.gateway';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +20,7 @@ export class AuthService {
     private configService: ConfigService,
     private jwtAuthService: JwtAuthService,
     private jwtService: JwtService,
-    // private eventsGateway: EventsGateway
+
   ) { }
 
   // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *

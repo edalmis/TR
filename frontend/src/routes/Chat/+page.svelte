@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    // import { writable } from 'svelte/store';
     import { session, user ,kickEndTimes, muteEndTimes} from "$lib/store/store";
+    import UserProfileModal from "./../../components/UserProfileModal.svelte";
+    import EmojiPicker from "../../components/EmojiPicker.svelte"
     // import { browser } from "$app/environment";
     // import { goto } from "$app/navigation";
     // import Disable2Fa from "$lib/profile/Disable2Fa.svelte";
@@ -9,7 +10,7 @@
     // import { openModal, selectedPage } from "$lib/store/ModalValues";
 	// import { closeModal } from "$lib/store/ModalValues";
 	// import { showModal } from "$lib/store/ModalValues";
-    import UserProfileModal from "./../../components/UserProfileModal.svelte";
+    // import { writable } from 'svelte/store';
     // import * as bcrypt from 'bcrypt';
     // import bcrypt from 'bcrypt';
 
@@ -25,14 +26,15 @@
     let chatMessages: any[] = [];
     
     let showChatWindow = true;
-    let isAdmin = $user.isAdmin;
+    // let isAdmin = $user.isAdmin;
     let showChatHistory = true;
     let showSendMessage= true;
     let userId = $user.id42;
     let usere = $user;
-    let userLogin= $user.login;
+    // let userLogin= $user.login;
     let usersInRoom: any[] = [];
-    let isUserOwner = true;
+    // let isUserOwner = true;
+    let showEmojiPicker: boolean = false;
 
     interface ISocketValue{
         rooms:string
@@ -169,21 +171,22 @@ function promptPasswordAndEnter(room: any) {
         });
 
         $session.on("repMessagesInChatRoom", (data: any) => {
-            // chatMessages = [...data.messages];
-            chatMessagesPerRoom[selectedChatRoomid] = [...data.messages];
+   
 
-            // console.log("CHATTTTTT1---->", data.messages)
-                    scrollToBottom(); 
-    //                 const roomId:string = data.messages.roomId;
-    // if (!chatMessagesPerRoom[roomId]) {
-    //     chatMessagesPerRoom[roomId] = [];
-    // }
-    // chatMessagesPerRoom[roomId].push(data.messages);
-    // console.log("CHATTT", chatMessagesPerRoom[roomId])
-    // if (selectedChatRoom && roomId === selectedChatRoom.id) {
-    //     scrollToBottom();
-    // }
-        });
+   // Iterate through the messages and check if any sender login is in the blockedMembers or blockedByMembers list
+        const filteredMessages = data.messages.filter((message: any) => {
+        const senderLogin = message.senderLogin;
+        if (data.blockedMembers && data.blockedMembers.includes(senderLogin)) {
+            return false; // Don't process the message as this user should not see it
+        }
+        if (data.blockedByMembers && data.blockedByMembers.includes(senderLogin)) {
+            return false; // Don't process the message as this user should not see it
+        }
+        return true; // Process the message
+    });
+        chatMessagesPerRoom[selectedChatRoomid] = filteredMessages;
+        scrollToBottom();    
+    });
 
         $session.on('joinedChatRoom', ({room, user, role}: any) => {
         console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
@@ -490,6 +493,13 @@ $session.once("userStatus", (data: any) => {
 
     //      $session.emit("getMessagesInChatRoom", selectedChatRoomid);
     // }                                                    
+
+    function handleEmojiSelect(event: any) {
+    const selectedEmoji = event.detail.emoji;
+    message += selectedEmoji;
+    console.log('emo',selectedEmoji)
+    // Do something with the selectedEmoji
+  }
 
     function createChatRoom() {
         const payload = {
@@ -950,10 +960,20 @@ div.users-container ul#userList li .user-list button {
     text-align: center; /* To center the 'Close' text */
 }
 
+.custom-div {
+        position: absolute;
+        bottom: 70px;
+        right: 20px;
+        border: 1px solid #000; /* Black border */
+        padding: 10px;
+        transition: background-color 0.3s; /* Smooth background color transition */
+        cursor: pointer;
+    }
 
-
-
-
+    /* Define hover styles */
+    .custom-div:hover {
+        background-color: #555; /* Change the background color on hover */
+    }
 </style>
 
 
@@ -1033,11 +1053,17 @@ div.users-container ul#userList li .user-list button {
                 <!-- <input bind:value={message} placeholder="Type your message..."/> -->
                 <div class="message-input">
                     <input bind:value={message} on:keydown={handleKeyDown} placeholder="Type your message..."/>
+                    <button class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400" on:click={() => showEmojiPicker = !showEmojiPicker}>
+                        😀
+                    </button>
+                     {#if showEmojiPicker}
+                        <div class="custom-div">  
+                            <EmojiPicker on:emojiSelect={handleEmojiSelect} />
+                        </div>
+                    {/if}  
                     <button on:click={sendMessage}>Send</button>
                 </div>
-                
                 <!-- <button on:click={sendMessage}>Send</button> -->
-
                 {/if}
             </div>
         </div>
@@ -1091,10 +1117,6 @@ div.users-container ul#userList li .user-list button {
                             <button on:click={toggleModal}>Close</button>
                         </div>
                     </div>  -->
-                   
-                    
-            
-
 <!-- Main Modal -->
 
                         {/if}  

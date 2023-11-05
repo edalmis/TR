@@ -7,7 +7,7 @@
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues";
-	import { authentificated, user } from "$lib/store/store";
+	import { authentificated, session, user } from "$lib/store/store";
 	import OtherProfile from "$lib/OtherProfile/OtherProfile.svelte";
 	// import ImgPreviewProfile from "$lib/Profile/ImgPreviewProfile.svelte";
 
@@ -30,32 +30,13 @@
 	selectedPage.subscribe((b: string) => {
 		selectedModal = b;
 	});
+
+	let messagedUsers = new Set(JSON.parse(sessionStorage.getItem('messagedUsers') || '[]'));
+    // let resetButton: HTMLElement;
+	let id : number;
+		id = $user.id;
 	///////////////////////////////////////////////////
 
-	// Afficher la liste des user online
-	// ajouter un bouton 'send request'
-
-	// Afficher la liste des amis
-	// ajouter bouton 'unfriend'
-
-	// afficher la liste des amis en attente acceptation
-	// ajouter bouton 'accept'
-
-	//let users: string[];
-	//let id42: number;
-	//id42 = $user.id42;
-
-	 // Import any necessary data here
-// 	 let users = [
-//     {
-//       name: 'Leslie Alexander',
-//       email: 'leslie.alexander@example.com',
-//       role: 'Co-Founder / CEO',
-//       lastSeen: '3h ago',
-//       imageSrc: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     },
-//     // Add more user data here
-//   ];
 	let onlineUsers: string[] = [];
 	let friendsList: string[] = [];
 	let onlineFriendsList: string[] = [];
@@ -93,17 +74,6 @@
 	onMount(async () => {
 		try {
 			const jwt = localStorage.getItem("jwt");
-			// const onlineUsers_url = await fetchData("http://localhost:3000/auth/onlineUsers");
-			// if (onlineUsers_url) {
-			// console.log("Online Users:", onlineUsers_url);
-			// }
-
-			// const onlineUserResponse = await fetchData("http://localhost:3000/user/profile");
-			// if (onlineUserResponse) {
-			// pictureLink = user.avatar;
-			// }
-			//Online Users
-			
 			const onlineUsers_url = "http://localhost:3000/auth/onlineUsers";
 			const onlineUserResponse = await fetch(onlineUsers_url, {
 			// const onlineUserResponse = await fetchData(onlineUsers_url, {
@@ -119,7 +89,6 @@
 				return;
 			} else {
 				const response = await fetch( "http://localhost:3000/user/profile", {
-				// const response = await fetchData( "http://localhost:3000/user/profile", {
 					method: "GET",
 					headers: {
 						Authorization: `Bearer ${jwt}`,
@@ -367,6 +336,43 @@
 		closeModal();
 		goto("/");
 	}
+
+	function resetMessagedUsers() {
+		sessionStorage.removeItem('messagedUsers');
+		alert('Messaged users reset successfully!');
+	}
+
+	function handleButtonClick(use:string) {
+        // console.log('use-----------', use)
+    const isBlockedByMe = usersIBlockedList.includes(use);
+    const isBlockedByOthers = usersWhoBlockedMeList.includes(use);
+
+    if (isBlockedByMe || isBlockedByOthers) {
+        alert('Sending direct message blocked!');
+        return; // Exit the function since the user is blocked
+    }
+
+    if (!messagedUsers.has(use)) {
+        // Only send the default message if we haven't messaged this user before
+        $session.emit('sendMessageN', {
+            message: 'Hello!',
+            sendBy: id,
+            sendTo: use
+        });
+
+        // Mark this user as messaged
+        // messagedUsers.add(use);
+        messagedUsers.add(use);
+
+        // Save to sessionStorage
+        sessionStorage.setItem('messagedUsers', JSON.stringify([...messagedUsers]));
+    }
+
+		// Call this regardless of whether it's the first message or not, 
+		// as it appears to be your intention from the original code
+		// handleDM(use);
+		goto("/DM");
+    }
 </script>
 
 <ul role="list" class="divide-y divide-gray-100">
@@ -464,8 +470,16 @@
 											on:click={() => { handleSeeProfil(user);}}>See Profile 
 										</button>
 									</p>
+									<p class="mt-1 truncate text-xs leading-5 text-gray-500" >
+										<button on:click={resetMessagedUsers}>Reset DM</button>
+									</p>
 								</div>
+
+								<button on:click={() => handleButtonClick(user)}>
+									Send DM
+								</button>
 							</div>
+						
 							<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
 								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
 									<button 

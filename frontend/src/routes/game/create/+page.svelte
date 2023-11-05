@@ -212,7 +212,7 @@
 	}
 
 	async function initializeGame() {
-		//const client = new Client("ws://localhost:3000");
+		//const client = new Client("ws://localhost:3001");
 		try {
 			iAmInvited.subscribe((a) => {
 				invited = a;

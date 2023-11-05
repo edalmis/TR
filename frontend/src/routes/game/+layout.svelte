@@ -18,6 +18,7 @@
         background-size: cover;
         background-position: center;
         min-height: 100vh;
+        min-width: 100%;
         display: flex;
         flex-direction: column;
         position: absolute;

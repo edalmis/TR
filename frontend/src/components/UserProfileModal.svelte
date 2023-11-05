@@ -1,10 +1,10 @@
-<script lang="ts">
+<script>
     import { chanel, chanelname, session } from "$lib/store/store";
     import { onMount } from 'svelte';
-    export let username: any ; 
-    let user: any = null;
+    export let username ; 
+    let user = null;
     // let userNamee = usernale
-    let pictureLink: string;
+    let pictureLink;
 
 
     onMount(() => {
@@ -12,7 +12,7 @@
             // Assume $session has an 'on' method to listen to events
             $session.emit('message', username);
 
-            $session.on("userResponse", (data: any) => {
+            $session.on("userResponse", (data) => {
             user = data.user;
             pictureLink = user.avatar;
 
