@@ -75,7 +75,7 @@ export class AuthController {
 
     // /////////////////////////////////   [ User Modifications ]      //////////////////////////////////
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard) //
+    // @UseGuards(AuthGuard) //
     @Get('verify_2fa')
     async verify_2fa(@Request() req, @Response() res) {
         console.log("-[ verify_2fa ]-");
@@ -84,7 +84,7 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard) //
+    // @UseGuards(AuthGuard) //
     @Get('get_google_2fa')
     async get_google_2fa(@Request() req, @Response() res) {
         const url = new URL(req.url, 'http://localhost:5173');
@@ -107,7 +107,7 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard) //
+    // @UseGuards(AuthGuard) //
     @Get('enable_2fa')
     async preview2fa(@Request() req, @Response() res) {
         let login: string;
@@ -131,7 +131,7 @@ export class AuthController {
     }
 
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard) //
+    // @UseGuards(AuthGuard) //
     @Post('enable_2fa')
     async enable_2fa(@Request() req, @Response() res) {
         console.log("-[ 2fa ]- Enable ");
@@ -144,7 +144,7 @@ export class AuthController {
 
 
     @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard) //
+    // @UseGuards(AuthGuard) //
     @Post('disable_2fa')
     async disable_2fa(@Request() req) {
         console.log("-[ 2fa ]- Disable ");

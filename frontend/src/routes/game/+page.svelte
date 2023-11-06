@@ -76,9 +76,9 @@
 
 <main class="game-background">
 	<div class ='button-container'>
-		<button style="margin-top: 2px"
+		<!-- <button style="margin-top: 2px"
 		on:click={redirectToMatchmaking} class="create-privateRoom-button" > MatchMaking 
-		</button>
+		</button> -->
 		<button style="margin-top: 2px" on:click={openModal} class="create-privateRoom-button">Create PrivateGame with '{invited}' </button>
 		<button style="margin-top: 2px"on:click={openGameRuleModal} class="create-privateRoom-button">
 			Game Rules

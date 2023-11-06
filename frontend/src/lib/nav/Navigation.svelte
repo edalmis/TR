@@ -56,7 +56,7 @@
 		goto("/Friends");
 	}
 	function handleGame() {
-		goto("/game");
+		goto("/game/matchmaking");
 	}
 	function handleInvitation() {
 		inviteNotifModal.set(true);
