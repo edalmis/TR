@@ -4,7 +4,6 @@
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte"
 
-
     let title = "";
     let isPrivate = false;
     let password = "";
@@ -17,7 +16,7 @@
     let showChatWindow = true;
     let showChatHistory = true;
     let showSendMessage= true;
-    let userId = $user.id42;
+    let userId = $user.id;
     let usere = $user;
     let usersInRoom: any[] = [];
     let showEmojiPicker: boolean = false;
@@ -27,13 +26,13 @@
     }
     
 
-    let allUsers: any[] = []; // Ensure to declare the allUsers array
-    let selectedUserId: string = ""; // For choosing a user to make admin
+    // let allUsers: any[] = []; // Ensure to declare the allUsers array
+    // let selectedUserId: string = ""; // For choosing a user to make admin
     let enteredPassword: string | null;
     enteredPassword = "";
-    let kickEndTime: any;
+    // let kickEndTime: any;
     let kickDuration: any;
-    let muteDuration: any;
+    // let muteDuration: any;
     interface Message {
     // your message properties here, e.g.,
     content: string;
@@ -104,7 +103,7 @@ function promptPasswordAndEnter(room: any) {
 
         // General event listener for debugging
         $session.onAny((event: any, ...args: any) => {
-            console.log(`Received event: ${event}`, args);
+            // console.log(`Received event: ${event}`, args);
         });
 
         $session.on("repChatRooms", (data : ISocketValue) => {
@@ -130,12 +129,12 @@ function promptPasswordAndEnter(room: any) {
     });
 
         $session.on('joinedChatRoom', ({room, user, role}: any) => {
-        console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
+        // console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
         });
 
       
 $session.on("newMessage", (data:any) => {
-    console.log('Received new message:', data);
+    // console.log('Received new message:', data);
     
     // Check if data.savedMessage exists before accessing it
     if (!data || !data.savedMessage) {
@@ -168,13 +167,13 @@ $session.on("newMessage", (data:any) => {
 
         $session.on("chatRoomCreated", (data: any)=>{
             const {channel }= data
-             console.log("newRoom", channel)
+            //  console.log("newRoom", channel)
             chatRooms = [...chatRooms, channel];
 
         })
         $session.on("chatRoomDeleted", (data: any)=>{
             const {room }= data
-             console.log("deletedRoom", room)
+            //  console.log("deletedRoom", room)
              chatRooms = chatRooms.filter(item => item.id !== room.id);
 
 
@@ -182,7 +181,7 @@ $session.on("newMessage", (data:any) => {
        
     $session.on("membersList", (data: any) => {
     usersInRoom = data.members; 
-    console.log('users in room', usersInRoom);
+    // console.log('users in room', usersInRoom);
 });
 
 $session.on('kickedFromRoom', ({ roomId, duration }: any) => {
@@ -283,7 +282,7 @@ $session.on("roomUpdated", (updatedRoom: any) => {
             return;
         }
          // Request user's status in the chat room
-    $session.emit("checkUserStatus", { userId: usere.id, roomId: selectedChatRoomid });
+    $session.emit("CheckUserStatus", { userId: usere.id, roomId: selectedChatRoomid });
 
 // Listen to the server's response
 $session.once("userStatus", (data: any) => {
@@ -353,7 +352,7 @@ $session.once("userStatus", (data: any) => {
     function handleEmojiSelect(event: any) {
     const selectedEmoji = event.detail.emoji;
     message += selectedEmoji;
-    console.log('emo',selectedEmoji)
+    // console.log('emo',selectedEmoji)
     // Do something with the selectedEmoji
   }
 
@@ -371,7 +370,7 @@ $session.once("userStatus", (data: any) => {
     }
 
     function sendMessage() {
-        console.log('here***-*-*-*-*-')
+        // console.log('here***-*-*-*-*-')
 
         $session.emit("sendMessageChannel", {
             message: message,
@@ -379,13 +378,9 @@ $session.once("userStatus", (data: any) => {
             sendBylogin: usere.login, 
             sendTo: selectedChatRoomid
         });
-        console.log(selectedChatRoomid)
+        // console.log(selectedChatRoomid)
 
         message = ''; // Clear the message after sending
-    }
-    
-    function logMessages() {
-        console.log(chatMessages);
     }
 
     function clean() {
@@ -456,7 +451,7 @@ $session.once("userStatus", (data: any) => {
 
     async function cancelpassChatRoom() {
         if (selectedChatRoom) {
-    if (selectedChatRoom.password) {
+    if (selectedChatRoom.hashedPassword) {
 
         $session.emit("cancelpassChatRoom", {
             user: usere,
@@ -508,14 +503,10 @@ function openProfileModal(username: any) {
             event.target.selectionEnd = start + 1;
         }
     }
-
 </script>
 
 
 <style>
-    /* body {
-        font-family: Arial, sans-serif;
-    } */
 
     .chat-message p {
     white-space: pre-wrap;
@@ -604,15 +595,7 @@ function openProfileModal(username: any) {
         background-color: #990000;
     }
 
-    /* input[type="text"], input[type="password"] {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #999;
-        width: 100%;
-        box-sizing: border-box;
-        background-color: rgb(231, 210, 210);
-        color: black;
-    } */
+ 
 
     .message-input {
         margin-top: 10px;
@@ -624,24 +607,7 @@ function openProfileModal(username: any) {
     .message-input input {
         flex-grow: 1;
     }
-    /* .user-list {
-    background-color: #9c9494;
-    border: 1px solid #1a1515;
-    color:red;
-    border-radius: 5px;
-    margin-top: 15px;
-    padding: 10px;
-} */
-
-/* .user-list ul {
-    list-style-type: none;
-    padding: 0;
-
-} */
-
-/* .user-list li  {
-    margin-bottom: 5px;
-} */
+  
 .users-container {
     position: fixed;
     top: 35%;
@@ -665,16 +631,6 @@ function openProfileModal(username: any) {
 .locked-icon {
     margin-left: 5px; 
 }
-/* .user-list button {
-    background-color: red;
-    color: white;
-    padding: 2px 2px;
-    border: none;
-    border-radius: 2px;
-    margin-left: 2px; /* to space out between buttons */
-    /* transition: background-color 0.3s ease;
-    box-shadow: 0 0 2px rgba(255,0,0,0.2); /* subtle red shadow to match other UI elements */
-/* } */ 
 
 div.users-container ul#userList li .user-list button {
     background-color: red;
@@ -690,43 +646,15 @@ div.users-container ul#userList li .user-list button {
     vertical-align: middle; /* to align button text vertically in case it's misaligned */
 }
 
-
-.user-list button {
-    background-color: red;
-    color: white;
-    padding: 1px 3px !important;;  /* further reduced padding */
-    border: none;
-    border-radius: 2px;
-    margin-left: 1px; /* slight margin reduction for tighter spacing */
-    transition: background-color 0.3s ease;
-    box-shadow: 0 0 2px rgba(255,0,0,0.2);
-    font-size: 0.6rem !important; /* further reduced font-size */
-    line-height: 1; /* adjusted line-height */
-    vertical-align: middle; /* to align button text vertically in case it's misaligned */
-}
-.user-list button:hover {
-    background-color: #990000;
-    color: white;
-    text-decoration: none;
-}
-
-/* Differentiating Kick and Ban with slight modifications */
-.user-list .kick {
-    background-color: #ff3333; /* Slightly different shade for distinction */
-}
-
-.user-list .ban {
-    background-color: red; 
-}
 .par {
     color: #181313;           /* Green text color */
-        background-color: a9abc2; /* White background */
-        padding: 4 px 8px;           /* Optional: some padding for better appearance */
+        background-color: #a9abc2; /* White background */
+        padding: 4px 8px;           /* Optional: some padding for better appearance */
         border-radius: 4px;     /* Optional: rounded corners for a softer look */
     }
     .kickd {
     color: #181313;           /* Green text color */
-        padding: 4 px 8px;           /* Optional: some padding for better appearance */
+        padding: 4px 8px;           /* Optional: some padding for better appearance */
         border-radius: 4px;     /* Optional: rounded corners for a softer look */
     }
     .pa:hover{
@@ -738,7 +666,7 @@ div.users-container ul#userList li .user-list button {
         text-align: center;
         font-weight: bold;
         color: #181010;
-        padding: 4 px 8px;           /* Optional: some padding for better appearance */
+        padding: 4px 8px;           /* Optional: some padding for better appearance */
         border-radius: 4px; 
     }
     .room-list-title {
@@ -811,7 +739,7 @@ div.users-container ul#userList li .user-list button {
 {#if showChatWindow}
 <div class="chat-window">
     <button class="close-btn" on:click={() => { 
-        console.log('Close button clicked'); 
+        // console.log('Close button clicked'); 
         showChatWindow = false;
     }}>X</button>
    
@@ -859,7 +787,7 @@ div.users-container ul#userList li .user-list button {
 {#if selectedChatRoom && showChatHistory}
     <div class="chat-history">
         <button class="close-btn" on:click={() => { 
-            console.log('Close button clicked'); 
+            // console.log('Close button clicked'); 
             showChatHistory = false;
         }}>X</button>
         
@@ -869,7 +797,6 @@ div.users-container ul#userList li .user-list button {
             <p class="user-list-title">CHAT HISTORY</p>
             {#if Array.isArray(chatMessagesPerRoom[selectedChatRoomid])}
                 {#each chatMessagesPerRoom[selectedChatRoomid] as message}
-                <!-- {#each chatMessages as message} -->
                     <div class="chat-message">
                         <p class="sender">{message.senderLogin}</p>
                         <p>{message.content}</p>
@@ -881,7 +808,6 @@ div.users-container ul#userList li .user-list button {
             <div class="message-input">
                 {#if showSendMessage}
                 
-                <!-- <input bind:value={message} placeholder="Type your message..."/> -->
                 <div class="message-input">
                     <input bind:value={message} on:keydown={handleKeyDown} placeholder="Type your message..."/>
                     <button class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400" on:click={() => showEmojiPicker = !showEmojiPicker}>
@@ -894,7 +820,6 @@ div.users-container ul#userList li .user-list button {
                     {/if}  
                     <button on:click={sendMessage}>Send</button>
                 </div>
-                <!-- <button on:click={sendMessage}>Send</button> -->
                 {/if}
             </div>
         </div>
@@ -916,7 +841,7 @@ div.users-container ul#userList li .user-list button {
                     {/if}
                         {#if ((user.role == 'Participant')&&(usere.login != user.user.login)) || ((user.role == 'Admin') && (usere.login != user.user.login))} 
                            
-                            <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" />
+                            <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" min="1"/>
                             <button on:click={() => kickUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Kick</button>  
                             <button on:click={() => muteUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Mute</button>  
 
@@ -966,4 +891,3 @@ div.users-container ul#userList li .user-list button {
 
 <!-- Debugging button to manually log chat messages -->
 <button on:click={clean}  >New window</button>
-<p><button on:click={logMessages}  >Log Messages</button></p>

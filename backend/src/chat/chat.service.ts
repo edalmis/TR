@@ -26,13 +26,8 @@ export class ChatService {
 	) { }
 
 	// 1. Create a chat room
-	// async createChatRoom(payload: { title: string, isPrivate: boolean, 
-	// 	password?: string, hashedPassword: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
+	async createChatRoom(payload: { title: string, isPrivate: boolean, hashedPassword: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
 		
-
-	// ethem
-	async createChatRoom(payload: { title: string, isPrivate: boolean, 
-		hashedPassword?: string, userId: number, user: UserEntity }): Promise<ChatRoom> {
 		const newRoom = this.chatRoomRepository.create(payload);
 
 		const savedRoom = await this.chatRoomRepository.save(newRoom);
@@ -74,15 +69,15 @@ export class ChatService {
 
 		// Check if the user is already a member of the chat room
 		const a = await this.isUserMemberOfRoom(usere.id, room.id)
-		console.log('a', a)
+		// console.log('a', a)
 		if (a != false) {
-			console.log('existing member')
+			// console.log('existing member')
 			
 			return;
 		}
 		else {
 			
-			console.log('new member')
+			// console.log('new member')
 
 			//-----------------
 			const newMember = this.chatRoomMemberRepository.create({
@@ -90,7 +85,7 @@ export class ChatService {
 				chatRoom: room,
 				role: 'Participant',
 			});
-			console.log("member details", newMember)
+			// console.log("member details", newMember)
 
 			return await this.chatRoomMemberRepository.save(newMember);
 		}
@@ -129,7 +124,7 @@ export class ChatService {
 		const chatRoomMember = await this.chatRoomMemberRepository.findOne({ where: { user: { id: senderUser.id }, chatRoom: { id: roomId } } });
 
 		if (!chatRoomMember) {
-			console.log('Failed senderUserId:', senderUser.id);  // Log the failed senderUserId for clarity
+			// console.log('Failed senderUserId:', senderUser.id);  // Log the failed senderUserId for clarity
 			throw new Error("Sender not found in chat room members.");
 		}
 
@@ -139,12 +134,12 @@ export class ChatService {
 		const newMessage = this.chatMessageRepository.create({ content, senderId, senderLogin, roomId });
 
 		// Log the message details
-		console.log('Attempting to save message with details:', {
-			content: content,
-			senderId: senderId,
-			roomId: roomId,
-			senderLogin: senderLogin
-		});
+		// console.log('Attempting to save message with details:', {
+		// 	content: content,
+		// 	senderId: senderId,
+		// 	roomId: roomId,
+		// 	senderLogin: senderLogin
+		// });
 		return await this.chatMessageRepository.save(newMessage);
 	}
 
@@ -400,12 +395,12 @@ export class ChatService {
 				where: { id: roomId },
 				relations: ['bannedUsers']
 			});
-			console.log('userr', userId)
+			// console.log('userr', userId)
 			if (room && room.bannedUsers) {
 				const updatedBannedUsers = room.bannedUsers.filter(user => user.id !== userId);
 				room.bannedUsers = updatedBannedUsers;
 				await this.chatRoomRepository.save(room);
-				console.log("ROOOOOOOOMMMMMMM", room)
+				// console.log("ROOOOOOOOMMMMMMM", room)
 			}
 		} catch (error) {
 			throw new Error(`Error unbanning user: ${error.message}`);
@@ -423,10 +418,10 @@ export class ChatService {
 		// Update the password
 		if (!chatRoom.isPrivate)
 			chatRoom.isPrivate = true;
-		chatRoom.password = newPassword;
+		// chatRoom.password = newPassword;
 		let hashedPassword;
 		const saltRounds = 10; // or another number of rounds
-		hashedPassword = await bcrypt.hash(chatRoom.password, saltRounds);
+		hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 		chatRoom.hashedPassword = hashedPassword;
 		// Save the updated chat room entity
 		await this.chatRoomRepository.save(chatRoom);
@@ -445,7 +440,7 @@ export class ChatService {
 		// Update the password
 		if (chatRoom.isPrivate) {
 			chatRoom.isPrivate = false;
-			chatRoom.password = "";
+			// chatRoom.password = "";
 			chatRoom.hashedPassword = "";
 			await this.chatRoomRepository.save(chatRoom);
 		}

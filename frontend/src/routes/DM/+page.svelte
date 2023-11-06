@@ -68,7 +68,7 @@
 				if (usersIBlockedList.length === 0) {
 					usersIBlockedEmptyArray = true;
 				}
-				console.log("usersIblockedList: ", usersIBlockedList);
+				// console.log("usersIblockedList: ", usersIBlockedList);
 			}
 
 			// Users Who Blocked Me
@@ -88,7 +88,7 @@
 				if (usersWhoBlockedMeList.length === 0) {
 					usersWhoBlockedMeEmptyArray = true;
 				}
-				console.log("usersWhoBlockedMeList: ", usersWhoBlockedMeList);
+				// console.log("usersWhoBlockedMeList: ", usersWhoBlockedMeList);
 			}
 		};
 		fetchData();
@@ -97,13 +97,13 @@
 
 		$session.on("repDmRooms", (data: any) => {
 			rooms = data.rooms;
-			console.log("repDmRooms:", rooms);
+			// console.log("repDmRooms:", rooms);
 		});
 
 		$session.on("repMessagesInDmRooms", (data: any) => {
 			messages = data.messages;
 			scrollToBottom();
-			console.log("repMessagesInDmRooms:", messages);
+			// console.log("repMessagesInDmRooms:", messages);
 		});
 
 		$session.on("newMessage", (data: any) => {
@@ -122,12 +122,12 @@
 	});
 
 	function handleClick(use: number, logine:string) {
-        console.log('use----------',use)
+        // console.log('use----------',use)
         if (!(
             blockedUsername = usersIBlockedList.some(blockedUser => blockedUser == logine)
         )) blockedUsername = usersWhoBlockedMeList.some(blockedBy => blockedBy == logine);
         
-        console.log('blockedusername--', blockedUsername);
+        // console.log('blockedusername--', blockedUsername);
         if (blockedUsername) {
             alert('Sending direct message blocked!');
         }
@@ -158,7 +158,7 @@
 	function handleEmojiSelect(event: any) {
     const selectedEmoji = event.detail.emoji;
     chatMessage += selectedEmoji;
-    console.log('emo',selectedEmoji)
+    // console.log('emo',selectedEmoji)
     // Do something with the selectedEmoji
   }
 </script>
@@ -325,8 +325,7 @@
 	}
 
 	.room:hover {
-        brightness: 0.9;
-    }
+		filter: brightness(0.9);    }
 
     .room:hover {
         background-color: red;

@@ -16,12 +16,6 @@ import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 import * as bcrypt from 'bcrypt';
 
-// interface SendMessageData {
-// 	sendBy: number;
-// 	sendTo: number;
-// 	message: string;
-// }
-
 @Injectable()
 @WebSocketGateway(
 	3002,
@@ -101,7 +95,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		let str = this.userIdFindHelper.get(client.id);
 		let num = +str;
 		let a = await this.directMessageService.findAllRoomsForUser(num)
-		console.log(a)
+		// console.log(a)
 		client.emit('repDmRooms', {
 			rooms: a
 		})
@@ -111,7 +105,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('getMessagesInDmRoom')
 	async getDmRoomMessages(client: Socket, roomId: any) {
 		let a = await this.directMessageService.findAllMessagesForRoom(roomId)
-		console.log('AAAAAAAAAAAAAAA', a)
+		// console.log('AAAAAAAAAAAAAAA', a)
 		client.emit('repMessagesInDmRooms', {
 			messages: a
 		})
@@ -126,11 +120,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		}
 
 		// Log the received data for debugging
-		console.log('Data received in sendMessage:', data);
+		// console.log('Data received in sendMessage:', data);
 
 	
 		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
-		console.log('a', a)
+		// console.log('a', a)
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
 		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
 		if (userOne) {
@@ -216,7 +210,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const channel = await this.chatService.createChatRoom({
 			title,
 			isPrivate,
-			// password,  // ethem
+			// password,
 			hashedPassword,
 			userId,
 			user
@@ -260,7 +254,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('sendMessageChannel')
 	async sendMessageChannel(client: Socket, payload: { message: string, sendBy: UserEntity, sendBylogin: string, sendTo: string }) {
 		try {
-			console.log('Received payload:', payload);
+			// console.log('Received payload:', payload);
 
 			// Extract variables from payload
 			const { message, sendBy, sendBylogin, sendTo } = payload;
@@ -298,7 +292,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('joinChatRoom')
 	async joinChatRoom(client: Socket, payload: { user: UserEntity, room: ChatRoom, role: string }) {
-		console.log("Received joinChatRoom payload:", payload);
+		// console.log("Received joinChatRoom payload:", payload);
 		try {
 			const { user, room, role } = payload;
 			// console.log('**********************', user)
@@ -441,7 +435,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			room.bannedUsers.push(userToBan);
 			const roome = await this.chatService.updateRoome(room);  // Make sure you have an updateRoom method in your chatService
 			//------------------------------------------------OFFLINE ADDING
-			console.log('m yroom neew version', roome)
+			// console.log('m yroom neew version', roome)
 			const member = await this.chatService.findMemberInChatRoom(userToBan.id, roomId);
 			member.isBanned = true;
 			await this.chatService.updateMember(member);
@@ -462,7 +456,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		try {
 			const { userId, roomId } = payload;
 			const isBanned = await this.chatService.isUserBanned(userId, roomId);
-			console.log('isBanned:', isBanned);
+			// console.log('isBanned:', isBanned);
 
 			// Respond back to the client with the ban status
 			client.emit('userBanStatus', { isBanned });
@@ -482,8 +476,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			const member = await this.chatService.findMemberInChatRoom(userId, roomId);
 			const kickEndTime = member.kickedTime ? member.kickedTime.getTime() + member.kickDuration * 60 * 1000 : 0;
 			const muteEndTime = member.mutedTime ? member.mutedTime.getTime() + member.mutedDuration * 60 * 1000 : 0;
-			console.log("-member-", member)
-			console.log('kickandmutetimes', kickEndTime, muteEndTime)
+			// console.log("-member-", member)
+			// console.log('kickandmutetimes', kickEndTime, muteEndTime)
 			// Respond back to the client with the combined status
 			client.emit('userStatus', { isBanned, kickEndTimes: { [roomId]: kickEndTime }, muteEndTimes: { [roomId]: muteEndTime } });
 		} catch (error) {
@@ -505,13 +499,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			const memberes = await this.chatService.findMembersByRoomId(room.id);
 
 			const isOwner = memberes.some(member => member.role === 'Owner' && member.user.id === user.id);
-			console.log(isOwner)
+			// console.log(isOwner)
 
 			if (isOwner) {
 				const second = memberes.some(membr => membr.role === 'Admin');
 				if (second) {
 					const done = await this.chatService.makeOwner(room);
-					console.log('done**--**-*-*-*-*-', done)
+					// console.log('done**--**-*-*-*-*-', done)
 					if (done)
 						console.log('New owner selected', done)
 				}
@@ -657,7 +651,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('message')
 	async handleMessage(client: Socket, username: string) {
-		console.log('userdataaaaa')
+		// console.log('userdataaaaa')
 
 		try {
 			// console.log('here', username)
