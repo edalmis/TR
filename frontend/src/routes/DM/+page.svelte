@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { session, user } from "$lib/store/store";
+	import { session, user, dmNotif} from "$lib/store/store";
 	import { browser } from "$app/environment";
 	import EmojiPicker from "../../components/EmojiPicker.svelte";
 
@@ -111,6 +111,7 @@
 			if (!isPageFocused) {
 				showNotification(data.messages.message);
 			}
+			dmNotif.set(true);
 			scrollToBottom();
 		});
 
@@ -142,18 +143,18 @@
         }
     }
 
- function handleKeyPress(event: any) {
-	if (event.key === "Enter" && !event.shiftKey) {
-				event.preventDefault();
-				handleClick(
-	(rooms[roomSelected].userOne.id === $user.id)
-		? rooms[roomSelected].userTwo.id
-		: rooms[roomSelected].userOne.id,
-	(rooms[roomSelected].userOne.id === $user.id)
-		? rooms[roomSelected].userTwo.login
-		: rooms[roomSelected].userOne.login
-	);        }
-    }
+	function handleKeyPress(event: any) {
+		if (event.key === "Enter" && !event.shiftKey) {
+					event.preventDefault();
+					handleClick(
+		(rooms[roomSelected].userOne.id === $user.id)
+			? rooms[roomSelected].userTwo.id
+			: rooms[roomSelected].userOne.id,
+		(rooms[roomSelected].userOne.id === $user.id)
+			? rooms[roomSelected].userTwo.login
+			: rooms[roomSelected].userOne.login
+		);        }
+		}
 
 	function handleEmojiSelect(event: any) {
     const selectedEmoji = event.detail.emoji;

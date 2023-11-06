@@ -45,6 +45,8 @@ export let user: any = writable(null);
 export let chanel: any = writable(null);
 export let chanelname: any = writable(null);
 export let dm: any = writable(null);
+export let dmNotif: any = writable(false);
+
 export let block: any = writable(null);
 export let kickEndTimes: any = writable(null);
 export let muteEndTimes: any = writable(null);

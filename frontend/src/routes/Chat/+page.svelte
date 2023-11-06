@@ -841,7 +841,7 @@ div.users-container ul#userList li .user-list button {
                     {/if}
                         {#if ((user.role == 'Participant')&&(usere.login != user.user.login)) || ((user.role == 'Admin') && (usere.login != user.user.login))} 
                            
-                            <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" min="1"/>
+                            <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" min="1" max="60">
                             <button on:click={() => kickUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Kick</button>  
                             <button on:click={() => muteUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Mute</button>  
 

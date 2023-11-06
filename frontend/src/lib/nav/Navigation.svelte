@@ -20,11 +20,13 @@
 		// launchedGame,
 		// dataGame,
 		inviteNotifModal,
+		dmNotif
 	} from "../store/store";
 
 	// [ Notif Game Invitation] // // // // // // // // // //
 	$: inviteNotif;
 	$: notif = false;
+	$: notifDm = false;
 	let socket: any;
 	let isModalOpen = false;
 
@@ -39,6 +41,11 @@
 	let selectedModal: string;
 	selectedPage.subscribe((b: string) => {
 		selectedModal = b;
+	});
+
+
+	dmNotif.subscribe( (a:any) => {
+		notifDm= a;
 	});
 	// // // // // // // // // // // // // // // // // // // //
 
@@ -92,6 +99,11 @@
 		handleLoggout();
 		});}
 	});
+	function handleDMNotif(){
+
+		dmNotif.set(false);
+		goto("/DM")
+	}
 </script>
 
 <nav class="w-full flex gap-10 p-2 justify-center items-center h-full">
@@ -105,7 +117,11 @@
 	<!-- <button on:click={() => { goto("/"); openModal("chat"); }}>Chat</button -->
 	<!-- <button on:click={() => { goto("/"); openModal("findFriends"); }}>Find Friends</button> -->
 	<button on:click={handleFriends}>Friends</button>
-	<button on:click={() => goto("/DM")}>DM</button>
+	{#if notifDm === true}
+	<button class='dmButton' on:click={handleDMNotif}>DM</button>
+	{:else}
+	<button  on:click={() => goto("/DM")}>DM</button>
+	{/if}
 	<button on:click={handleLoggoutModal}>Logout</button>
 	{#if notif === true}
 		<button class="notif" on:click={handleInvitation}
@@ -169,6 +185,9 @@
 
 <style>
 	.notif {
+		color: blue;
+	}
+	.dmButton{
 		color: blue;
 	}
 </style>
