@@ -1,12 +1,14 @@
 <script lang="ts">
     import { session } from "$lib/store/store";
     import { onMount } from 'svelte';
+    import { InvitedUserId, InvitedUserLogin } from "$lib/store/store";
+    import InviteToPlayButton from "$lib/game/InviteToPlayButton.svelte";
 
     export let username: any ; 
     
     let user: any = null;
     let pictureLink: any;
-
+    
 
     onMount(() => {
         console.log('here', username)
@@ -15,11 +17,14 @@
             $session.on("userResponse", (data: any) => {
             user = data.user;
             pictureLink = user.avatar;
-
+            
+            InvitedUserLogin.set(user.login);
+			InvitedUserId.set(user.id);
             });
             return () => {
                 $session.off('userResponse');
             };
+            
     });
 
 
@@ -40,6 +45,8 @@
         <p>Rank: {user.rank}</p>
         <p>Title: {user.title}</p>
         <p>Total Won: {user.wonGameNbr} - {user. lostGameNbr} :Lost</p>
+       <InviteToPlayButton/>
+
     {:else}
         <p>Loading user data...</p>
     {/if}

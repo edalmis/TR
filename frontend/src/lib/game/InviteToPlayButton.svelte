@@ -7,7 +7,7 @@
 </script>
 
 <div>
-	<button on:click={handleInviteToPlay}>Invite To Play</button>
+	<button on:click={handleInviteToPlay}>Play Moi</button>
 </div>
 
 <style>

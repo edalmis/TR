@@ -175,8 +175,6 @@ $session.on("newMessage", (data:any) => {
             const {room }= data
             //  console.log("deletedRoom", room)
              chatRooms = chatRooms.filter(item => item.id !== room.id);
-
-
         })
        
     $session.on("membersList", (data: any) => {
@@ -468,11 +466,11 @@ function openProfileModal(username: any) {
         isModalVisible = true;
     }
 
-    function closeProfileModal() {
-        isProfileModalOpen = false;
-        isModalVisible = false;
-        userToDisplay= null;
-    }
+    // function closeProfileModal() {
+    //     isProfileModalOpen = false;
+    //     isModalVisible = false;
+    //     userToDisplay= null;
+    // }
 
     function toggleModal() {
         isModalVisible = !isModalVisible;
@@ -840,10 +838,13 @@ div.users-container ul#userList li .user-list button {
                     </button>
                     {/if}
                         {#if ((user.role == 'Participant')&&(usere.login != user.user.login)) || ((user.role == 'Admin') && (usere.login != user.user.login))} 
-                           
-                            <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" min="1" max="60">
+                           <div>
+                        
+                                <input type="number" class="kickd" bind:value={kickDuration} placeholder="Duration (minutes)" min="1" max="60">
                             <button on:click={() => kickUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Kick</button>  
                             <button on:click={() => muteUser(usere, user.user.login, selectedChatRoomid, kickDuration)}>Mute</button>  
+                        </div>
+                            
 
                             <button on:click={() => banUser(usere, user.user.login, selectedChatRoomid)}>Ban</button>
                             <button on:click={() => unbanUser(usere, user.user.login, selectedChatRoomid)}>Unban</button>

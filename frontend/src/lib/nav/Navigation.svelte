@@ -100,7 +100,6 @@
 		});}
 	});
 	function handleDMNotif(){
-
 		dmNotif.set(false);
 		goto("/DM")
 	}
@@ -187,7 +186,18 @@
 	.notif {
 		color: blue;
 	}
-	.dmButton{
-		color: blue;
-	}
+	.dmButton {
+		background-color: blue; /* Button background color */
+		color: white; /* Text color */
+		padding: 10px 20px; /* Padding for the button */
+		border: none; /* Remove the default button border */
+		border-radius: 5px; /* Rounded corners */
+		cursor: pointer; /* Add a pointer cursor on hover */
+		transition: background-color 0.3s; /* Smooth background color transition */
+
+		/* Additional styles for hover effect */
+		&:hover {
+			background-color: darkblue; /* Change background color on hover */
+		}
+}
 </style>
