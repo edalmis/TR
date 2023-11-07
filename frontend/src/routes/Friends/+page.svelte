@@ -415,7 +415,7 @@
 					{#each onlineUsers as user}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img class="h-12 w-13 flex-none rounded-full bg-gray-50" style="margin-left: 20px;" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+							<img class="h-12 w-13 flex-none rounded-full bg-gray-50" style="margin-left: 20px;" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
 							<div class="min-w-0 flex-auto">
 								<p class="text-sm font-semibold leading-6 text-gray-900">{user}</p>
 								<p class="mt-1 truncate text-xs leading-5 text-gray-500">

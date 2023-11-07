@@ -42,10 +42,10 @@
 	let indication_avatar: string = "";
 
 	let isModalOpen = false;
-	function handleLoggoutModal() {
+	function handleOpenModal() {
 		isModalOpen = true;
 	}
-	function handleCancelLoggoutModal(){
+	function handleCancelModal(){
 		isModalOpen = false
 	}
 
@@ -169,7 +169,7 @@
 		<h1>That is * {username} * Profil Bro !</h1>
 		<h3>You will get a Cookie if you are a Good Boy</h3>
 		<div>
-			<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+			<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
 		</div>
 		<div>
 			<p>Login : {login}</p>
@@ -193,7 +193,7 @@
 							indication_username = "20 char Max";
 						} else {
 							// handleChangeName();
-							handleLoggoutModal();
+							handleOpenModal();
 						}
 					}}>Change</button
 				>
@@ -223,7 +223,7 @@
 					</div>
 					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
 						<button id="leaveGameButton" on:click={handleChangeName} type="button" class="inline-flex w-full justify-center rounded-md bg-emerald-200 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Change it</button>
-						<button on:click={handleCancelLoggoutModal} type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
+						<button on:click={handleCancelModal} type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
 					</div>
 					</div>
 				</div>
@@ -243,7 +243,7 @@
 					bind:value={newImg}
 				/>
 				<!-- <button on:click={handleChangeImage}>Change</button> -->
-				<button
+				<!-- <button
 					on:click={async () => {
 						if (!newImg.length) {
 							indication_avatar = "Cannot be empty";
@@ -253,7 +253,7 @@
 							handleChangeImage();
 						}
 					}}>Change</button
-				>
+				> -->
 				<button
 					on:click={async () => {
 						if (!newImg.length) {
@@ -261,6 +261,7 @@
 						} else if (newImg.length > 200) {
 							indication_avatar = "200 char Max";
 						} else {
+							// handleOpenModal()
 							openModal("Try Avatar");
 							goto("/Profile");
 						}

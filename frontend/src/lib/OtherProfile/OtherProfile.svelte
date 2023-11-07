@@ -232,7 +232,7 @@
 <div class="profile-Page">
 	<h1>That is * {username} * Profile Bro !</h1>
 	<div>
-		<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+		<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
 	</div>
 	<div>
 		<p>Login : {login}</p>

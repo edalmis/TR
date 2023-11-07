@@ -35,7 +35,7 @@
 
     {#if user}
     <div>
-        <img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+        <img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
     </div>
         <p>Username: {user.userName}</p>
         <p>Login: {user.login}</p>

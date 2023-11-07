@@ -27,14 +27,14 @@
 
 	async function handleNo() {
 		closeModal();
-		goto("/");
+		goto("/Profile");
 	}
 </script>
 
 <div >
 	<h3>That is your Cookie Bro, Enjoy !!!</h3>
 	<div>
-		<img class="profile-pic" src={image} alt=": 🤖 👨🏻‍🌾 🍪 🤣 :" />
+		<img class="profile-pic" src={image} alt=": 🤖 👨🏻‍🌾 Error 🍪 🤣  :" />
 	</div>
 	<div>
 		<p>Login : {login}</p>
