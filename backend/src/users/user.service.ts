@@ -419,11 +419,12 @@ export class UserService {
 		const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
 		// transforme id en userName
 		let usernameInGameList: string[] = [];
-		for (const id of inGameIdList) {
-			const user = await this.find_user_by_id(id);
-			const username: string = user.userName;
-			usernameInGameList.push(username);
-		}
+		if (inGameIdList.length != 0)
+			for (const id of inGameIdList) {
+				const user = await this.find_user_by_id(id);
+				const username: string = user.userName;
+				usernameInGameList.push(username);
+			}
 		return usernameInGameList;
 	}
 

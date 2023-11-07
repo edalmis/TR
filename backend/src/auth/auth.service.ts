@@ -6,70 +6,70 @@ import { lastValueFrom } from 'rxjs';
 import * as argon2 from 'argon2';
 import * as otplib from 'otplib';
 import { toDataURL } from 'qrcode';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import { JwtAuthService } from './jwt/jwt.service';
-import { UserEntity } from 'src/users/orm/user.entity';
+// import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 
 @Injectable()
 export class AuthService {
-  private onlineUsersMap = new Map<number, UserEntity>();
+  // private onlineUsersMap = new Map<number, UserEntity>();
   constructor(
     private httpService: HttpService,
     private userService: UserService,
     private configService: ConfigService,
     private jwtAuthService: JwtAuthService,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
 
   ) { }
 
-  // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *
-  add_Online_User_inMap(jwt: string, user: UserEntity) {
-    const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-    console.log(" -[ add MAP ]-  Id: {", decoded.id, "}")
-    // console.log(" -[ add MAP ]-  is user { ", decoded.id, " } alreadyin Map: {", this.onlineUsersMap.has(decoded.id), "}")
-    if (!this.onlineUsersMap.has(decoded.id)) {
-      this.onlineUsersMap.set(decoded.id, user);
-    }
-  }
+  // // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *
+  // add_Online_User_inMap(jwt: string, user: UserEntity) {
+  //   const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
+  //   console.log(" -[ add MAP ]-  Id: {", decoded.id, "}")
+  //   // console.log(" -[ add MAP ]-  is user { ", decoded.id, " } alreadyin Map: {", this.onlineUsersMap.has(decoded.id), "}")
+  //   if (!this.onlineUsersMap.has(decoded.id)) {
+  //     this.onlineUsersMap.set(decoded.id, user);
+  //   }
+  // }
 
-  remove_Online_User_inMap(jwt: string) {
-    const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-    this.onlineUsersMap.delete(decoded.id);
-  }
+  // remove_Online_User_inMap(jwt: string) {
+  //   const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
+  //   this.onlineUsersMap.delete(decoded.id);
+  // }
 
-  async get_Online_Usernames(id: number) {
-    // console.log(" -[ GET Online ]- requette de user.id: {", id, "}")
-    let loginList: string[] = [];
-    let usernameList: string[] = [];
-    //console.log(" -[ GET Online ]- init mapInside: ", loginList)
-    const mapSize = this.onlineUsersMap.size;
-    console.log(" -[ GET Online ]- mapSize: ", mapSize)
-    if (mapSize === 1) { return [] }
-    else {
-      this.onlineUsersMap.forEach((user) => {
-        // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
-        if (user.id !== id) {
-          loginList.push(user.login);
-        }
-      });
-      for (const userLogin of loginList) {
-        const user = await this.userService.find_user_by_login(userLogin);
-        usernameList.push(user.userName);
-      }
-      return usernameList;
-    }
-  }
+  // async get_Online_Usernames(id: number) {
+  //   // console.log(" -[ GET Online ]- requette de user.id: {", id, "}")
+  //   let loginList: string[] = [];
+  //   let usernameList: string[] = [];
+  //   //console.log(" -[ GET Online ]- init mapInside: ", loginList)
+  //   const mapSize = this.onlineUsersMap.size;
+  //   console.log(" -[ GET Online ]- mapSize: ", mapSize)
+  //   if (mapSize === 1) { return [] }
+  //   else {
+  //     this.onlineUsersMap.forEach((user) => {
+  //       // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
+  //       if (user.id !== id) {
+  //         loginList.push(user.login);
+  //       }
+  //     });
+  //     for (const userLogin of loginList) {
+  //       const user = await this.userService.find_user_by_login(userLogin);
+  //       usernameList.push(user.userName);
+  //     }
+  //     return usernameList;
+  //   }
+  // }
 
-  isUserOnline(login: string) {
-    this.onlineUsersMap.forEach((user) => {
-      // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
-      if (user.login === login) {
-        return true;
-      }
-    });
-    return false;
-  }
+  // isUserOnline(login: string) {
+  //   this.onlineUsersMap.forEach((user) => {
+  //     // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
+  //     if (user.login === login) {
+  //       return true;
+  //     }
+  //   });
+  //   return false;
+  // }
   //////////////////////////////////////////////////////////////////
 
 
@@ -140,7 +140,7 @@ export class AuthService {
           "username": newCreatedUser.userName,
         }
         const jwt = await this.jwtAuthService.createToken(jwt_payload);
-        this.add_Online_User_inMap(await jwt, newCreatedUser);
+        // this.add_Online_User_inMap(await jwt, newCreatedUser);
         return jwt;
       }
 
@@ -208,7 +208,7 @@ export class AuthService {
         }
         console.log("Creation du Token avec payload ... payload: ", jwt_payload);
         const jwt = await this.jwtAuthService.createToken(jwt_payload);
-        this.onlineUsersMap.set(newAuthUser.id, newAuthUser);
+        // this.onlineUsersMap.set(newAuthUser.id, newAuthUser);
         return jwt;
       }
     }
@@ -255,7 +255,7 @@ export class AuthService {
 
   // * - - - [  L O G O U T  ] - - - *
   async logout(login: string, jwt: string) {
-    this.remove_Online_User_inMap(jwt);
+    // this.remove_Online_User_inMap(jwt);
 
     // //
     // const mapSize = this.onlineUsersMap.size;
