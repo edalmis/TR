@@ -124,7 +124,10 @@
 			}
 		);
 		if (response.ok) {
-			// console.log("response { OK } du [ Add Friend ]");
+			console.log(
+				"response { OK } du [ SendFriendRequest ] : ",
+				response.ok
+			);
 			socket.emit("SendFriendRequest", {
 				username: username,
 				myId: $userId,

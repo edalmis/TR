@@ -410,11 +410,14 @@
 		});
 		if (response.ok) {
 			// console.log("response { OK } du [ Add Friend ]");
-			socket.emit("acceptOrRefuseFriendRequest", {
+			await socket.emit("acceptOrRefuseFriendRequest", {
 				username: username,
 				myId: id,
 			});
-			socket.emit("updateFriendList", { username: username, myId: id });
+			await socket.emit("updateFriendList", {
+				username: username,
+				myId: id,
+			});
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
@@ -437,7 +440,7 @@
 			}
 		);
 		if (response.ok) {
-			// console.log("response { OK } du [ Refuse Friend ]");
+			console.log("response { OK } du [ Refuse Friend ] : ", response.ok);
 			socket.emit("acceptOrRefuseFriendRequest", {
 				username: username,
 				myId: id,
@@ -465,10 +468,10 @@
 			}
 		);
 		if (response.ok) {
-			// console.log("response { OK } du [ Remove Friend ]");
+			console.log("response { OK } du [ Undo Friend ] ", response.ok);
 			socket.emit("updateFriendList", { username: username, myId: id });
 		} else {
-			console.log("response { NOT OK } du [ Remove Friend ]");
+			console.log("response { NOT OK } du [ Undo Friend ]");
 		}
 
 		closeModal();

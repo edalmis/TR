@@ -143,7 +143,7 @@ export class UserService {
 
 		if (!receiver.pendindFriendRequests.includes(requester.login)) {
 			receiver.pendindFriendRequests.push(requester.login);
-			// console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
+			console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
 			await this.userRepository.save(receiver);
 		}
 
@@ -212,6 +212,7 @@ export class UserService {
 		const pendingFriendIndex = accepter.pendindFriendRequests.indexOf(requester.login);
 		if (pendingFriendIndex !== -1) {
 			accepter.pendindFriendRequests.splice(pendingFriendIndex, 1);
+			console.log("2  -[ clear Friend ]- *accepter* PendingList: ", accepter.pendindFriendRequests)
 			await this.userRepository.save(accepter);
 		}
 
@@ -219,6 +220,7 @@ export class UserService {
 		const senderFriendIndex = requester.friendRequestsSent.indexOf(accepter.login);
 		if (senderFriendIndex !== -1) {
 			requester.friendRequestsSent.splice(senderFriendIndex, 1);
+			console.log("2  -[ clear Friend ]- *requester* SentRequestsList: ", requester.friendRequestsSent)
 			await this.userRepository.save(requester);
 		}
 
