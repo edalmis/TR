@@ -83,7 +83,7 @@ export class UserController {
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			const friendUsername: string = req.body.data.username;
 
-			this.userService.sendFriendRequest(decoded.login, friendUsername);
+			await this.userService.sendFriendRequest(decoded.login, friendUsername);
 			//	const user2login = await this.userService.find_user_by_userName(friendUsername);
 			//	const user1username = await this.userService.find_user_by_login(decoded.login);
 			//	this.userService.sendFriendRequest(user2login.login, user1username.userName);
@@ -104,7 +104,7 @@ export class UserController {
 			const user2login = await this.userService.find_user_by_userName(friendUsername);
 			const user1username = await this.userService.find_user_by_login(decoded.login);
 			// clear pending and request List of User
-			this.userService.clearUpdatePendingAndRequestList(user1username.userName, user2login.login);
+			await this.userService.clearUpdatePendingAndRequestList(user1username.userName, user2login.login);
 		}
 	}
 
@@ -129,7 +129,7 @@ export class UserController {
 			const user1username = await this.userService.find_user_by_login(decoded.login);
 			//this.userService.addFriend(user2login.login, user1username.userName);
 			// clear pending and request List of User
-			this.userService.clearUpdatePendingAndRequestList(user1username.userName, user2login.login);
+			await this.userService.clearUpdatePendingAndRequestList(user1username.userName, user2login.login);
 		}
 	}
 
@@ -143,10 +143,10 @@ export class UserController {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			const friendUsername: string = req.body.data.username;
-			this.userService.removeFriend(decoded.login, friendUsername);
+			await this.userService.removeFriend(decoded.login, friendUsername);
 			const user2login = await this.userService.find_user_by_userName(friendUsername)
 			const user1username = await this.userService.find_user_by_login(decoded.login)
-			this.userService.removeFriend(user2login.login, user1username.userName);
+			await this.userService.removeFriend(user2login.login, user1username.userName);
 		}
 	}
 

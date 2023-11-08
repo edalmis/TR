@@ -110,35 +110,43 @@
 	});
 
 	async function handleSendFriendRequest() {
-		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
-		const response = await fetch(
-			"http://localhost:3000/user/sendFriendRequest",
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
-			}
-		);
-		if (response.ok) {
-			console.log(
-				"response { OK } du [ SendFriendRequest ] : ",
-				response.ok
-			);
-			socket.emit("SendFriendRequest", {
-				username: username,
-				myId: $userId,
-			});
-		} else {
-			console.log("response { NOT OK } du [ Add Friend ]");
-		}
+		socket.emit("SendFriendRequest", {
+			username: username,
+			myId: $userId,
+		});
 		closeModal();
-
-		// goto("/");
 	}
+
+	// async function handleSendFriendRequest() {
+	// 	const jwt = localStorage.getItem("jwt");
+	// 	const data = { username: username };
+	// 	const response = await fetch(
+	// 		"http://localhost:3000/user/sendFriendRequest",
+	// 		{
+	// 			method: "POST",
+	// 			headers: {
+	// 				Authorization: `Bearer ${jwt}`,
+	// 				"Content-Type": "application/json",
+	// 			},
+	// 			body: JSON.stringify({ data }),
+	// 		}
+	// 	);
+	// 	if (response.ok) {
+	// 		console.log(
+	// 			"response { OK } du [ SendFriendRequest ] : ",
+	// 			response.ok
+	// 		);
+	// 		socket.emit("SendFriendRequest", {
+	// 			username: username,
+	// 			myId: $userId,
+	// 		});
+	// 	} else {
+	// 		console.log("response { NOT OK } du [ Add Friend ]");
+	// 	}
+	// 	closeModal();
+
+	// 	// goto("/");
+	// }
 
 	async function handleAcceptFriend() {
 		const jwt = localStorage.getItem("jwt");

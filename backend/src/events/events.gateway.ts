@@ -107,6 +107,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('SendFriendRequest')
 	async sendFriendRequest(client: Socket, data: any) {
+		const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
+		await this.userService.sendFriendRequest(moi.login, data.username);
+
 		console.log('-[ *Events* Send friend request]- datas : ', data);
 		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
 		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
