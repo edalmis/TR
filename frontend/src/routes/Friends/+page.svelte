@@ -340,6 +340,15 @@
 			console.log(' -[ socket.on("onlineUsersUpdate" ]- : ', usersDatas);
 			onlineUsersDatas = usersDatas;
 		});
+		socket.on("friendListUpdate", (newFriendsList: any[]) => {
+			friendsListDatasEmptyArray =
+				newFriendsList.length === 0 ? true : false;
+			console.log(
+				' -[ socket.on("friendListUpdate" ]- : ',
+				newFriendsList
+			);
+			friendsListDatas = newFriendsList;
+		});
 	});
 
 	async function handleSeeProfil(username: string) {
@@ -365,8 +374,11 @@
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
+
+		socket.emit("acceptFriend", { username: username, myId: id });
 		closeModal();
-		goto("/");
+
+		// goto("/");
 	}
 
 	async function handleRefuseFriendRequest(username: string) {

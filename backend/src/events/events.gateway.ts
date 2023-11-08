@@ -93,6 +93,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
 	}
 
+	@SubscribeMessage('acceptFriend')
+	async acceptFriend(client: Socket, data: any) {
+		console.log(' -[ EventsGateway ]- acceptFriend');
+		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
+		const friendClient: any = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('friendListUpdate', friendnewFriendList);
+
+		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
+		client.emit('friendListUpdate', myNewFriendList);
+	}
+
 	@SubscribeMessage('getOnlineUsersDatas')
 	sendOnlineUsersDatas(client: Socket) {
 		console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
