@@ -56,19 +56,19 @@
 	let friendsListDatasEmptyArray: boolean = false;
 
 	// [ Online Friends List ]
-	let onlineUsers: string[] = [];
-	let friendsList: string[] = [];
-	let onlineFriendsList: string[] = [];
+	// let onlineUsers: string[] = [];
+	// let friendsList: string[] = [];
+	let onlineFriendsList: any[] = [];
 	let onlineFriendsEmptyArray: boolean = false;
 
-	// [ Online Friends ]
-	let onlineFriendsListDatas: any[] = [];
-	let onlineFriendsListDatasEmptyArray: boolean = false;
+	// // [ Online Friends ]
+	// let onlineFriendsListDatas: any[] = [];
+	// let onlineFriendsListDatasEmptyArray: boolean = false;
 
 	// [ InGame Friends ]
-	let inGameUsersList: string[] = [];
+	let inGameUsersList: any[] = [];
 	let inGameUsersEmptyArray: boolean = false;
-	let inGameFriendsList: string[] = [];
+	let inGameFriendsList: any[] = [];
 	let inGameFriendsEmptyArray: boolean = false;
 
 	// [ Pending List ]
@@ -299,18 +299,31 @@
 					);
 				}
 
-				// Online Friends
-				onlineFriendsList = friendsList.filter((friend) =>
-					onlineUsers.includes(friend)
-				);
+				// [ Online Friends ]
+				onlineFriendsList = onlineUsersDatas.filter((user) => {
+					return friendsListDatas.some(
+						(friend) => friend.id === user.id
+					);
+				});
+				console.log(onlineFriendsList);
+
+				// onlineFriendsList = friendsList.filter((friend) =>
+				// 	onlineUsers.includes(friend)
+				// );
 				if (onlineFriendsList.length === 0) {
 					onlineFriendsEmptyArray = true;
 				}
 
+				// // InGame Friends
+				// inGameFriendsList = friendsList.filter((friend) =>
+				// 	inGameUsersList.includes(friend)
+				// );
 				// InGame Friends
-				inGameFriendsList = friendsList.filter((friend) =>
-					inGameUsersList.includes(friend)
-				);
+				inGameFriendsList = friendsListDatas.filter((friend) => {
+					return inGameUsersList.some(
+						(user) => friend.id === user.id
+					);
+				});
 				if (inGameFriendsList.length === 0) {
 					inGameFriendsEmptyArray = true;
 				}
@@ -626,27 +639,28 @@
 					</div>
 				</li>
 			{:else}
-				{#each onlineFriendsList as user}
+				<!-- {#each onlineFriendsList as user} -->
+				{#each onlineFriendsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{user}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(user);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
@@ -659,7 +673,9 @@
 									>
 								</p>
 							</div>
-							<button on:click={() => handleButtonClick(user)}>
+							<button
+								on:click={() => handleButtonClick(username)}
+							>
 								Send DM</button
 							>
 						</div>
@@ -703,27 +719,27 @@
 					</div>
 				</li>
 			{:else}
-				{#each inGameFriendsList as user}
+				{#each inGameFriendsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{user}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(user);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
