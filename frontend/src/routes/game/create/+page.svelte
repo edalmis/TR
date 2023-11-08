@@ -248,20 +248,6 @@
 				//123
 				room = await client.create("privateRoom", roomOptions);
 			} else {
-				// 	let id: number;
-				// 	userId.subscribe((a)=> {
-				// 		id = a;
-				// 	});
-				// 	client.getAvailableRooms("privateRoom"). then((rooms: any) => {
-				// 	for (var i =0; i < rooms.length; i++){
-				// 		const room = rooms[i];
-				// 		if (room.metadata?.idToInvite === id) {
-				// 			let roomToJoin: any = client.join(room.roomId);
-				// 			console.log(" roomToJoin sucessfuly" );
-				// 			return;
-				// 		}
-				// 	}
-				// });
 
 				room = await client.joinById(gameData.roomId, roomOptions);
 				iAmInvited.set(false);
@@ -344,19 +330,20 @@
 		isGamePaused = false; // Resume the game on reconnection
 	}
 
-	// ... [Handle key events]
+	//  Handle key events
 	function handleKeydown(e: KeyboardEvent) {
 		if (isGamePaused) {
 			return; // Don't handle key events when the game is paused
 		}
 		switch (e.key) {
 			case "ArrowUp":
-				//room.send({ newDirection: PaddleDirection.UP } as PaddleMoveMessage);
+			case "W":
+			case "w":
 				room.send("paddleMove", { newDirection: PaddleDirection.UP });
-
 				break;
 			case "ArrowDown":
-				//room.send({ newDirection: PaddleDirection.DOWN } as PaddleMoveMessage);
+			case "S":
+			case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.DOWN });
 				break;
 		}
@@ -366,15 +353,18 @@
 		if (isGamePaused) {
 			return; // Don't handle key events when the game is paused
 		}
-
 		switch (e.key) {
 			case "ArrowUp":
 			case "ArrowDown":
-				//room.send({ newDirection: PaddleDirection.STOP } as PaddleMoveMessage);
+			case "W":
+    		case "S":
+			case "w":
+    		case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
 				break;
 		}
 	}
+
 
 	function resizeCanvas() {
 		const scale = Math.min(
@@ -406,16 +396,4 @@
 <canvas bind:this={canvas} id="rendering-canvas" />
 
 <style>
-	/* #canvas-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		height: 100vh;
-	}
-	canvas#rendering-canvas {
-		max-width: 100%;
-		max-height: 100%;
-		border: 10px solid white;
-	} */
 </style>

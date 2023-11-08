@@ -32,19 +32,21 @@
 </script>
 
 <div >
-	<h3>That is your Cookie Bro, Enjoy !!!</h3>
+	<h3>That is your Preview Bro, Enjoy !!!</h3>
 	<div>
-		<img class="profile-pic" src={image} alt=": 🤖 👨🏻‍🌾 Error 🍪 🤣  :" />
+		<img class="profile-pic" src={image} alt=" 🤖 ❌ Error 🍪 🤣 " />
 	</div>
 	<div>
 		<p>Login : {login}</p>
 		<p>Name : {username}</p>
 	</div>
 </div>
-<div>
+<br />
+<br />
+<div>	
 	<div>Make a Choice Son !</div>
 	<button on:click={handleGarderImg}>Garder</button>
-	<button on:click={handleNo}>C'est pas Top !</button>
+	<button on:click={handleNo}>C'est pas Top!</button>
 </div>
 
 <style>
@@ -64,7 +66,7 @@
 	.profile-pic {
 		max-width: 42%;
 		max-height: 42%;
-		border-radius: 50%;
+		border-radius: 200px;
 		align-items: center;
 		position: relative;
 		border-color: black;

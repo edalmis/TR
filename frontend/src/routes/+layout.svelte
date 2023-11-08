@@ -7,17 +7,14 @@
 	import { dataGame, inviteNotif, inviteNotifModal, launchedGame, session, user,navbar} from "$lib/store/store";
 	import { isGoogleAuthActivated, qrGoogle, userLogin, userId, actualUsername} from "$lib/store/store";
 	import { authentificated } from "$lib/store/store";
-
-	let login: any;
-
-	// import -[ Value ]- Authentification : Condition Acces Espace User
 	import Modal from "$lib/modals/Modal.svelte";
 	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
 	import LoginFortyTwo from "$lib/Login/LoginFortyTwo.svelte";
-	// import { showModal } from "$lib/store/ModalValues";
 	import GameInvitation from "$lib/game/GameInvitation.svelte";
 	import GameNavbar from "$lib/game/GameNavbar.svelte";
 
+
+	let login: any;
 	let auth: boolean = false;
 	authentificated.subscribe((a) => {
 		auth = a;
@@ -218,6 +215,7 @@
 	}
 </script>
 
+
 <div class="w-full h-full">
 	{#if !auth}
 		<main class="w-full h-full">
@@ -248,9 +246,3 @@
 		<slot />
 	{/if}
 </div>
-<style>
-	:global(body) {
-		width: 100vw;
-		height: 100vh;
-	}
-</style>

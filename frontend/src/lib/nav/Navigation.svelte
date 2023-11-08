@@ -1,11 +1,11 @@
 <script lang="ts">
 	// Imports -[ SvelteKit Fct ]-
 	import { goto } from "$app/navigation";
-	import Modal from "$lib/modals/Modal.svelte";
+	// import Modal from "$lib/modals/Modal.svelte";
 
 	// Imports -[ Functions ]-
 	import {
-		openModal,
+		// openModal,
 		selectedPage,
 		showModal,
 	} from "$lib/store/ModalValues";

@@ -229,21 +229,21 @@ export class AuthController {
     }
     // /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard)
-    @Get('onlineUsers')
-    async getOnlineUsers(@Request() req, @Response() res) {
-        console.log(" -[ Online Users (Auth-Ctrl) ]- ");
-        const headers = req.headers;
-        const Token = req.headers.authorization;
-        const [, jwtToken] = Token.split(' '); // Divise la chaîne en fonction de l'espace et ignore la première partie (Bearer)
-        const jwt = this.jwtService.decode(jwtToken) as { [key: string]: any };
+    // @HttpCode(HttpStatus.OK)
+    // @UseGuards(AuthGuard)
+    // @Get('onlineUsers')
+    // async getOnlineUsers(@Request() req, @Response() res) {
+    //     console.log(" -[ Online Users (Auth-Ctrl) ]- ");
+    //     const headers = req.headers;
+    //     const Token = req.headers.authorization;
+    //     const [, jwtToken] = Token.split(' '); // Divise la chaîne en fonction de l'espace et ignore la première partie (Bearer)
+    //     const jwt = this.jwtService.decode(jwtToken) as { [key: string]: any };
 
-        let onlineUserlist: string[];
-        onlineUserlist = await this.authService.get_Online_Usernames(jwt.id);
-        console.log("OnlineUser list Sent: ", onlineUserlist);
-        res.json(onlineUserlist);
-    }
+    //     let onlineUserlist: string[];
+    //     onlineUserlist = await this.authService.get_Online_Usernames(jwt.id);
+    //     console.log("OnlineUser list Sent: ", onlineUserlist);
+    //     res.json(onlineUserlist);
+    // }
 }
 
 

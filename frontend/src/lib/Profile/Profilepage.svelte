@@ -29,13 +29,14 @@
 
 	let login: string;
 	let pictureLink: string;
+	let originalPictureLink: string;
 	let rank: string;
 	let title: string;
 	let win: number;
 	let loose: number;
 
 	let newUserName: string = "";
-	$: newImg = "";
+	// $: newImg = "";
 	$: username = "";
 
 	let indication_username: string = "";
@@ -48,6 +49,7 @@
 	function handleCancelModal(){
 		isModalOpen = false
 	}
+
 
 
 	onMount(async () => {
@@ -70,10 +72,11 @@
 				if (response.ok) {
 					//const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
 					const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
-					console.log(" -[ Profile ]- User: ", user);
-					console.log("Salut du Profile");
+					// console.log(" -[ Profile ]- User: ", user);
+					// console.log("Salut du Profile");
 					login = user.login;
 					pictureLink = user.avatar;
+					originalPictureLink = user.avatar;
 					username = user.userName;
 					rank = user.rank;
 					title = user.title;
@@ -121,9 +124,11 @@
 		}
 	}
 
-	async function handleChangeImage() {
+	// async function handleChangeImage() {
+	async function resetProfilePhoto () {
+
 		const jwt = localStorage.getItem("jwt");
-		const data = { login: login, img: newImg };
+		const data = { login: login, img: originalPictureLink};
 		const response = await fetch("http://localhost:3000/auth/changeImage", {
 			method: "POST",
 			headers: {
@@ -133,11 +138,49 @@
 			body: JSON.stringify({ data }),
 		});
 
+		
 		if (response.ok) {
+			// const user = await response.json(); 
+			// pictureLink = user.avatar;
 			console.log("-[ Change Image ]- New Image bien Set");
 		}
+		// resetProfilePhoto()
 		goto("/");
 	}
+
+// 	function resetProfilePhoto() {
+//     pictureLink = originalPictureLink;
+//   }
+	//////teste///
+	let people = [
+		{ newImg: 'images/Sadness.jpeg' },
+		{ newImg: 'images/Happiness.jpeg' },
+		{ newImg: 'images/Love.jpeg' },
+		{ newImg: 'images/Anger.jpeg' },
+		{ newImg: 'images/Disgust.jpeg' },
+		{ newImg: 'images/Fear.jpeg' },
+	];
+
+	let prefix = '';
+	let newImg = '';
+	let i = 0;
+
+	$: filteredPeople = prefix
+		? people.filter((person) => {
+				const name = `${person.newImg}`;
+				return name.toLowerCase().startsWith(prefix.toLowerCase());
+		  })
+		: people;
+
+	$: selected = filteredPeople[i];
+
+	$: reset_inputs(selected);
+
+	function reset_inputs(person: any) {
+		newImg = person ? person.newImg : '';
+	}
+
+
 </script>
 
 {#if show_Modal}
@@ -166,39 +209,72 @@
 	</div>
 {:else}
 	<div class="profile-Page">
-		<h1>That is * {username} * Profil Bro !</h1>
-		<h3>You will get a Cookie if you are a Good Boy</h3>
+		<!-- <h1 > {username} Profile:  You will get a Cookie if you are a Good Boy</h1> -->
+		<h1>
+			<span class="profileName">{username}</span> 's Profile 
+			<span> You will get a Cookie if you are a Good Boy </span>
+		</h1>
 		<div>
 			<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
 		</div>
 		<div>
 			<p>Login : {login}</p>
-			<p>Name : {username}</p>
+			<p>Username : {username}</p>
 			<p>Rank : {rank}</p>
 			<p>Title : {title}</p>
 			<p>Total Won: {win} - {loose} :Lost</p>
 			<p>
-				Change username
-				<input
-					type="text"
-					placeholder="new username"
-					bind:value={newUserName}
-				/>
-				<!-- <button on:click={handleChangeName}>Change</button> -->
-				<button
-					on:click={async () => {
-						if (!newUserName.length) {
-							indication_username = "Cannot be empty";
-						} else if (newUserName.length > 20) {
-							indication_username = "20 char Max";
-						} else {
-							// handleChangeName();
-							handleOpenModal();
-						}
-					}}>Change</button
-				>
-			</p>
-
+				<span> Google Authentificator : </span>
+					{#if Google2fa === true}
+						<span>
+							<button
+								on:click={() => {
+									openModal("Try Disable 2fa");
+									goto("/Profile");
+								}}
+							>
+								Disable
+							</button>
+						</span>
+					{:else}
+						<span>
+							<button
+								on:click={() => {
+									openModal("Try Enable 2fa");
+									goto("/Profile");
+								}}
+							>
+								Enable
+							</button>
+						</span>
+					{/if}
+				</p>
+			<p2 class="flex-container">
+				<!-- <p2> -->
+					<span class="label">Change username :</span>
+					<input
+						type="text"
+						placeholder="new username"
+						bind:value={newUserName}
+					/>
+					<!-- <button on:click={handleChangeName}>Change</button> -->
+					<button
+						on:click={async () => {
+							if (!newUserName.length) {
+								indication_username = "Cannot be empty";
+							} else if (newUserName.length > 20) {
+								indication_username = "20 char Max";
+							} else {
+								handleOpenModal();
+							}
+						}}>Change
+					</button>
+					{#if indication_username !== ""}
+					<div class="indication">{indication_username}</div>
+				{/if}
+				<!-- </p2> -->
+			</p2>
+			
 			{#if isModalOpen}
 			<div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 				<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
@@ -231,31 +307,12 @@
 			</div>
   			{/if}
 
-
-			{#if indication_username !== ""}
-				<div class="indication">{indication_username}</div>
-			{/if}
-			<p>
-				Change Avatar (.jpg only !)
-				<input
-					type="text"
-					placeholder="avatar img link"
-					bind:value={newImg}
-				/>
-				<!-- <button on:click={handleChangeImage}>Change</button> -->
-				<!-- <button
-					on:click={async () => {
-						if (!newImg.length) {
-							indication_avatar = "Cannot be empty";
-						} else if (newImg.length > 200) {
-							indication_avatar = "200 char Max";
-						} else {
-							handleChangeImage();
-						}
-					}}>Change</button
-				> -->
-				<button
-					on:click={async () => {
+			  <p2 class="flex-container">
+				<span class="label">Change Avatar : </span>
+			
+				<label><input bind:value={newImg} placeholder="newImg"/></label>
+			
+				<button on:click={async () => {
 						if (!newImg.length) {
 							indication_avatar = "Cannot be empty";
 						} else if (newImg.length > 200) {
@@ -264,17 +321,29 @@
 							// handleOpenModal()
 							openModal("Try Avatar");
 							goto("/Profile");
-						}
-					}}
-				>
-					Preview
+						}}}> 
+						Preview
 				</button>
+
+				<button on:click={resetProfilePhoto}>Reset</button>
+				<!-- <select bind:value={i} size={4}>
+					{#each filteredPeople as person, i}
+						<option value={i}>{person.newImg}</option>
+					{/each}
+				</select> -->
 				{#if indication_avatar !== ""}
 					<div class="indication">{indication_avatar}</div>
 				{/if}
-			</p>
-			<div>You could try : images/defaultAvatar.jpg</div>
-			<div>You could try : images/backgroundImg.jpg</div>
+			
+			</p2>
+
+			<select bind:value={i} size={4}>
+				{#each filteredPeople as person, i}
+					<option value={i}>{person.newImg}</option>
+				{/each}
+			</select>
+<!-- 			
+
 			<div>
 				<span> Google Authentificator : </span>
 				{#if Google2fa === true}
@@ -300,7 +369,7 @@
 						</button>
 					</span>
 				{/if}
-			</div>
+			</div> -->
 		</div>
 	</div>
 {/if}
@@ -309,73 +378,109 @@
 	.indication {
 		color: crimson;
 	}
+
 	input {
-		border-color: black;
-		border-width: 1px;
+		display: block;
+		margin: 0 0 0.5em 0;
+		border-color: rgb(243, 237, 237);
+		border: 2px solid #eff1f4;
+		font-size: 14px;
+		padding: 2px 2px;
 	}
+
 	button {
-		color: rgb(239, 36, 36);
+		cursor: pointer;
+		color: white; /* Change text color to white */
 		border-width: 1px;
 		border-radius: 25%;
-		border-color: rgb(52, 16, 16);
-		margin-left: 2px;
-		margin-right: 2px;
+		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
+		/* border-radius: 3px; */
+		padding: 5px 5px;
+		font-size: 8px;
+		border: 2px solid #eff1f4;
+		transition: background 0.3s ease, color 0.3s ease;
+		margin-left: 0;
+		margin-right: 0;
 	}
+
+	button:hover {
+		background: rgb(67, 90, 26);
+	}
+
 	.profile-Page {
 		/* height: 2500px;
 		width: 2500px; */
 		align-items: center;
-		color:  rgb(244, 237, 237);
+		color: rgb(119, 101, 129);
 		margin-left: 300px;
 	}
+
 	.profile-pic {
-		max-width: 50%;
-		max-height: 50%;
-		border-radius: 50%;
+		max-width: 31%;
+		/* max-height: ; */
+		border-radius: 200px;
 		align-items: center;
 		/* position: relative; */
 		border-color: rgb(111, 151, 142);
 		border-width: 2px;
 		/* margin: 0 auto; */
 	}
-	/* img {
+
+	p{
+		/* margin-top: 0; */
+		color: rgb(32, 43, 33);
+		/* margin-left: 0px;	 */
+		font-family: inherit;
 		align-items: center;
-		position: relative;
-		border-color: rgb(111, 151, 142);
-		border-width: 2px;
-		margin: 0 auto;
-	} */
-	p {
-		margin-top: 2px;
-		color: rgb(77, 60, 60);
-		margin-left: 0px;
-	
-		
 	}
 
-	/* .box {
-		width: 1000px;
-		height: 1000;
-		border: 1px solid #aaa;
-		border-radius: 30px;
-		box-shadow: 20px 300px 100px rgba(255, 5, 5, 0.1);
-		padding: 3em;
-		margin: 0 0 1em 0;
-		margin: 0 auto; 
-        position: fixed;
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-	} */
 
-	h1 {
+	/*label {
+		max-width: 100%;
+		display: inline-block; /* Makes it inline and allows for horizontal alignment 
+		margin-right: 0em; /* Adjust the spacing as needed
+	}*/
+
+	.flex-container {
+		display: flex;
+		align-items: center;
+		gap: 10px; /* Adjust the gap as needed to control the spacing between elements */
+	}
+
+	.label {
+		flex: 0.5; /* This will make the label take up all available space */
+	
+	/* Adjust the margin as needed */
+	}
+
+	.profileName{
 		align-items: center;
 		color: rgb(237, 228, 228);
-		
+		font-size: 30px;
+		margin-top: 10;
+		/* margin-bottom: 0; */
+		font-family: fantasy;
+	}
+	h1 {
+		font-family: inherit;
+		align-items: center;
+		color:  rgb(26, 112, 26);
 	}
 
 	h3 {
 		align-items: center;
-		color: rgb(201, 202, 195);
+		color: rgb(214, 225, 222);
+	}
+
+	* {
+		font-family: inherit;
+		font-size: inherit;
+		color: rgb(97, 118, 113);
+	}
+
+	select {
+		float: left;
+		margin: 0 1em 1em 0;
+		width: 12em;
 	}
 </style>

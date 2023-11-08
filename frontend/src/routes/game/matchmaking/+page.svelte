@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	// import { goto } from "$app/navigation";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
 	import { clientColyseus } from "$lib/store/store";
@@ -19,36 +18,19 @@
 	let room: Room<GameState>;
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
-	// let isDisconnected = false;
 	let isGamePaused = false;
-	// let isModalOpen = false;
 
-	// Game options writables
+	// **************   Game options writables  ************** //
 	let speed: number;
 	let scoreToWin: number;
 	let loginName: string;
 	let id: number;
-
-	// **************      ************** //
 	let client: any;
-	// **************      ************** //
+	// **************      **************      ************** //
+	
+
 	// Writable userInfos
 	let username: string = "john";
-
-	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
-
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-		}
-	}
 
 	onMount(() => {
 		// [ MatchMaking ] // // // // // // // // // // // // // // // // // // // // // //
@@ -87,6 +69,7 @@
 		session.subscribe((a: any) => {
 			wsClient = a;
 		});
+
 		// console.log("frontend: createGame [] : userName:", username);
 		const context = canvas.getContext("2d");
 		if (!context) {
@@ -114,7 +97,6 @@
 				// Normal closure, not a disconnection
 				return;
 			}
-			// handleDisconnection();
 		});
 
 		// Add event listeners for key events
@@ -139,10 +121,52 @@
 		LeaveGame();
 		closeModal();
 		navbar.set(true);
-		console.log("Le composant [Game/Create] a été démonté.");
+		// console.log("Le composant [Game/Create] a été démonté.");
 	});
 
+
+
+	export async function sendHttpRequest(url: string, data: any, message: string ) {
+	const jwt = localStorage.getItem("jwt");
+		const headers = {
+			Authorization: `Bearer ${jwt}`,
+			"Content-Type": "application/json",
+		};
+		const requestOptions = {
+			method: "POST",
+			headers,
+		};
+
+		if (data) {
+			requestOptions.body = JSON.stringify(data);
+		}
+
+		const response = await fetch(url, requestOptions);
+
+		if (response.ok) {
+			console.log(message);
+		}
+	}
 	async function LeaveGame() {
+		const url = "http://localhost:3000/user/leaveGame";
+		const message = "-[ Leave Game ]-";
+		await sendHttpRequest(url, null, message);
+
+	}
+	async function registerScoreHistory(data: any) {
+		const url = "http://localhost:3000/user/matchHistory";
+		const message = "-[ Match History ]- Set!";
+		await sendHttpRequest(url, {data},  message);
+	}
+
+	async function EnterGame() {
+		const url = "http://localhost:3000/user/enterGame";
+		const message = "-[ Enter Game Button ]-";
+		await sendHttpRequest(url,null , message);
+	}
+
+	/*async function LeaveGame() {
+	
 		const jwt = localStorage.getItem("jwt");
 		const response = await fetch("http://localhost:3000/user/leaveGame", {
 			method: "POST",
@@ -156,6 +180,7 @@
 			console.log("-[ Leave Game ]- ");
 		}
 	}
+
 
 	async function registerScoreHistory(data: any) {
 		const jwt = localStorage.getItem("jwt");
@@ -175,6 +200,20 @@
 			console.log("-[ Match History ]-  Set !");
 		}
 	}
+			
+	async function EnterGame() {
+		const jwt = localStorage.getItem("jwt");
+		const response = await fetch("http://localhost:3000/user/enterGame", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${jwt}`,
+				"Content-Type": "application/json",
+			},
+		});
+		if (response.ok) {
+			console.log("-[ Enter Game Button ]- ");
+		}
+	}*/
 
 	async function initializeGame() {
 		try {
@@ -222,25 +261,6 @@
 			console.error("Failed to connect to the game server:", e);
 		}
 	}
-	// function handleDisconnection() {
-	// 	isDisconnected = true;
-	// 	isGamePaused = true; // Pause the game on disconnection
-	// 	isModalOpen = true;
-	// 	goto("/game");
-	// }
-	// function handleReconnection() {
-	// 	isDisconnected = false;
-	// 	isGamePaused = false; // Resume the game on reconnection
-	// 	isModalOpen = true;
-	// }
-
-	// function GameOver() {
-	// 	isModalOpen = false; // Close the modal
-	// 	goto("/"); // Redirect to the home page
-	// }
-	// export function handleCancelLeaveGame(){
-	// 	isModalOpen = false
-	// }
 
 	// ... [Handle key events]
 	function handleKeydown(e: KeyboardEvent) {
@@ -249,12 +269,13 @@
 		}
 		switch (e.key) {
 			case "ArrowUp":
-				//room.send({ newDirection: tion.UP } as PaddleMoveMessage);
+			case "W":
+			case "w":
 				room.send("paddleMove", { newDirection: PaddleDirection.UP });
-
 				break;
 			case "ArrowDown":
-				//room.send({ newDirection: PaddleDirection.DOWN } as PaddleMoveMessage);
+			case "S":
+			case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.DOWN });
 				break;
 		}
@@ -268,7 +289,10 @@
 		switch (e.key) {
 			case "ArrowUp":
 			case "ArrowDown":
-				//room.send({ newDirection: PaddleDirection.STOP } as PaddleMoveMessage);
+			case "W":
+    		case "S":
+			case "w":
+    		case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
 				break;
 		}
@@ -285,17 +309,12 @@
 	}
 	function renderLoop() {
 		requestAnimationFrame(renderLoop);
-		//gameRender();
 		gameRender(ctx, state);
 	}
 
 </script>
 
-<!-- {#if isDisconnected}
-	<div class="disconnected-message">
-		<h2>Opponent Left, click to Leave</h2>
-	</div> 
-{/if} -->
+
 <svelte:window
 	on:resize={resizeCanvas}
 	on:keydown={handleKeydown}
@@ -304,16 +323,12 @@
 <canvas bind:this={canvas} id="rendering-canvas" />
 
 <style>
-	/* #canvas-container {
+	canvas#rendering-canvas {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		width: 100%;
-		height: 100vh;
-	} */
-	canvas#rendering-canvas {
 		max-width: 100%;
 		max-height: 100%;
-		border: 10px solid white;
+		border: 10px solid rgb(141, 145, 145);
 	}
 </style>

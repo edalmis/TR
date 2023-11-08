@@ -38,31 +38,109 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	private socketsByUserID: Map<any, Socket> = new Map(); // id42_>id -> socket
 	private userIdFindHelper: Map<string, any> = new Map(); // socket id -> id42_>id
+	private idByClientIdMap: Map<string, number> = new Map(); // <client.id, user.id>
+	private onlineUsersMap: Map<number, UserEntity> = new Map();
+
 	afterInit(server: Server) {
 		console.log(' -[ EventsGateway ]- *initialized* afterInit( server io )')
 	}
 
-	handleConnection(client: Socket) {
+	async handleConnection(client: Socket) {
 		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
 		if (connected) {
-			console.log("-[ Handle Connection ]- Deja connected, -> deconnection");
+			console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
 			this.socketsByUserID.delete(connected.id); // remove old connection from helper map
 			connected.disconnect(); // disconnect old connection
 		}
 		this.socketsByUserID.set(client.handshake.query.id, client);
-		console.log('-[ EventsGateway ]- client.handshake.query.id: ', client.handshake.query.id);
+		// console.log('-[ EventsGateway ]- client.handshake.query.id: ', client.handshake.query.id);
 		this.userIdFindHelper.set(client.id, client.handshake.query.id);
-		console.log(' -[ EventsGateway ]- *connected* :  ', client.id)
-		
+		const id: number = parseInt(client.handshake.query.id[0], 10);
+		this.idByClientIdMap.set(client.id, id);
+		console.log(' -[ EventsGateway ]- client connected :  { ', client.id, ' }');
+
+		// { add User to connectedUsersMap }
+		// console.log(' -[ Events - HandleConnection ]- id:', id)
+		if (!this.onlineUsersMap.has(id)) {
+			const user = await this.userService.find_user_by_id(id)
+			this.onlineUsersMap.set(id, user);
+			// Get l'ensemble des onLineUsers et creer la List
+			const usersDatas: any[] = [];
+			for (const [id, user] of this.onlineUsersMap) {
+				usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+			}
+			this.server.emit('onlineUsersUpdate', usersDatas);
+			console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
+		}
 	}
 
 	handleDisconnect(client: Socket) {
 		this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
 		this.userIdFindHelper.delete(client.id);
 
-		console.log(' -[ EventsGateway ]- *a clietn jsut disconnected* : { ', client.id, ' }')
+		// { delete User to connectedUsersMap }
+		const id: number = this.idByClientIdMap.get(client.id);
+		this.idByClientIdMap.delete(client.id);
+		// const id: number = this.userIdFindHelper.get(client.id);
+		// console.log(' -[ Events - HandleDisconnect ]- id:', id)
+		this.onlineUsersMap.delete(id);
+		console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
+		const usersDatas: any[] = [];
+		for (const [id, user] of this.onlineUsersMap) {
+			usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+		}
+		this.server.emit('onlineUsersUpdate', usersDatas);
+		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
 	}
 
+	@SubscribeMessage('acceptOrRefuseFriendRequest')
+	async acceptFriendRequest(client: Socket, data: any) {
+		console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
+		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
+		client.emit('pendingListUpdate', mynewPendingList)
+
+		const friend = await this.userService.find_user_by_userName(data.username);
+		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
+	}
+
+	@SubscribeMessage('SendFriendRequest')
+	async sendFriendRequest(client: Socket, data: any) {
+		console.log('-[ *Events* Send friend request]- datas : ', data);
+		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		console.log('-[ *Events* Send friend request]- ', data.username, '  newPendingList : ', friendnewPendingList);
+		friendClient.emit('pendingListUpdate', friendnewPendingList);
+
+		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
+		console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
+		client.emit('sentRequestsListUpdate', myNewRequestedList);
+	}
+
+	@SubscribeMessage('updateFriendList')
+	async updateFriend(client: Socket, data: any) {
+		console.log(' -[ EventsGateway ]- acceptFriend');
+		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
+		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('friendListUpdate', friendnewFriendList);
+
+		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
+		client.emit('friendListUpdate', myNewFriendList);
+	}
+
+
+	@SubscribeMessage('getOnlineUsersDatas')
+	sendOnlineUsersDatas(client: Socket) {
+		console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
+		const usersDatas: any[] = [];
+		for (const [id, user] of this.onlineUsersMap) {
+			usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+		}
+		client.emit('onlineUsersDatas', usersDatas);
+	}
 
 	// [ Game Invitation ] // // // // // // // // // //
 	@SubscribeMessage('sendGameInvitation')
@@ -122,7 +200,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		// Log the received data for debugging
 		// console.log('Data received in sendMessage:', data);
 
-	
+
 		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
 		// console.log('a', a)
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
@@ -223,31 +301,32 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('getMessagesInChatRoom')
 	async getMessagesInChatRoom(client: Socket, id: any) {
-	  try {
-		let str= this.userIdFindHelper.get(client.id);
-		// console.log('str-----------------', str)
-		let user= await this.userService.find_user_by_id(str);
-		const roomMembers = await this.chatService.findMembersByRoomId(id);
-	
-		if(await this.chatService.eligibleMember(str, id)){
-		  let messages = await this.chatService.listMessages(id);
-		 // let contents = messages.map(message => message.content);
-		 // console.log('Extracted contents:', messages);
-		  const blockedMembersLogins = roomMembers.filter(member => 
-			member.user.blockedUser && member.user.blockedUser.includes(user.login)
-		).map(member => member.user.login);
-		const blockedByMembersLogins = roomMembers.filter(member => 
-		  member.user.blockedBy && member.user.blockedBy.includes(user.login)
-	  ).map(member => member.user.login);
-		//  console.log('blockeeeeeeeeeeeeee',blockedByMembersLogins,blockedMembersLogins)
-		 client.emit('repMessagesInChatRoom', {
-			  messages: messages,
-			  blockedMembers: blockedMembersLogins, // logins of members who have blocked the sender
-			  blockedByMembers: blockedByMembersLogins
-		  });}
-	  } catch (error) {
-		  console.error("Error fetching messages:", error);
-	  }
+		try {
+			let str = this.userIdFindHelper.get(client.id);
+			// console.log('str-----------------', str)
+			let user = await this.userService.find_user_by_id(str);
+			const roomMembers = await this.chatService.findMembersByRoomId(id);
+
+			if (await this.chatService.eligibleMember(str, id)) {
+				let messages = await this.chatService.listMessages(id);
+				// let contents = messages.map(message => message.content);
+				// console.log('Extracted contents:', messages);
+				const blockedMembersLogins = roomMembers.filter(member =>
+					member.user.blockedUser && member.user.blockedUser.includes(user.login)
+				).map(member => member.user.login);
+				const blockedByMembersLogins = roomMembers.filter(member =>
+					member.user.blockedBy && member.user.blockedBy.includes(user.login)
+				).map(member => member.user.login);
+				//  console.log('blockeeeeeeeeeeeeee',blockedByMembersLogins,blockedMembersLogins)
+				client.emit('repMessagesInChatRoom', {
+					messages: messages,
+					blockedMembers: blockedMembersLogins, // logins of members who have blocked the sender
+					blockedByMembers: blockedByMembersLogins
+				});
+			}
+		} catch (error) {
+			console.error("Error fetching messages:", error);
+		}
 	}
 
 
@@ -330,7 +409,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 
 			///------------------------------
-			
+
 			// console.log("-----------------", members)
 			client.emit('membersList', {
 				members: memberLogins,

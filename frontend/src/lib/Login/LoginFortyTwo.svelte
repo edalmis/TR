@@ -1,18 +1,15 @@
 <script lang="ts">
-	import { onMount } from "svelte";
-	import LoginButton from "./LoginButton.svelte";
+import LoginButton from "./LoginButton.svelte";
 	//import { goto } from "$app/navigation";
 
-	onMount(() => {
-		// Code a exécuter lorsque SPA est chargée
-	});
-
-	// function ConnectChchao() {
-	// 	goto("http://localhost:3000/loginChchao");
-	// }
-	// function ConnectBalbecke() {
-	// 	goto("http://localhost:3000/loginBalbecke");
-	// }
+	/* // DeBug Auth42 user // // // // // // // // // // // //
+	function ConnectChchao() {
+		goto("http://localhost:3000/loginChchao");
+	}
+	function ConnectBalbecke() {
+		goto("http://localhost:3000/loginBalbecke");
+	}
+	// // // // // // // // // // // // // // // // // // // */
 </script>
 
 <div class="content">
@@ -38,10 +35,6 @@
 	.content {
 		z-index: 1;
 	}
-	
-	/* img {
-		max-width: 21%;
-	} */
 
 	div {
 		display: flex;
@@ -50,20 +43,12 @@
 		justify-content: center;
 	}
 
-	/* h1 {
-		color: green;
-		font-size: 37px;
-		margin-top: 21px;
-		margin-bottom: 1px;
-	} */
-
 	h2 {
 		color: green;
 		font-size: 180px;
 		margin-top: 100;
 		/* margin-bottom: 0; */
 		font-family: fantasy;
-	
 	}
 	/* Create the overlay with the background image */
 	.content::before {
@@ -79,19 +64,4 @@
 		background-repeat: no-repeat;
 		opacity: 0.5; /* Adjust the opacity as needed */
 	}
-
-		/* .testUsers {
-		flex-direction: row;
-		align-items: center;
-		margin-top: 3%;
-		margin-bottom: 3%;
-	}
-
-	.buttonUserTest {
-		margin-right: 10px;
-		border-radius: 12%;
-		border-color: blue;
-		border-width: 1px;
-	} */
-
 </style>

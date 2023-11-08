@@ -2,7 +2,12 @@
 	import { goto } from "$app/navigation";
 	import InviteToPlayButton from "$lib/game/InviteToPlayButton.svelte";
 	import { closeModal } from "$lib/store/ModalValues";
-	import { InvitedUserId, InvitedUserLogin } from "$lib/store/store";
+	import {
+		InvitedUserId,
+		InvitedUserLogin,
+		session,
+		userId,
+	} from "$lib/store/store";
 	import { onDestroy, onMount } from "svelte";
 
 	export let username: string;
@@ -36,6 +41,15 @@
 	// 		player2Score: 2,
 	// 	},
 	// ];
+
+	let socket: any;
+	session.subscribe((a: any) => {
+		socket = a;
+	});
+	let myId: number;
+	userId.subscribe((a: number) => {
+		myId = a;
+	});
 
 	onMount(async () => {
 		try {
@@ -95,29 +109,6 @@
 		closeModal();
 	});
 
-	async function handleRefuseFriendRequest() {
-		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
-		const response = await fetch(
-			"http://localhost:3000/user/refuseFriendRequest",
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
-			}
-		);
-		if (response.ok) {
-			console.log("response { OK } du [ Add Friend ]");
-		} else {
-			console.log("response { NOT OK } du [ Add Friend ]");
-		}
-		closeModal();
-		goto("/");
-	}
-
 	async function handleSendFriendRequest() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
@@ -133,12 +124,20 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Add Friend ]");
+			console.log(
+				"response { OK } du [ SendFriendRequest ] : ",
+				response.ok
+			);
+			socket.emit("SendFriendRequest", {
+				username: username,
+				myId: $userId,
+			});
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
 		closeModal();
-		goto("/");
+
+		// goto("/");
 	}
 
 	async function handleAcceptFriend() {
@@ -154,12 +153,44 @@
 			body: JSON.stringify({ data }),
 		});
 		if (response.ok) {
-			console.log("response { OK } du [ Add Friend ]");
+			// console.log("response { OK } du [ Add Friend ]");
+			socket.emit("acceptOrRefuseFriendRequest", {
+				username: username,
+				myId: id,
+			});
+			socket.emit("updateFriendList", { username: username, myId: id });
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
+
 		closeModal();
-		goto("/");
+	}
+
+	async function handleRefuseFriendRequest() {
+		const jwt = localStorage.getItem("jwt");
+		const data = { username: username };
+		const response = await fetch(
+			"http://localhost:3000/user/refuseFriendRequest",
+			{
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ data }),
+			}
+		);
+		if (response.ok) {
+			// console.log("response { OK } du [ Add Friend ]");
+			socket.emit("acceptOrRefuseFriendRequest", {
+				username: username,
+				myId: id,
+			});
+		} else {
+			console.log("response { NOT OK } du [ Add Friend ]");
+		}
+
+		closeModal();
 	}
 
 	async function handleRemoveFriend() {
@@ -178,12 +209,14 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Remove Friend ]");
+			// console.log("response { OK } du [ Remove Friend ]");
+			socket.emit("updateFriendList", { username: username, myId: id });
 		} else {
 			console.log("response { NOT OK } du [ Remove Friend ]");
 		}
+
 		closeModal();
-		goto("/");
+		// goto("/");
 	}
 
 	async function handleBlockUser() {
@@ -232,7 +265,11 @@
 <div class="profile-Page">
 	<h1>That is * {username} * Profile Bro !</h1>
 	<div>
-		<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
+		<img
+			class="profile-pic"
+			src={pictureLink}
+			alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
+		/>
 	</div>
 	<div>
 		<p>Login : {login}</p>

@@ -160,7 +160,7 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const pendingList: string[] = await this.userService.getPendingList(decoded.id);
+			const pendingList: any[] = await this.userService.getPendingList(decoded.id);
 			res.json(pendingList);
 		}
 	}
@@ -175,7 +175,7 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const friendsList: string[] = await this.userService.getFriendsList(decoded.id);
+			const friendsList: any[] = await this.userService.getFriendsList(decoded.id);
 			res.json(friendsList);
 		}
 	}
@@ -189,7 +189,7 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const sentRequestsList: string[] = await this.userService.getSentRequestsList(decoded.id);
+			const sentRequestsList: any[] = await this.userService.getSentRequestsList(decoded.id);
 			res.json(sentRequestsList);
 		}
 	}
@@ -249,7 +249,8 @@ export class UserController {
 	@Get('inGameUsers')
 	async getInGameUsersList(@Request() req, @Response() res) {
 		// console.log(" -[ get InGameList  / UsrCtrl ]- ");
-		const inGameList: string[] = await this.userService.getInGameUsers();
+		// const inGameList: string[] = await this.userService.getInGameUsers();
+		const inGameList: any[] = await this.userService.getInGameUsers();
 		res.json(inGameList);
 	}
 
@@ -262,7 +263,7 @@ export class UserController {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			const history = req.body.data;
-			console.log('-[ Match History / Ctrl ]- : ', history);
+			// console.log('-[ Match History / Ctrl ]- : ', history);
 			await this.userService.register_MatchHistory(history);
 		}
 	}
@@ -271,7 +272,7 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get('getMatchHistory')
 	async getMatchHistoryList(@Request() req, @Response() res) {
-		console.log(" -[ Match History List  / UsrCtrl ]- ");
+		// console.log(" -[ Match History List  / UsrCtrl ]- ");
 		const token = req.headers.authorization;
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
@@ -279,7 +280,7 @@ export class UserController {
 
 			const user = await this.userService.find_user_by_id(decoded.id);
 			const matchHistoryList = await this.userService.getMatchHistory(user);
-			console.log(" -[ Match History List  / UsrCtrl ]- Match History: ", matchHistoryList);
+			// console.log(" -[ Match History List  / UsrCtrl ]- Match History: ", matchHistoryList);
 			res.json(matchHistoryList);
 		}
 	}
@@ -327,7 +328,7 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const blockUserList: string[] = await this.userService.getUsersIBlockList(decoded.id);
+			const blockUserList: any[] = await this.userService.getUsersIBlockList(decoded.id);
 			res.json(blockUserList);
 		}
 	}
@@ -341,7 +342,7 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const blockedByList: string[] = await this.userService.getUsersWhoBlockedMeList(decoded.id);
+			const blockedByList: any[] = await this.userService.getUsersWhoBlockedMeList(decoded.id);
 			res.json(blockedByList);
 		}
 	}

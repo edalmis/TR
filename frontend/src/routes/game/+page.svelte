@@ -97,7 +97,7 @@
 
             <p >To win, be the first to reach the winning score.</p>
 			<p>Designate right and left players; left player starts.</p>
-			<p>Use 'up' and 'down' to move your paddle and hit the ball.</p>
+			<p>Use 'up','down', 'W','S' to move paddle and hit the ball.</p>
 			<p>Invitations initiated by the left player.</p>
 			<p>Choose between 3vs3 or 5vs5 games.</p>
 			<p>Select game speed (0-3).</p>
@@ -234,7 +234,8 @@
 .py-2{
 	font-family: fantasy;	
 }
-	button {
+
+button {
     cursor: pointer;
     color: white; /* Change text color to white */
     background: #007bff; /* A cool blue color */
