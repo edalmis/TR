@@ -375,7 +375,7 @@
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
 
-		socket.emit("acceptFriend", { username: username, myId: id });
+		socket.emit("updateFriendList", { username: username, myId: id });
 		closeModal();
 
 		// goto("/");
@@ -396,9 +396,9 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Add Friend ]");
+			console.log("response { OK } du [ Refuse Friend ]");
 		} else {
-			console.log("response { NOT OK } du [ Add Friend ]");
+			console.log("response { NOT OK } du [ Refuse Friend ]");
 		}
 		closeModal();
 		goto("/");
@@ -424,8 +424,9 @@
 		} else {
 			console.log("response { NOT OK } du [ Remove Friend ]");
 		}
+		socket.emit("updateFriendList", { username: username, myId: id });
 		closeModal();
-		goto("/");
+		// goto("/");
 	}
 
 	function resetMessagedUsers() {
