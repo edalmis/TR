@@ -21,7 +21,6 @@
 		); // Difference in hours
 		return timeDifference;
 	}
-	// let image: string;
 	let show_Modal: boolean;
 	showModal.subscribe((a: boolean) => {
 		show_Modal = a;
@@ -35,7 +34,6 @@
 	let messagedUsers = new Set(
 		JSON.parse(sessionStorage.getItem("messagedUsers") || "[]")
 	);
-	// let resetButton: HTMLElement;
 	let id: number;
 	id = $user.id;
 	userId.subscribe((a: number) => {
@@ -47,43 +45,51 @@
 	session.subscribe((a: any) => {
 		socket = a;
 	});
-	// $: onlineUsersDatas = [];
+
+	// [ Online Users ]
 	let myId: number = 0;
 	let onlineUsersDatas: any[] = [];
 	let onlineUserDatasEmptyArray: boolean = true;
 
+	// [ Friends List ]
+	let friendsListDatas: any[] = [];
+	let friendsListDatasEmptyArray: boolean = false;
+
+	// [ Online Friends List ]
 	let onlineUsers: string[] = [];
 	let friendsList: string[] = [];
 	let onlineFriendsList: string[] = [];
-
-	let inGameUsersList: string[] = [];
-	let inGameFriendsList: string[] = [];
-
-	let pendingList: string[] = [];
-	let sentRequestsList: string[] = [];
-	let usersIBlockedList: string[] = [];
-	let usersWhoBlockedMeList: string[] = [];
-	//let users: string[] = ["Henry", "john", "boby"];
-	let userToDisplay: string;
-
-	let onlineUserEmptyArray: boolean = false;
-	let friendsListEmptyArray: boolean = false;
 	let onlineFriendsEmptyArray: boolean = false;
 
+	// [ Online Friends ]
+	let onlineFriendsListDatas: any[] = [];
+	let onlineFriendsListDatasEmptyArray: boolean = false;
+
+	// [ InGame Friends ]
+	let inGameUsersList: string[] = [];
 	let inGameUsersEmptyArray: boolean = false;
+	let inGameFriendsList: string[] = [];
 	let inGameFriendsEmptyArray: boolean = false;
 
+	// [ Pending List ]
+	let pendingList: any[] = [];
 	let pendingListEmptyArray: boolean = false;
-	let sentRequestListEmptyArray: boolean = false;
-	let usersIBlockedEmptyArray: boolean = false;
-	let usersWhoBlockedMeEmptyArray: boolean = false;
-	let pictureLink: string;
-	// let chatMessage: string = " ";
 
-	// async function handleDM(username: string) {
-	// 	//console.log("+page.Friends - username: ", username);
-	// 	goto("/DM");
-	// }
+	// [ Sent Requests List ]
+	let sentRequestsList: any[] = [];
+	let sentRequestListEmptyArray: boolean = false;
+
+	// [ Block System ]
+	let usersIBlockedList: any[] = [];
+	let usersIBlockedEmptyArray: boolean = false;
+	let usersWhoBlockedMeList: any[] = [];
+	let usersWhoBlockedMeEmptyArray: boolean = false;
+
+	//let users: string[] = ["Henry", "john", "boby"];
+	let userToDisplay: string;
+	// let onlineUserEmptyArray: boolean = false;
+	// let friendsListEmptyArray: boolean = false;
+	let pictureLink: string;
 
 	onMount(async () => {
 		try {
@@ -92,6 +98,7 @@
 				goto("/");
 				return;
 			} else {
+				// [ OnlineUsers ]
 				socket.emit("getOnlineUsersDatas");
 				socket.on("onlineUsersDatas", (datas: any) => {
 					onlineUsersDatas = datas;
@@ -127,16 +134,25 @@
 				// }
 
 				// [ OnlineUsers ]
-				const onlineUsers_url =
-					"http://localhost:3000/auth/onlineUsers";
-				const onlineUserResponse = await fetch(onlineUsers_url, {
-					// const onlineUserResponse = await fetchData(onlineUsers_url, {
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				});
+				// const onlineUsers_url =
+				// 	"http://localhost:3000/auth/onlineUsers";
+				// const onlineUserResponse = await fetch(onlineUsers_url, {
+				// 	// const onlineUserResponse = await fetchData(onlineUsers_url, {
+				// 	method: "GET",
+				// 	headers: {
+				// 		Authorization: `Bearer ${jwt}`,
+				// 		"Content-Type": "application/json",
+				// 	},
+				// });
+
+				// if (onlineUserResponse.ok) {
+				// 	// onlineUsers = await onlineUserResponse.json();
+				// 	onlineUsers = await onlineUserResponse.json();
+				// 	if (onlineUsers.length === 0) {
+				// 		onlineUserEmptyArray = true;
+				// 	}
+				// 	console.log("onlineUsers: ", onlineUsers);
+				// }
 				const response = await fetch(
 					"http://localhost:3000/user/profile",
 					{
@@ -147,11 +163,15 @@
 						},
 					}
 				);
+				if (response.ok) {
+					const user = await response.json();
+					pictureLink = user.avatar;
+				}
 
-				const userProfile = await fetch(
-					"http://localhost:3000/user/profile",
+				// InGame Users
+				const inGameUsersListResponse = await fetch(
+					`http://localhost:3000/user/inGameUsers`,
 					{
-						// const response = await fetchData( "http://localhost:3000/user/profile", {
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
@@ -159,163 +179,146 @@
 						},
 					}
 				);
-
-				if (response.ok) {
-					// const user = await userProfile.json();
-					const user = await response.json();
-					pictureLink = user.avatar;
-				}
-
-				if (onlineUserResponse.ok) {
-					// onlineUsers = await onlineUserResponse.json();
-					onlineUsers = await onlineUserResponse.json();
-					if (onlineUsers.length === 0) {
-						onlineUserEmptyArray = true;
+				if (inGameUsersListResponse.ok) {
+					inGameUsersList = await inGameUsersListResponse.json();
+					if (inGameUsersList.length === 0) {
+						inGameUsersEmptyArray = true;
 					}
-					console.log("onlineUsers: ", onlineUsers);
+					console.log("inGameUsersList: ", inGameUsersList);
 				}
-				// Handle the error, e.g., show an error message to the user
-			}
 
-			// InGame Users
-			const inGameUsersListResponse = await fetch(
-				`http://localhost:3000/user/inGameUsers`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Pending List
+				const pendingListResponse = await fetch(
+					`http://localhost:3000/user/pendingList`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${jwt}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (pendingListResponse.ok) {
+					pendingList = await pendingListResponse.json();
+					if (pendingList.length === 0) {
+						pendingListEmptyArray = true;
+					}
+					console.log("pendingList: ", pendingList);
+				} else {
+					localStorage.clear();
+					authentificated.set(false);
+					goto("/");
 				}
-			);
-			if (inGameUsersListResponse.ok) {
-				inGameUsersList = await inGameUsersListResponse.json();
-				if (inGameUsersList.length === 0) {
-					inGameUsersEmptyArray = true;
-				}
-				console.log("inGameUsersList: ", inGameUsersList);
-			}
 
-			// Pending List
-			const pendingListResponse = await fetch(
-				`http://localhost:3000/user/pendingList`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Friends List
+				const friendsListResponse = await fetch(
+					`http://localhost:3000/user/friendsList`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${jwt}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (friendsListResponse.ok) {
+					friendsListDatas = await friendsListResponse.json();
+					if (friendsListDatas.length === 0) {
+						friendsListDatasEmptyArray = true;
+					} else {
+						friendsListDatasEmptyArray = false;
+					}
+					console.log("friendsListDatas: ", friendsListDatas);
 				}
-			);
-			if (pendingListResponse.ok) {
-				pendingList = await pendingListResponse.json();
-				if (pendingList.length === 0) {
-					pendingListEmptyArray = true;
-				}
-				console.log("pendingList: ", pendingList);
-			} else {
-				localStorage.clear();
-				authentificated.set(false);
-				goto("/");
-			}
+				// if (friendsListResponse.ok) {
+				// 	friendsList = await friendsListResponse.json();
+				// 	if (friendsList.length === 0) {
+				// 		friendsListEmptyArray = true;
+				// 	}
+				// 	console.log("friendsList: ", friendsList);
+				// }
 
-			// Friends List
-			const friendsListResponse = await fetch(
-				`http://localhost:3000/user/friendsList`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Sent Requests List
+				const sentRequestsListResponse = await fetch(
+					`http://localhost:3000/user/sentRequestsList`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${jwt}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (sentRequestsListResponse.ok) {
+					sentRequestsList = await sentRequestsListResponse.json();
+					if (sentRequestsList.length === 0) {
+						sentRequestListEmptyArray = true;
+					}
+					console.log("sendRequest List: ", sentRequestsList);
 				}
-			);
-			if (friendsListResponse.ok) {
-				friendsList = await friendsListResponse.json();
-				if (friendsList.length === 0) {
-					friendsListEmptyArray = true;
-				}
-				console.log("friendsList: ", friendsList);
-			}
 
-			// Sent Requests List
-			const sentRequestsListResponse = await fetch(
-				`http://localhost:3000/user/sentRequestsList`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Users I Blocked List
+				const blockedUsersListResponse = await fetch(
+					`http://localhost:3000/user/blockUserList`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${jwt}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (blockedUsersListResponse.ok) {
+					usersIBlockedList = await blockedUsersListResponse.json();
+					if (usersIBlockedList.length === 0) {
+						usersIBlockedEmptyArray = true;
+					}
+					console.log("usersIblockedList: ", usersIBlockedList);
 				}
-			);
-			if (sentRequestsListResponse.ok) {
-				sentRequestsList = await sentRequestsListResponse.json();
-				if (sentRequestsList.length === 0) {
-					sentRequestListEmptyArray = true;
-				}
-				console.log("sendRequest List: ", sentRequestsList);
-			}
 
-			// Users I Blocked List
-			const blockedUsersListResponse = await fetch(
-				`http://localhost:3000/user/blockUserList`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Users Who Blocked Me
+				const usersWhoBlockedMeListResponse = await fetch(
+					`http://localhost:3000/user/blockedByList`,
+					{
+						method: "GET",
+						headers: {
+							Authorization: `Bearer ${jwt}`,
+							"Content-Type": "application/json",
+						},
+					}
+				);
+				if (usersWhoBlockedMeListResponse.ok) {
+					usersWhoBlockedMeList =
+						await usersWhoBlockedMeListResponse.json();
+					if (usersWhoBlockedMeList.length === 0) {
+						usersWhoBlockedMeEmptyArray = true;
+					}
+					console.log(
+						"usersWhoBlockedMeList: ",
+						usersWhoBlockedMeList
+					);
 				}
-			);
-			if (blockedUsersListResponse.ok) {
-				usersIBlockedList = await blockedUsersListResponse.json();
-				if (usersIBlockedList.length === 0) {
-					usersIBlockedEmptyArray = true;
-				}
-				console.log("usersIblockedList: ", usersIBlockedList);
-			}
 
-			// Users Who Blocked Me
-			const usersWhoBlockedMeListResponse = await fetch(
-				`http://localhost:3000/user/blockedByList`,
-				{
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+				// Online Friends
+				onlineFriendsList = friendsList.filter((friend) =>
+					onlineUsers.includes(friend)
+				);
+				if (onlineFriendsList.length === 0) {
+					onlineFriendsEmptyArray = true;
 				}
-			);
-			if (usersWhoBlockedMeListResponse.ok) {
-				usersWhoBlockedMeList =
-					await usersWhoBlockedMeListResponse.json();
-				if (usersWhoBlockedMeList.length === 0) {
-					usersWhoBlockedMeEmptyArray = true;
+
+				// InGame Friends
+				inGameFriendsList = friendsList.filter((friend) =>
+					inGameUsersList.includes(friend)
+				);
+				if (inGameFriendsList.length === 0) {
+					inGameFriendsEmptyArray = true;
 				}
-				console.log("usersWhoBlockedMeList: ", usersWhoBlockedMeList);
-			}
-
-			// Online Friends
-			onlineFriendsList = friendsList.filter((friend) =>
-				onlineUsers.includes(friend)
-			);
-			if (onlineFriendsList.length === 0) {
-				onlineFriendsEmptyArray = true;
-			}
-
-			// InGame Friends
-			inGameFriendsList = friendsList.filter((friend) =>
-				inGameUsersList.includes(friend)
-			);
-			if (inGameFriendsList.length === 0) {
-				inGameFriendsEmptyArray = true;
 			}
 		} catch (e) {
 			console.log("Friend OnMount PB");
 		}
 		socket.on("onlineUsersUpdate", (usersDatas: any[]) => {
-			// if (usersDatas[0] === null) {
 			if (usersDatas.length >= 2) {
 				onlineUserDatasEmptyArray = false;
 			} else {
@@ -327,9 +330,7 @@
 	});
 
 	async function handleSeeProfil(username: string) {
-		//console.log("+page.Friends - username: ", username);
 		userToDisplay = username;
-		//user.name = username;
 		openModal("OtherProfile");
 		goto("/Friends");
 	}
@@ -756,7 +757,8 @@
 			{/if}
 
 			<h2>Friends List</h2>
-			{#if friendsListEmptyArray === true}
+			<!-- {#if friendsListEmptyArray === true} -->
+			{#if friendsListDatasEmptyArray === true}
 				<li class="flex justify-between gap-x-6 py-5">
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
@@ -768,27 +770,27 @@
 					</div>
 				</li>
 			{:else}
-				{#each friendsList as friendUser}
+				{#each friendsListDatas as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{friendUser}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(friendUser);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
@@ -812,7 +814,7 @@
 							>
 								<button
 									on:click={() => {
-										handleRemoveFriend(friendUser);
+										handleRemoveFriend(username);
 									}}
 									>Undo Friendship
 								</button>
@@ -865,27 +867,28 @@
 					</div>
 				</li>
 			{:else}
-				{#each pendingList as pendingUser}
+				<!-- {#each pendingList as pendingUser} -->
+				{#each pendingList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{pendingUser}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(pendingUser);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
@@ -910,7 +913,7 @@
 							>
 								<button
 									on:click={() => {
-										handleAcceptFriend(pendingUser);
+										handleAcceptFriend(username);
 									}}
 									>Accept
 								</button>
@@ -925,7 +928,7 @@
 							>
 								<button
 									on:click={() => {
-										handleRefuseFriendRequest(pendingUser);
+										handleRefuseFriendRequest(username);
 									}}
 									>Refuse
 								</button>
@@ -958,27 +961,27 @@
 						</p>
 					</div>
 				</li>
-				{#each sentRequestsList as requestedUser}
+				{#each sentRequestsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{requestedUser}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(requestedUser);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
@@ -1008,27 +1011,27 @@
 						</p>
 					</div>
 				</li>
-				{#each usersIBlockedList as blockedUser}
+				{#each usersIBlockedList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{blockedUser}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(blockedUser);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>
@@ -1067,27 +1070,27 @@
 						</p>
 					</div>
 				</li>
-				{#each usersWhoBlockedMeList as blockedUser}
+				{#each usersWhoBlockedMeList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
-								src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-								alt=""
+								src={avatar}
+								alt="error"
 							/>
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
-									{blockedUser}
+									{username}
 								</p>
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(blockedUser);
+											handleSeeProfil(username);
 										}}
 										>See Profile
 									</button>

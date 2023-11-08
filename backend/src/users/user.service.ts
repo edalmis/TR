@@ -252,42 +252,39 @@ export class UserService {
 		const user = await this.find_user_by_id(id);
 		console.log(" -[ Get Pending ]- userRecup: [", user.userName, "] -> PendingList: ", user.pendindFriendRequests);
 		const loginPendingList: string[] = user.pendindFriendRequests;
-		// tranformation des login en usernames
-		let usernamePendingList: string[] = [];
+		// tranformation des login en user Obj
+		let usersPendingList: any[] = [];
 		for (const login of loginPendingList) {
 			const user = await this.find_user_by_login(login);
-			const username: string = user.userName;
-			usernamePendingList.push(username);
+			usersPendingList.push({ id: user.id, username: user.userName, avatar: user.avatar });
 		}
-		return usernamePendingList;
+		return usersPendingList;
 	}
 
 	async getFriendsList(id: number) {
 		const user = await this.find_user_by_id(id);
 		console.log(" -[ Get Friends ]- userRecup: [", user.userName, "] -> friendsList: ", user.friends);
 		const loginFriendsList: string[] = user.friends;
-		// tranformation des login en usernames
-		let usernameFriendsList: string[] = [];
+		// tranformation des login en objet user
+		let userFriendsList: any[] = [];
 		for (const login of loginFriendsList) {
 			const user = await this.find_user_by_login(login);
-			const username: string = user.userName;
-			usernameFriendsList.push(username);
+			userFriendsList.push({ id: user.id, username: user.userName, avatar: user.avatar });
 		}
-		return usernameFriendsList;
+		return userFriendsList;
 	}
 
 	async getSentRequestsList(id: number) {
 		const user = await this.find_user_by_id(id);
 		console.log(" -[ Get SendRequests ]- user: [", user.userName, "] -> RequestsList: ", user.friendRequestsSent);
 		const loginSentRequestsList: string[] = user.friendRequestsSent;
-		// tranformation des login en usernames
-		let usernameSentRequestsList: string[] = [];
+		// tranformation des login en user Obj
+		let usersSentRequestsList: any[] = [];
 		for (const login of loginSentRequestsList) {
 			const user = await this.find_user_by_login(login);
-			const username: string = user.userName;
-			usernameSentRequestsList.push(username);
+			usersSentRequestsList.push({ id: user.id, username: user.userName, avatar: user.avatar });
 		}
-		return usernameSentRequestsList;
+		return usersSentRequestsList;
 	}
 
 	//////////////////  BLOCK USER SYSTEM ////////////////
@@ -351,28 +348,26 @@ export class UserService {
 		const user = await this.find_user_by_id(id);
 		console.log(" -[ Get User I Block ]- user: [", user.userName, "] -> BlockList: ", user.blockedUser);
 		const loginUserBlockedList: string[] = user.blockedUser;
-		// tranformation des login en usernames
-		let usernameUserBlockList: string[] = [];
+		// tranformation des login User Obj
+		let userBlockList: any[] = [];
 		for (const login of loginUserBlockedList) {
 			const user = await this.find_user_by_login(login);
-			const username: string = user.userName;
-			usernameUserBlockList.push(username);
+			userBlockList.push({ id: user.id, username: user.userName, avatar: user.avatar });
 		}
-		return usernameUserBlockList;
+		return userBlockList;
 	}
 
 	async getUsersWhoBlockedMeList(id: number) {
 		const user = await this.find_user_by_id(id);
 		console.log(" -[ Get UsersWhoBlockedMe ]- user: [", user.userName, "] -> BlockByList: ", user.blockedBy);
 		const loginUserBlockedByList: string[] = user.blockedBy;
-		// tranformation des login en usernames
-		let usernameUserBlockedByList: string[] = [];
+		// tranformation des login User Obj
+		let userBlockedByList: any[] = [];
 		for (const login of loginUserBlockedByList) {
 			const user = await this.find_user_by_login(login);
-			const username: string = user.userName;
-			usernameUserBlockedByList.push(username);
+			userBlockedByList.push({ id: user.id, username: user.userName, avatar: user.avatar });
 		}
-		return usernameUserBlockedByList;
+		return userBlockedByList;
 	}
 
 	//////////////////////////////////////////////////
@@ -415,17 +410,30 @@ export class UserService {
 		UserService.inGameUsersSet.delete(id);
 	}
 
+	// async getInGameUsers() {
+	// 	const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
+	// 	// transforme id en userName
+	// 	let usernameInGameList: string[] = [];
+	// 	if (inGameIdList.length != 0)
+	// 		for (const id of inGameIdList) {
+	// 			const user = await this.find_user_by_id(id);
+	// 			const username: string = user.userName;
+	// 			usernameInGameList.push(username);
+	// 		}
+	// 	return usernameInGameList;
+	// }
+
 	async getInGameUsers() {
 		const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
-		// transforme id en userName
-		let usernameInGameList: string[] = [];
+		// transforme id en objet user 
+		let usersInGameDatas: any[] = [];
 		if (inGameIdList.length != 0)
 			for (const id of inGameIdList) {
 				const user = await this.find_user_by_id(id);
-				const username: string = user.userName;
-				usernameInGameList.push(username);
+				usersInGameDatas.push({ id: user.id, username: user.userName, avatar: user.avatar });
 			}
-		return usernameInGameList;
+		console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
+		return usersInGameDatas;
 	}
 
 	//		[ Match History]		//
