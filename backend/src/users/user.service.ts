@@ -143,21 +143,21 @@ export class UserService {
 
 		if (!receiver.pendindFriendRequests.includes(requester.login)) {
 			receiver.pendindFriendRequests.push(requester.login);
-			console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
+			// console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
 			await this.userRepository.save(receiver);
 		}
 
 		//////// console.log Debug
-		const user1test = await this.find_user_by_login(requester.login);
-		const user2test = await this.find_user_by_login(receiver.login);
-		console.log("7  -[ RequestFriend ]- ", user1test.login, "  friendRequestSent list: ", user1test.friendRequestsSent);
-		console.log("8  -[ RequestFriend ]- ", user2test.login, "  Pending list: ", user2test.pendindFriendRequests);
+		// const user1test = await this.find_user_by_login(requester.login);
+		// const user2test = await this.find_user_by_login(receiver.login);
+		// console.log("7  -[ RequestFriend ]- ", user1test.login, "  friendRequestSent list: ", user1test.friendRequestsSent);
+		// console.log("8  -[ RequestFriend ]- ", user2test.login, "  Pending list: ", user2test.pendindFriendRequests);
 		/////////////////////
 	}
 
 
 	async addFriend(login: string, friendUsername: string) {
-		console.log("1  -[ addFriends ]- login: [", login, "]    friendUsername [", friendUsername, "]");
+		// console.log("1  -[ addFriends ]- login: [", login, "]    friendUsername [", friendUsername, "]");
 		let user1 = await this.find_user_by_login(login);
 		let user2 = await this.find_user_by_userName(friendUsername);
 		//console.log("2  -[ Friends ]- user1.login [", user1.login, "] user2.login [", user2.login, "]");
@@ -168,7 +168,7 @@ export class UserService {
 		//console.log("3  -[ Friends ]- User 1... > 4 ?");
 		if (!user1.friends.includes(user2.login)) {
 			user1.friends.push(user2.login);
-			console.log("4  -[ addFriends ]- Ajout de [", user2.login, "] a la friend list de [", user1.login, "]");
+			// console.log("4  -[ addFriends ]- Ajout de [", user2.login, "] a la friend list de [", user1.login, "]");
 			await this.userRepository
 				.createQueryBuilder()
 				.update()
@@ -193,18 +193,18 @@ export class UserService {
 
 
 		//////// console.log / Debug
-		const user1test = await this.find_user_by_login(user1.login);
-		const user2test = await this.find_user_by_login(user2.login);
-		console.log("7  -[ addFriends ]- ", user1test.login, "  friendList: ", user1test.friends);
-		console.log("8  -[ addFriends ]- ", user2test.login, "  friendList: ", user2test.friends);
+		// const user1test = await this.find_user_by_login(user1.login);
+		// const user2test = await this.find_user_by_login(user2.login);
+		// console.log("7  -[ addFriends ]- ", user1test.login, "  friendList: ", user1test.friends);
+		// console.log("8  -[ addFriends ]- ", user2test.login, "  friendList: ", user2test.friends);
 		/////////////////////
 	}
 
 	async clearUpdatePendingAndRequestList(receiver: string, sender: string) {
 		let accepter = await this.find_user_by_userName(receiver);
 		let requester = await this.find_user_by_login(sender);
-		console.log("1  -[ clear Friend ]- ", accepter.login, "  pendindFriendRequests: ", accepter.pendindFriendRequests);
-		console.log("1  -[ clear Friend ]- ", requester.login, "  friendRequestsSent: ", requester.friendRequestsSent);
+		// console.log("1  -[ clear Friend ]- ", accepter.login, "  pendindFriendRequests: ", accepter.pendindFriendRequests);
+		// console.log("1  -[ clear Friend ]- ", requester.login, "  friendRequestsSent: ", requester.friendRequestsSent);
 		if (!requester || !accepter) {
 			throw new BadRequestException('User not found');
 		}
@@ -223,10 +223,11 @@ export class UserService {
 		}
 
 		// debug
-		const user1test = await this.find_user_by_login(accepter.login);
-		const user2test = await this.find_user_by_login(requester.login);
-		console.log("2  -[ clear Friend ]- ", user1test.login, "  pendindFriendRequests: ", user1test.pendindFriendRequests);
-		console.log("2  -[ clear Friend ]- ", user2test.login, "  friendRequestsSent: ", user2test.friendRequestsSent);
+		// const user1test = await this.find_user_by_login(accepter.login);
+		// const user2test = await this.find_user_by_login(requester.login);
+		// console.log("2  -[ clear Friend ]- ", user1test.login, "  pendindFriendRequests: ", user1test.pendindFriendRequests);
+		// console.log("2  -[ clear Friend ]- ", user2test.login, "  friendRequestsSent: ", user2test.friendRequestsSent);
+		/////////////////////
 	}
 
 	async removeFriend(login: string, friendUsername: string) {
@@ -243,14 +244,15 @@ export class UserService {
 		}
 
 		// Debug :
-		const user1test = await this.find_user_by_login(user1.login);
-		console.log("7  -[ removeFriends ]- ", user1test.login, "  friendList: ", user1test.friends);
+		// const user1test = await this.find_user_by_login(user1.login);
+		// console.log("7  -[ removeFriends ]- ", user1test.login, "  friendList: ", user1test.friends);
+		/////////////////////
 	}
 
 
 	async getPendingList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ Get Pending ]- userRecup: [", user.userName, "] -> PendingList: ", user.pendindFriendRequests);
+		console.log(" -[ UsrServ - Get Pending ]- le user: [", user.userName, "] -> sa PendingList: ", user.pendindFriendRequests);
 		const loginPendingList: string[] = user.pendindFriendRequests;
 		// tranformation des login en user Obj
 		let usersPendingList: any[] = [];
@@ -263,7 +265,7 @@ export class UserService {
 
 	async getFriendsList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ Get Friends ]- userRecup: [", user.userName, "] -> friendsList: ", user.friends);
+		// console.log(" -[ Get Friends ]- userRecup: [", user.userName, "] -> friendsList: ", user.friends);
 		const loginFriendsList: string[] = user.friends;
 		// tranformation des login en objet user
 		let userFriendsList: any[] = [];
@@ -276,7 +278,7 @@ export class UserService {
 
 	async getSentRequestsList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ Get SendRequests ]- user: [", user.userName, "] -> RequestsList: ", user.friendRequestsSent);
+		console.log(" -[ UsrServ - Get SendRequests ]- Le user: [", user.userName, "] -> sa RequestsList: ", user.friendRequestsSent);
 		const loginSentRequestsList: string[] = user.friendRequestsSent;
 		// tranformation des login en user Obj
 		let usersSentRequestsList: any[] = [];
@@ -298,21 +300,21 @@ export class UserService {
 
 		if (!requester.blockedUser.includes(receiver.login)) {
 			requester.blockedUser.push(receiver.login);
-			console.log("4  -[ BlockUser ]- Ajout de [", receiver.login, "] a la BlockedUser list de [", requester.login, "]");
+			// console.log("4  -[ BlockUser ]- Ajout de [", receiver.login, "] a la BlockedUser list de [", requester.login, "]");
 			await this.userRepository.save(requester);
 		}
 
 		if (!receiver.blockedBy.includes(requester.login)) {
 			receiver.blockedBy.push(requester.login);
-			console.log("4  -[ BlockeUser ]- Ajout de [", requester.login, "] a la BlockedBy list de [", receiver.login, "]");
+			// console.log("4  -[ BlockeUser ]- Ajout de [", requester.login, "] a la BlockedBy list de [", receiver.login, "]");
 			await this.userRepository.save(receiver);
 		}
 
 		//////// console.log Debug
-		const user1test = await this.find_user_by_login(requester.login);
-		const user2test = await this.find_user_by_login(receiver.login);
-		console.log("7  -[ BlockeUser ]- ", user1test.login, "  BlockedUser list: ", user1test.blockedUser);
-		console.log("8  -[ BlockeUser ]- ", user2test.login, "  BlockedBy list: ", user2test.blockedBy);
+		// const user1test = await this.find_user_by_login(requester.login);
+		// const user2test = await this.find_user_by_login(receiver.login);
+		// console.log("7  -[ BlockeUser ]- ", user1test.login, "  BlockedUser list: ", user1test.blockedUser);
+		// console.log("8  -[ BlockeUser ]- ", user2test.login, "  BlockedBy list: ", user2test.blockedBy);
 		/////////////////////
 	}
 
@@ -337,16 +339,16 @@ export class UserService {
 		}
 
 		//////// console.log Debug
-		const user1test = await this.find_user_by_login(requester.login);
-		const user2test = await this.find_user_by_login(receiver.login);
-		console.log("7  -[ UnblockUser ]- ", user1test.login, "  BlockedUser list: ", user1test.blockedUser);
-		console.log("8  -[ UnblockUser ]- ", user2test.login, "  BlockedBy list: ", user2test.blockedBy);
+		// const user1test = await this.find_user_by_login(requester.login);
+		// const user2test = await this.find_user_by_login(receiver.login);
+		// console.log("7  -[ UnblockUser ]- ", user1test.login, "  BlockedUser list: ", user1test.blockedUser);
+		// console.log("8  -[ UnblockUser ]- ", user2test.login, "  BlockedBy list: ", user2test.blockedBy);
 		/////////////////////
 	}
 
 	async getUsersIBlockList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ Get User I Block ]- user: [", user.userName, "] -> BlockList: ", user.blockedUser);
+		// console.log(" -[ Get User I Block ]- user: [", user.userName, "] -> BlockList: ", user.blockedUser);
 		const loginUserBlockedList: string[] = user.blockedUser;
 		// tranformation des login User Obj
 		let userBlockList: any[] = [];
@@ -359,7 +361,7 @@ export class UserService {
 
 	async getUsersWhoBlockedMeList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ Get UsersWhoBlockedMe ]- user: [", user.userName, "] -> BlockByList: ", user.blockedBy);
+		// console.log(" -[ Get UsersWhoBlockedMe ]- user: [", user.userName, "] -> BlockByList: ", user.blockedBy);
 		const loginUserBlockedByList: string[] = user.blockedBy;
 		// tranformation des login User Obj
 		let userBlockedByList: any[] = [];

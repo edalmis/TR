@@ -93,12 +93,38 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
 	}
 
+	@SubscribeMessage('acceptOrRefuseFriendRequest')
+	async acceptFriendRequest(client: Socket, data: any) {
+		console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
+		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
+		client.emit('pendingListUpdate', mynewPendingList)
+
+		const friend = await this.userService.find_user_by_userName(data.username);
+		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
+	}
+
+	@SubscribeMessage('SendFriendRequest')
+	async sendFriendRequest(client: Socket, data: any) {
+		console.log('-[ *Events* Send friend request]- datas : ', data);
+		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		console.log('-[ *Events* Send friend request]- ', data.username, '  newPendingList : ', friendnewPendingList);
+		friendClient.emit('pendingListUpdate', friendnewPendingList);
+
+		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
+		console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
+		client.emit('sentRequestsListUpdate', myNewRequestedList);
+	}
+
 	@SubscribeMessage('updateFriendList')
-	async acceptFriend(client: Socket, data: any) {
+	async updateFriend(client: Socket, data: any) {
 		console.log(' -[ EventsGateway ]- acceptFriend');
 		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
 		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
-		const friendClient: any = this.socketsByUserID.get(friend.id.toString());
+		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
 		friendClient.emit('friendListUpdate', friendnewFriendList);
 
 		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);

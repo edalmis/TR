@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
 	// Imports -[ MODALS ]- ///////////////////////////
 	import Modal from "$lib/modals/Modal.svelte";
@@ -99,7 +99,6 @@
 				return;
 			} else {
 				// [ OnlineUsers ]
-				socket.emit("getOnlineUsersDatas");
 				socket.on("onlineUsersDatas", (datas: any) => {
 					onlineUsersDatas = datas;
 					console.log(" -[ OnlineUsersDatas ]- : ", onlineUsersDatas);
@@ -112,6 +111,56 @@
 						onlineUserDatasEmptyArray = true;
 					}
 				});
+
+				socket.on("onlineUsersUpdate", (usersDatas: any[]) => {
+					if (usersDatas.length >= 2) {
+						onlineUserDatasEmptyArray = false;
+					} else {
+						onlineUserDatasEmptyArray = true;
+					}
+					console.log(
+						' -[ socket.on("onlineUsersUpdate" ]- : ',
+						usersDatas
+					);
+					onlineUsersDatas = usersDatas;
+				});
+				socket.on("friendListUpdate", (newFriendsList: any[]) => {
+					friendsListDatasEmptyArray =
+						newFriendsList.length === 0 ? true : false;
+					console.log(
+						' -[ socket.on("friendListUpdate" ]- : ',
+						newFriendsList
+					);
+					friendsListDatas = newFriendsList;
+				});
+				socket.on("pendingListUpdate", (newPendingList: any[]) => {
+					if (newPendingList.length === 0) {
+						pendingListEmptyArray = true;
+					} else {
+						pendingListEmptyArray = false;
+					}
+					pendingList = newPendingList;
+					console.log(
+						" -[ io.on - pendingListUpdate ]- Liste : ",
+						pendingList
+					);
+				});
+				socket.on(
+					"sentRequestsListUpdate",
+					(newSentRequestsList: any[]) => {
+						if (newSentRequestsList.length === 0) {
+							sentRequestListEmptyArray = true;
+						} else {
+							sentRequestListEmptyArray = false;
+						}
+						sentRequestsList = newSentRequestsList;
+						console.log(
+							" -[ io.on - sentRequestUpdate ]- Liste : ",
+							sentRequestsList
+						);
+					}
+				);
+				socket.emit("getOnlineUsersDatas");
 				// [ OnlineUsersDatas ]
 				// const onlineUsersDatas_url =
 				// 	"http://localhost:3000/auth/onlineUsersDatas";
@@ -305,11 +354,10 @@
 						(friend) => friend.id === user.id
 					);
 				});
-				console.log(onlineFriendsList);
-
 				// onlineFriendsList = friendsList.filter((friend) =>
 				// 	onlineUsers.includes(friend)
 				// );
+				console.log(onlineFriendsList);
 				if (onlineFriendsList.length === 0) {
 					onlineFriendsEmptyArray = true;
 				}
@@ -331,24 +379,15 @@
 		} catch (e) {
 			console.log("Friend OnMount PB");
 		}
-		socket.on("onlineUsersUpdate", (usersDatas: any[]) => {
-			if (usersDatas.length >= 2) {
-				onlineUserDatasEmptyArray = false;
-			} else {
-				onlineUserDatasEmptyArray = true;
-			}
-			console.log(' -[ socket.on("onlineUsersUpdate" ]- : ', usersDatas);
-			onlineUsersDatas = usersDatas;
-		});
-		socket.on("friendListUpdate", (newFriendsList: any[]) => {
-			friendsListDatasEmptyArray =
-				newFriendsList.length === 0 ? true : false;
-			console.log(
-				' -[ socket.on("friendListUpdate" ]- : ',
-				newFriendsList
-			);
-			friendsListDatas = newFriendsList;
-		});
+	});
+
+	onDestroy(() => {
+		socket.off("onlineUsersDatas");
+		socket.off("onlineUsersUpdate");
+		socket.off("friendListUpdate");
+		socket.off("pendingListUpdate");
+		socket.off("sentRequestsListUpdate");
+		// socket.off('');
 	});
 
 	async function handleSeeProfil(username: string) {
@@ -370,15 +409,17 @@
 			body: JSON.stringify({ data }),
 		});
 		if (response.ok) {
-			console.log("response { OK } du [ Add Friend ]");
+			// console.log("response { OK } du [ Add Friend ]");
+			socket.emit("acceptOrRefuseFriendRequest", {
+				username: username,
+				myId: id,
+			});
+			socket.emit("updateFriendList", { username: username, myId: id });
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
 
-		socket.emit("updateFriendList", { username: username, myId: id });
 		closeModal();
-
-		// goto("/");
 	}
 
 	async function handleRefuseFriendRequest(username: string) {
@@ -396,12 +437,16 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Refuse Friend ]");
+			// console.log("response { OK } du [ Refuse Friend ]");
+			socket.emit("acceptOrRefuseFriendRequest", {
+				username: username,
+				myId: id,
+			});
 		} else {
 			console.log("response { NOT OK } du [ Refuse Friend ]");
 		}
+
 		closeModal();
-		goto("/");
 	}
 
 	async function handleRemoveFriend(username: string) {
@@ -420,15 +465,16 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Remove Friend ]");
+			// console.log("response { OK } du [ Remove Friend ]");
+			socket.emit("updateFriendList", { username: username, myId: id });
 		} else {
 			console.log("response { NOT OK } du [ Remove Friend ]");
 		}
-		socket.emit("updateFriendList", { username: username, myId: id });
+
 		closeModal();
-		// goto("/");
 	}
 
+	// /// /// /// /// // [ D M ] // /// /// /// /// //
 	function resetMessagedUsers() {
 		sessionStorage.removeItem("messagedUsers");
 		alert("Messaged users reset successfully!");
@@ -979,17 +1025,22 @@
 				{/each}
 			{/if}
 
-			{#if sentRequestListEmptyArray === false}
+			<h2>Friend Requests sent</h2>
+			{#if sentRequestListEmptyArray === true}
 				<!-- <h2>Waiting an answer from</h2> -->
 				<li class="flex justify-between gap-x-6 py-5">
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
 						<p class="text-xs leading-5 text-gray-500">
-							Waiting an answer from
+							Request new friends Bro !
 						</p>
 					</div>
 				</li>
+			{:else}
+				<p class="text-xs leading-5 text-gray-500">
+					Waiting an answer from
+				</p>
 				{#each sentRequestsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">

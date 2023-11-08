@@ -263,7 +263,7 @@ export class UserController {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			const history = req.body.data;
-			console.log('-[ Match History / Ctrl ]- : ', history);
+			// console.log('-[ Match History / Ctrl ]- : ', history);
 			await this.userService.register_MatchHistory(history);
 		}
 	}
@@ -272,7 +272,7 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get('getMatchHistory')
 	async getMatchHistoryList(@Request() req, @Response() res) {
-		console.log(" -[ Match History List  / UsrCtrl ]- ");
+		// console.log(" -[ Match History List  / UsrCtrl ]- ");
 		const token = req.headers.authorization;
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
@@ -280,7 +280,7 @@ export class UserController {
 
 			const user = await this.userService.find_user_by_id(decoded.id);
 			const matchHistoryList = await this.userService.getMatchHistory(user);
-			console.log(" -[ Match History List  / UsrCtrl ]- Match History: ", matchHistoryList);
+			// console.log(" -[ Match History List  / UsrCtrl ]- Match History: ", matchHistoryList);
 			res.json(matchHistoryList);
 		}
 	}
