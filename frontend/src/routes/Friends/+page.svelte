@@ -123,6 +123,21 @@
 						usersDatas
 					);
 					onlineUsersDatas = usersDatas;
+
+					onlineFriendsList = onlineUsersDatas.filter((user) => {
+						return friendsListDatas.some(
+							(friend) => friend.id === user.id
+						);
+					});
+					// onlineFriendsList = friendsList.filter((friend) =>
+					// 	onlineUsers.includes(friend)
+					// );
+					console.log(onlineFriendsList);
+					if (onlineFriendsList.length === 0) {
+						onlineFriendsEmptyArray = true;
+					} else {
+						onlineFriendsEmptyArray = false;
+					}
 				});
 				socket.on("friendListUpdate", (newFriendsList: any[]) => {
 					friendsListDatasEmptyArray =
@@ -132,6 +147,20 @@
 						newFriendsList
 					);
 					friendsListDatas = newFriendsList;
+					onlineFriendsList = onlineUsersDatas.filter((user) => {
+						return friendsListDatas.some(
+							(friend) => friend.id === user.id
+						);
+					});
+					// onlineFriendsList = friendsList.filter((friend) =>
+					// 	onlineUsers.includes(friend)
+					// );
+					console.log(onlineFriendsList);
+					if (onlineFriendsList.length === 0) {
+						onlineFriendsEmptyArray = true;
+					} else {
+						onlineFriendsEmptyArray = false;
+					}
 				});
 				socket.on("pendingListUpdate", (newPendingList: any[]) => {
 					if (newPendingList.length === 0) {
@@ -160,29 +189,26 @@
 						);
 					}
 				);
-				socket.emit("getOnlineUsersDatas");
-				// [ OnlineUsersDatas ]
-				// const onlineUsersDatas_url =
-				// 	"http://localhost:3000/auth/onlineUsersDatas";
-				// const onlineUsersDatasResponse = await fetch(
-				// 	onlineUsersDatas_url,
-				// 	{
-				// 		method: "GET",
-				// 		headers: {
-				// 			Authorization: `Bearer ${jwt}`,
-				// 			"Content-Type": "application/json",
-				// 		},
-				// 	}
-				// );
-				// if (onlineUsersDatasResponse.ok) {
-				// 	onlineUsersDatas = await onlineUsersDatasResponse.json();
-				// 	if (onlineUsersDatas === null) {
-				// 		onlineUserDatasEmptyArray = true;
-				// 	}
-				// 	console.log("onlineUsersDatas: ", onlineUsersDatas);
-				// }
+				socket.on("inGameFriendUpdate", (inGameUsersList: any[]) => {
+					inGameFriendsList = friendsListDatas.filter((friend) => {
+						return inGameUsersList.some(
+							(user) => friend.id === user.id
+						);
+					});
+					if (inGameFriendsList.length === 0) {
+						inGameFriendsEmptyArray = true;
+					} else {
+						inGameFriendsEmptyArray = false;
+					}
+					console.log(
+						" -[ io.on - inGameFriendUpdate ]- Liste : ",
+						inGameFriendsList
+					);
+				});
 
-				// [ OnlineUsers ]
+				// [ OnlineUsersDatas ]
+				socket.emit("getOnlineUsersDatas");
+
 				// const onlineUsers_url =
 				// 	"http://localhost:3000/auth/onlineUsers";
 				// const onlineUserResponse = await fetch(onlineUsers_url, {
@@ -279,13 +305,6 @@
 					}
 					console.log("friendsListDatas: ", friendsListDatas);
 				}
-				// if (friendsListResponse.ok) {
-				// 	friendsList = await friendsListResponse.json();
-				// 	if (friendsList.length === 0) {
-				// 		friendsListEmptyArray = true;
-				// 	}
-				// 	console.log("friendsList: ", friendsList);
-				// }
 
 				// Sent Requests List
 				const sentRequestsListResponse = await fetch(
@@ -362,11 +381,10 @@
 					onlineFriendsEmptyArray = true;
 				}
 
-				// // InGame Friends
+				// [ InGame Friends ]
 				// inGameFriendsList = friendsList.filter((friend) =>
 				// 	inGameUsersList.includes(friend)
 				// );
-				// InGame Friends
 				inGameFriendsList = friendsListDatas.filter((friend) => {
 					return inGameUsersList.some(
 						(user) => friend.id === user.id
@@ -374,6 +392,8 @@
 				});
 				if (inGameFriendsList.length === 0) {
 					inGameFriendsEmptyArray = true;
+				} else {
+					inGameFriendsEmptyArray = false;
 				}
 			}
 		} catch (e) {
