@@ -10,8 +10,8 @@
 	let messages: any = [];
 	let chatMessage: string = "";
 	let showEmojiPicker: boolean = false;
-	let usersIBlockedList: string[] = [];
-	let usersWhoBlockedMeList: string[] = [];
+	let usersIBlockedList: any[] = [];
+	let usersWhoBlockedMeList: any[] = [];
 	let usersIBlockedEmptyArray: boolean = false;
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 	let blockedUsername: boolean = false;
@@ -125,9 +125,10 @@
 	function handleClick(use: number, logine:string) {
         // console.log('use----------',use)
         if (!(
-            blockedUsername = usersIBlockedList.some(blockedUser => blockedUser == logine)
-        )) blockedUsername = usersWhoBlockedMeList.some(blockedBy => blockedBy == logine);
+			blockedUsername = usersIBlockedList.some(blockedUser => blockedUser.username == logine)
+        )) blockedUsername = usersWhoBlockedMeList.some(blockedBy => blockedBy.username == logine);
         
+		
         // console.log('blockedusername--', blockedUsername);
         if (blockedUsername) {
             alert('Sending direct message blocked!');
@@ -198,8 +199,8 @@
 				bind:this={messageListContainer}
 			>
 			{#each messages.filter(msg => 
-                !usersIBlockedList.includes(msg.senderLogin) && 
-                !usersWhoBlockedMeList.includes(msg.senderLogin)) as msg}
+				!usersIBlockedList.some(user => user.username === msg.senderLogin) &&
+				!usersWhoBlockedMeList.some(user => user.username === msg.senderLogin)) as msg}
                 <div class="relative w-full h-40 p-2">
                     <div class="message {msg.sendBy == $user.id ? 'right-0' : 'left-0'}">
                         <strong>|{msg.senderLogin}|</strong>

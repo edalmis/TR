@@ -153,12 +153,13 @@
 //   }
 	//////teste///
 	let people = [
-		{ newImg: 'images/Sadness.jpeg' },
+		{ newImg: 'images/defaultAvatar.jpg' },
 		{ newImg: 'images/Happiness.jpeg' },
 		{ newImg: 'images/Love.jpeg' },
 		{ newImg: 'images/Anger.jpeg' },
 		{ newImg: 'images/Disgust.jpeg' },
 		{ newImg: 'images/Fear.jpeg' },
+		{ newImg: 'images/Sadness.jpeg' },
 	];
 
 	let prefix = '';
@@ -179,8 +180,6 @@
 	function reset_inputs(person: any) {
 		newImg = person ? person.newImg : '';
 	}
-
-
 </script>
 
 {#if show_Modal}

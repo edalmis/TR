@@ -23,15 +23,15 @@ export class AuthService {
 
   ) { }
 
-  // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *
-  /*add_Online_User_inMap(jwt: string, user: UserEntity) {
-    const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-    console.log(" -[ add MAP ]-  Id: {", decoded.id, "}")
-    // console.log(" -[ add MAP ]-  is user { ", decoded.id, " } alreadyin Map: {", this.onlineUsersMap.has(decoded.id), "}")
-    if (!this.onlineUsersMap.has(decoded.id)) {
-      this.onlineUsersMap.set(decoded.id, user);
-    }
-  }
+  // // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *
+  // add_Online_User_inMap(jwt: string, user: UserEntity) {
+  //   const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
+  //   console.log(" -[ add MAP ]-  Id: {", decoded.id, "}")
+  //   // console.log(" -[ add MAP ]-  is user { ", decoded.id, " } alreadyin Map: {", this.onlineUsersMap.has(decoded.id), "}")
+  //   if (!this.onlineUsersMap.has(decoded.id)) {
+  //     this.onlineUsersMap.set(decoded.id, user);
+  //   }
+  // }
 
   // remove_Online_User_inMap(jwt: string) {
   //   const decoded = this.jwtService.decode(jwt) as { [key: string]: any };

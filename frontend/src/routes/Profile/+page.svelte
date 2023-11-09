@@ -33,16 +33,19 @@
 
 	.box {
 		/* background-image: url("/images/milky_galaxy.jpg"); */
-		width: 1000px;
-		height: 650px;
+		width: 880px;
+		height: 600px;
+		/* width: 60%;
+		height: 72%; */
 		border: 1px solid #aaa;
 		border-radius: 6px;
 		box-shadow: 20px 300px 100px rgba(255, 5, 5, 0.1);
 		padding: 3em;
-		margin: 0 0 1em 0;
+		/* margin: 0 0 1em 0;
+		margin-top: 0%; */
 		margin: 0 auto; /* Center horizontally */
         position: fixed;
-        top: 50%; /* Center vertically */
+        top: 60%; /* Center vertically */
         left: 50%; /* Center horizontally */
         transform: translate(-50%, -50%); 
 		

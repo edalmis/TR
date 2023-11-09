@@ -505,8 +505,8 @@
 
 	function handleButtonClick(use: string) {
 		// console.log('use-----------', use)
-		const isBlockedByMe = usersIBlockedList.includes(use);
-		const isBlockedByOthers = usersWhoBlockedMeList.includes(use);
+		const isBlockedByMe = usersIBlockedList.some(user => user.username === use);
+        const isBlockedByOthers = usersWhoBlockedMeList.some(user => user.username === use);
 
 		if (isBlockedByMe || isBlockedByOthers) {
 			alert("Sending direct message blocked!");
@@ -615,7 +615,7 @@
 										>
 									</p>
 								</div>
-								<button
+								<button class="mt-1 truncate text-xs leading-5 text-gray-500"
 									on:click={() => handleButtonClick(username)}
 								>
 									Send DM</button
@@ -755,7 +755,7 @@
 									>
 								</p>
 							</div>
-							<button
+							<button class="mt-1 truncate text-xs leading-5 text-gray-500"
 								on:click={() => handleButtonClick(username)}
 							>
 								Send DM</button
@@ -804,12 +804,12 @@
 				{#each inGameFriendsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<img
+							<!-- <img
 								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
-							/>
+							/> -->
 							<div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
@@ -1007,7 +1007,7 @@
 						>
 							<p
 								class="mt-1 truncate text-xs leading-5 text-gray-500"
-								style="margin-right:500px;"
+								style="margin-left:90px;"
 							>
 								<button
 									on:click={() => {
@@ -1022,7 +1022,7 @@
 						>
 							<p
 								class="mt-1 truncate text-xs leading-5 text-gray-500"
-								style="margin-right:390px;"
+								style="margin-right:400px;"
 							>
 								<button
 									on:click={() => {
@@ -1177,7 +1177,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-12 flex-none rounded-full bg-gray-50"
+								class="h-12 w-13 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -1223,10 +1223,6 @@
 <style>
 	h2 {
 		color: rgb(241, 58, 58);
-		align-items: center;
-	}
-	h1 {
-		color: rgb(134, 58, 241);
 		align-items: center;
 	}
 	h1 {

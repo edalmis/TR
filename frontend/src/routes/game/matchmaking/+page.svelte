@@ -149,46 +149,47 @@
 
 
 
-	export async function sendHttpRequest(url: string, data: any, message: string ) {
-	const jwt = localStorage.getItem("jwt");
-		const headers = {
-			Authorization: `Bearer ${jwt}`,
-			"Content-Type": "application/json",
-		};
-		const requestOptions = {
-			method: "POST",
-			headers,
-		};
+	// export async function sendHttpRequest(url: string, data: any, message: string ) {
+	// const jwt = localStorage.getItem("jwt");
+	// 	const headers = {
+	// 		Authorization: `Bearer ${jwt}`,
+	// 		"Content-Type": "application/json",
+	// 	};
+	// 	const requestOptions = {
+	// 		method: "POST",
+	// 		headers,
+	// 	};
 
-		if (data) {
-			requestOptions.body = JSON.stringify(data);
-		}
+	// 	if (data) {
+	// 		requestOptions.body = JSON.stringify(data);
+	// 	}
 
-		const response = await fetch(url, requestOptions);
+	// 	const response = await fetch(url, requestOptions);
 
-		if (response.ok) {
-			console.log(message);
-		}
-	}
+	// 	if (response.ok) {
+	// 		console.log(message);
+	// 	}
+	// }
+
+	// async function LeaveGame() {
+	// 	const url = "http://localhost:3000/user/leaveGame";
+	// 	const message = "-[ Leave Game ]-";
+	// 	await sendHttpRequest(url, null, message);
+
+	// }
+	// async function registerScoreHistory(data: any) {
+	// 	const url = "http://localhost:3000/user/matchHistory";
+	// 	const message = "-[ Match History ]- Set!";
+	// 	await sendHttpRequest(url, {data},  message);
+	// }
+
+	// async function EnterGame() {
+	// 	const url = "http://localhost:3000/user/enterGame";
+	// 	const message = "-[ Enter Game Button ]-";
+	// 	await sendHttpRequest(url,null , message);
+	// }
+
 	async function LeaveGame() {
-		const url = "http://localhost:3000/user/leaveGame";
-		const message = "-[ Leave Game ]-";
-		await sendHttpRequest(url, null, message);
-
-	}
-	async function registerScoreHistory(data: any) {
-		const url = "http://localhost:3000/user/matchHistory";
-		const message = "-[ Match History ]- Set!";
-		await sendHttpRequest(url, {data},  message);
-	}
-
-	async function EnterGame() {
-		const url = "http://localhost:3000/user/enterGame";
-		const message = "-[ Enter Game Button ]-";
-		await sendHttpRequest(url,null , message);
-	}
-
-	/*async function LeaveGame() {
 	
 		const jwt = localStorage.getItem("jwt");
 		const response = await fetch("http://localhost:3000/user/leaveGame", {
@@ -225,20 +226,6 @@
 		}
 	}
 			
-	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-		}
-	}*/
-
 	async function initializeGame() {
 		try {
 			const roomOptions = {
