@@ -9,9 +9,15 @@
 	import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
-		actualUsername, ballSpeed,
-		inGame, session, userId,
-		userLogin, winnerScore, launchedGame, navbar,
+		actualUsername,
+		ballSpeed,
+		inGame,
+		session,
+		userId,
+		userLogin,
+		winnerScore,
+		launchedGame,
+		navbar,
 	} from "$lib/store/store";
 
 	let state: GameState;
@@ -31,6 +37,23 @@
 
 	// Writable userInfos
 	let username: string = "john";
+
+	let wsClient: any;
+	async function EnterGame() {
+		const jwt = localStorage.getItem("jwt");
+		const response = await fetch("http://localhost:3000/user/enterGame", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${jwt}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (response.ok) {
+			console.log("-[ Enter Game Button ]- ");
+			wsClient.emit("inGameUpdate", { myId: id });
+		}
+	}
 
 	onMount(() => {
 		// [ MatchMaking ] // // // // // // // // // // // // // // // // // // // // // //
@@ -65,7 +88,7 @@
 		winnerScore.subscribe((a) => {
 			scoreToWin = a;
 		});
-		let wsClient: any;
+
 		session.subscribe((a: any) => {
 			wsClient = a;
 		});
@@ -178,6 +201,7 @@
 
 		if (response.ok) {
 			console.log("-[ Leave Game ]- ");
+			wsClient.emit("inGameUpdate", { myId: id });
 		}
 	}
 
@@ -248,14 +272,13 @@
 			room.onMessage("scoreHistory", (data: any) => {
 				registerScoreHistory(data);
 			});
-		
+
 			room.onMessage("gameFinished", (message: any) => {
 				// alert(message.winner);
 				if (message.winnerLogin) {
-       				alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
-    			}
+					alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
+				}
 				LeaveGame();
-				
 			});
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);
@@ -311,7 +334,6 @@
 		requestAnimationFrame(renderLoop);
 		gameRender(ctx, state);
 	}
-
 </script>
 
 

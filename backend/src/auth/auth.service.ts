@@ -33,43 +33,43 @@ export class AuthService {
     }
   }
 
-  remove_Online_User_inMap(jwt: string) {
-    const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-    this.onlineUsersMap.delete(decoded.id);
-  }
+  // remove_Online_User_inMap(jwt: string) {
+  //   const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
+  //   this.onlineUsersMap.delete(decoded.id);
+  // }
 
-  async get_Online_Usernames(id: number) {
-    // console.log(" -[ GET Online ]- requette de user.id: {", id, "}")
-    let loginList: string[] = [];
-    let usernameList: string[] = [];
-    //console.log(" -[ GET Online ]- init mapInside: ", loginList)
-    const mapSize = this.onlineUsersMap.size;
-    console.log(" -[ GET Online ]- mapSize: ", mapSize)
-    if (mapSize === 1) { return [] }
-    else {
-      this.onlineUsersMap.forEach((user) => {
-        // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
-        if (user.id !== id) {
-          loginList.push(user.login);
-        }
-      });
-      for (const userLogin of loginList) {
-        const user = await this.userService.find_user_by_login(userLogin);
-        usernameList.push(user.userName);
-      }
-      return usernameList;
-    }
-  }
+  // async get_Online_Usernames(id: number) {
+  //   // console.log(" -[ GET Online ]- requette de user.id: {", id, "}")
+  //   let loginList: string[] = [];
+  //   let usernameList: string[] = [];
+  //   //console.log(" -[ GET Online ]- init mapInside: ", loginList)
+  //   const mapSize = this.onlineUsersMap.size;
+  //   console.log(" -[ GET Online ]- mapSize: ", mapSize)
+  //   if (mapSize === 1) { return [] }
+  //   else {
+  //     this.onlineUsersMap.forEach((user) => {
+  //       // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
+  //       if (user.id !== id) {
+  //         loginList.push(user.login);
+  //       }
+  //     });
+  //     for (const userLogin of loginList) {
+  //       const user = await this.userService.find_user_by_login(userLogin);
+  //       usernameList.push(user.userName);
+  //     }
+  //     return usernameList;
+  //   }
+  // }
 
-  isUserOnline(login: string) {
-    this.onlineUsersMap.forEach((user) => {
-      // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
-      if (user.login === login) {
-        return true;
-      }
-    });
-    return false;
-  }*/
+  // isUserOnline(login: string) {
+  //   this.onlineUsersMap.forEach((user) => {
+  //     // console.log(" -[ GET Online ]- Map -> username: [", user.userName, "]  id: {", user.id, "}")
+  //     if (user.login === login) {
+  //       return true;
+  //     }
+  //   });
+  //   return false;
+  // }
   //////////////////////////////////////////////////////////////////
 
 

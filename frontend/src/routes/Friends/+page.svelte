@@ -123,6 +123,21 @@
 						usersDatas
 					);
 					onlineUsersDatas = usersDatas;
+
+					onlineFriendsList = onlineUsersDatas.filter((user) => {
+						return friendsListDatas.some(
+							(friend) => friend.id === user.id
+						);
+					});
+					// onlineFriendsList = friendsList.filter((friend) =>
+					// 	onlineUsers.includes(friend)
+					// );
+					console.log(onlineFriendsList);
+					if (onlineFriendsList.length === 0) {
+						onlineFriendsEmptyArray = true;
+					} else {
+						onlineFriendsEmptyArray = false;
+					}
 				});
 				socket.on("friendListUpdate", (newFriendsList: any[]) => {
 					friendsListDatasEmptyArray =
@@ -132,6 +147,20 @@
 						newFriendsList
 					);
 					friendsListDatas = newFriendsList;
+					onlineFriendsList = onlineUsersDatas.filter((user) => {
+						return friendsListDatas.some(
+							(friend) => friend.id === user.id
+						);
+					});
+					// onlineFriendsList = friendsList.filter((friend) =>
+					// 	onlineUsers.includes(friend)
+					// );
+					console.log(onlineFriendsList);
+					if (onlineFriendsList.length === 0) {
+						onlineFriendsEmptyArray = true;
+					} else {
+						onlineFriendsEmptyArray = false;
+					}
 				});
 				socket.on("pendingListUpdate", (newPendingList: any[]) => {
 					if (newPendingList.length === 0) {
@@ -160,29 +189,26 @@
 						);
 					}
 				);
-				socket.emit("getOnlineUsersDatas");
-				// [ OnlineUsersDatas ]
-				// const onlineUsersDatas_url =
-				// 	"http://localhost:3000/auth/onlineUsersDatas";
-				// const onlineUsersDatasResponse = await fetch(
-				// 	onlineUsersDatas_url,
-				// 	{
-				// 		method: "GET",
-				// 		headers: {
-				// 			Authorization: `Bearer ${jwt}`,
-				// 			"Content-Type": "application/json",
-				// 		},
-				// 	}
-				// );
-				// if (onlineUsersDatasResponse.ok) {
-				// 	onlineUsersDatas = await onlineUsersDatasResponse.json();
-				// 	if (onlineUsersDatas === null) {
-				// 		onlineUserDatasEmptyArray = true;
-				// 	}
-				// 	console.log("onlineUsersDatas: ", onlineUsersDatas);
-				// }
+				socket.on("inGameFriendUpdate", (inGameUsersList: any[]) => {
+					inGameFriendsList = friendsListDatas.filter((friend) => {
+						return inGameUsersList.some(
+							(user) => friend.id === user.id
+						);
+					});
+					if (inGameFriendsList.length === 0) {
+						inGameFriendsEmptyArray = true;
+					} else {
+						inGameFriendsEmptyArray = false;
+					}
+					console.log(
+						" -[ io.on - inGameFriendUpdate ]- Liste : ",
+						inGameFriendsList
+					);
+				});
 
-				// [ OnlineUsers ]
+				// [ OnlineUsersDatas ]
+				socket.emit("getOnlineUsersDatas");
+
 				// const onlineUsers_url =
 				// 	"http://localhost:3000/auth/onlineUsers";
 				// const onlineUserResponse = await fetch(onlineUsers_url, {
@@ -279,13 +305,6 @@
 					}
 					console.log("friendsListDatas: ", friendsListDatas);
 				}
-				// if (friendsListResponse.ok) {
-				// 	friendsList = await friendsListResponse.json();
-				// 	if (friendsList.length === 0) {
-				// 		friendsListEmptyArray = true;
-				// 	}
-				// 	console.log("friendsList: ", friendsList);
-				// }
 
 				// Sent Requests List
 				const sentRequestsListResponse = await fetch(
@@ -362,11 +381,10 @@
 					onlineFriendsEmptyArray = true;
 				}
 
-				// // InGame Friends
+				// [ InGame Friends ]
 				// inGameFriendsList = friendsList.filter((friend) =>
 				// 	inGameUsersList.includes(friend)
 				// );
-				// InGame Friends
 				inGameFriendsList = friendsListDatas.filter((friend) => {
 					return inGameUsersList.some(
 						(user) => friend.id === user.id
@@ -374,6 +392,8 @@
 				});
 				if (inGameFriendsList.length === 0) {
 					inGameFriendsEmptyArray = true;
+				} else {
+					inGameFriendsEmptyArray = false;
 				}
 			}
 		} catch (e) {
@@ -559,6 +579,8 @@
 					</div>
 				</li>
 			{:else}
+				<!--  -->
+
 				{#each onlineUsersDatas as { id, username, avatar }}
 					{#if id != myId}
 						<li class="flex justify-between gap-x-6 py-5">
@@ -593,7 +615,7 @@
 										>
 									</p>
 								</div>
-								<button class="mt-1 truncate text-xs leading-5 text-gray-500"
+								<button
 									on:click={() => handleButtonClick(username)}
 								>
 									Send DM</button
@@ -620,6 +642,71 @@
 				{/each}
 			{/if}
 			<li class="flex justify-between" />
+			<!-- 
+						<li>{username}</li>
+						<button on:click={() => handleButtonClick(id)}
+							>Envoyer ID</button
+						>
+					{/each} -->
+
+			<!--  -->
+			<!-- {#each onlineUsers as user}
+					<li class="flex justify-between gap-x-6 py-5">
+						<div class="flex min-w-0 gap-x-4">
+							<img
+								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								style="margin-left: 20px;"
+								src={pictureLink}
+								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
+							/>
+							<div class="min-w-0 flex-auto">
+								<p
+									class="text-sm font-semibold leading-6 text-gray-900"
+								>
+									{user}
+								</p>
+								<p
+									class="mt-1 truncate text-xs leading-5 text-gray-500"
+								>
+									<button
+										on:click={() => {
+											handleSeeProfil(user);
+										}}
+										>See Profile
+									</button>
+								</p>
+								<p
+									class="mt-1 truncate text-xs leading-5 text-gray-500"
+								>
+									<button on:click={resetMessagedUsers}
+										>Reset DM</button
+									>
+								</p>
+							</div>
+							<button on:click={() => handleButtonClick(user)}>
+								Send DM</button
+							>
+						</div>
+
+						<div class="mt-1 flex items-center gap-x-1.5">
+							<div
+								class="flex-none rounded-full bg-emerald-500/20 p-1"
+							>
+								<div
+									class="h-2 w-2 rounded-full bg-emerald-500"
+								/>
+							</div>
+							<p
+								class="text-xs leading-5 text-gray-500"
+								style="margin-right: 130px;"
+							>
+								Online
+							</p>
+						</div>
+					</li>
+				{/each}
+			{/if}
+			<li class="flex justify-between" /> -->
 
 			<h2>Online Friends</h2>
 			{#if onlineFriendsEmptyArray === true}
@@ -639,7 +726,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -668,8 +755,7 @@
 									>
 								</p>
 							</div>
-
-							<button class="mt-1 truncate text-xs leading-5 text-gray-500"
+							<button
 								on:click={() => handleButtonClick(username)}
 							>
 								Send DM</button
@@ -707,7 +793,6 @@
 				<li class="flex justify-between gap-x-6 py-5">
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
-
 					>
 						<p class="text-xs leading-5 text-gray-500">
 							None of your friends is playing. Invite them to play
@@ -719,25 +804,19 @@
 				{#each inGameFriendsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
-							<!-- <img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+							<img
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
-							/> -->
-							<div class="min-w-0 flex-auto ">
+							/>
+							<div class="min-w-0 flex-auto">
 								<p
-									class="text-sm ml-10 font-semibold leading-6 text-gray-900"
+									class="text-sm font-semibold leading-6 text-gray-900"
 								>
 									{username}
-									<button class="mt-1 ml-4 truncate text-xs leading-5 text-gray-500"
-										on:click={() => {
-											handleSeeProfil(username);
-										}}
-										>See Profile
-									</button>
 								</p>
-								<!-- <p
+								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button
@@ -746,10 +825,16 @@
 										}}
 										>See Profile
 									</button>
-								</p> -->
+								</p>
 							</div>
 						</div>
-				
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+								<button 
+									on:click={() => { handleSeeProfil(user);}}>See Profile 
+								</button>
+							</p>
+						</div> -->
 						<div class="mt-1 flex items-center gap-x-1.5">
 							<div
 								class="flex-none rounded-full bg-emerald-500/20 p-1"
@@ -762,7 +847,7 @@
 								class="text-xs leading-5 text-gray-500"
 								style="margin-right: 130px;"
 							>
-								GamOn
+								Game-On
 							</p>
 						</div>
 					</li>
@@ -787,7 +872,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -816,17 +901,14 @@
 										on:click={() => {handleSeeProfil(friendUser);}}>See Profile
 									</button>
 								</p>
-							</div>
-						flex justify-between gap-x-6 py-5 
-					mt-1 truncate text-xs leading-5 text-gray-500
-				-->
-						
+							</div> -->
+
 						<div
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-							class="flex justify-between text-xs gap-x-6 py-5 text-gray-500"
-							style="margin-right: 10;"
+								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								style="margin-right: 130px;"
 							>
 								<button
 									on:click={() => {
@@ -925,7 +1007,7 @@
 						>
 							<p
 								class="mt-1 truncate text-xs leading-5 text-gray-500"
-								style="margin-left:90px;"
+								style="margin-right:500px;"
 							>
 								<button
 									on:click={() => {
@@ -939,8 +1021,8 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class=" mt-1 truncate text-xs leading-5 text-gray-500"
-								style="margin-right:400px;"
+								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								style="margin-right:390px;"
 							>
 								<button
 									on:click={() => {
@@ -950,12 +1032,24 @@
 								</button>
 							</p>
 						</div>
+						<!-- <button
+								on:click={() => {
+									handleSeeProfil(pendingUser);
+								}}>See Profile</button>
+							<button
+								on:click={() => {
+									handleAcceptFriend(pendingUser);
+								}}>Accept</button>
+							<button
+								on:click={() => {
+									handleRefuseFriendRequest(pendingUser);
+								}}>Refuse</button> -->
 					</li>
 				{/each}
 			{/if}
-			
+
 			<h2>Friend Requests sent</h2>
-			{#if sentRequestListEmptyArray === false}
+			{#if sentRequestListEmptyArray === true}
 				<!-- <h2>Waiting an answer from</h2> -->
 				<li class="flex justify-between gap-x-6 py-5">
 					<div
@@ -966,15 +1060,15 @@
 						</p>
 					</div>
 				</li>
-				{:else}
-					<p class="text-xs leading-5 text-gray-500">
-						Waiting an answer from
-					</p>
+			{:else}
+				<p class="text-xs leading-5 text-gray-500">
+					Waiting an answer from
+				</p>
 				{#each sentRequestsList as { id, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -997,6 +1091,14 @@
 								</p>
 							</div>
 						</div>
+
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+								<button
+								on:click={() => {handleSeeProfil(requestedUser);}}>See Profile
+								</button>
+							</p>
+						</div> -->
 					</li>
 				{/each}
 			{/if}
@@ -1016,7 +1118,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -1039,7 +1141,24 @@
 								</p>
 							</div>
 						</div>
+
+						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
+								<button
+								on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
+								
+								</button>
+							</p>
+						</div> -->
 					</li>
+					<!-- <div class="user-card">
+							<p>{blockedUser}</p>
+							<button
+								on:click={() => {
+									handleSeeProfil(blockedUser);
+								}}>See Profile</button
+							>
+						</div> -->
 				{/each}
 			{/if}
 
@@ -1058,7 +1177,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -1082,15 +1201,32 @@
 							</div>
 						</div>
 					</li>
+					<!-- <div class="user-card">
+							<p>{blockedUser}</p>
+							<button
+								on:click={() => {
+									handleSeeProfil(blockedUser);
+								}}>See Profile</button
+							>
+						</div> -->
 				{/each}
 			{/if}
 		</div>
 	{/if}
+	<!-- </div> -->
+	<!-- <div>
+		<img src="images/imgT3.jpg" alt="Image presentation" />
+	</div> -->
+	<!-- </div> -->
 </ul>
 
 <style>
 	h2 {
 		color: rgb(241, 58, 58);
+		align-items: center;
+	}
+	h1 {
+		color: rgb(134, 58, 241);
 		align-items: center;
 	}
 	h1 {
