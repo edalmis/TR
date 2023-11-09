@@ -145,6 +145,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		client.emit('onlineUsersDatas', usersDatas);
 	}
 
+	@SubscribeMessage('inGameUpdate')
+	async enterGame(client: Socket, data: any) {
+		const inGameUsersList: any[] = await this.userService.getInGameUsers();
+		this.server.emit('inGameFriendUpdate', inGameUsersList)
+	}
+
 	// [ Game Invitation ] // // // // // // // // // //
 	@SubscribeMessage('sendGameInvitation')
 	async sendGameInvitation(client: Socket, data: any) {

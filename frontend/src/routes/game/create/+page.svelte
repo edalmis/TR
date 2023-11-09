@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
 	// import { PaddleDirection } from "$lib/game/PaddleDirection"
-	import { PaddleDirection } from'../../../../../backend/src/game/game.physics';
+	import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
 	import { closeModal } from "$lib/store/ModalValues";
@@ -30,7 +30,7 @@
 		paddleSize,
 		gameState,
 		rightPlayerUsername,
-		leftPlayerUsername, 
+		leftPlayerUsername,
 		navbar,
 		launchedGame,
 	} from "$lib/store/store";
@@ -78,6 +78,7 @@
 
 		if (response.ok) {
 			console.log("-[ Enter Game Button ]- ");
+			wsClient.emit("inGameUpdate", { myId: id });
 		}
 	}
 
@@ -189,6 +190,7 @@
 
 		if (response.ok) {
 			console.log("-[ Leave Game ]- ");
+			wsClient.emit("inGameUpdate", { myId: id });
 		}
 	}
 
