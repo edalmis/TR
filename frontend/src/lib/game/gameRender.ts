@@ -6,30 +6,30 @@ import { goto } from "$app/navigation";
 
 // Constants for background and paddle colors
 const BackgroundColors: any = {
-    blue: 'rgb(65, 135, 225)',
-    orange: 'rgb(255, 143, 31)',
-    green: 'rgb(0, 100, 0)',
-    default: 'rgb(0, 100, 0)',
+	blue: 'rgb(65, 135, 225)',
+	orange: 'rgb(255, 143, 31)',
+	green: 'rgb(0, 100, 0)',
+	default: 'rgb(0, 100, 0)',
 };
 
 const PaddleColors: any = {
-    blue: 'green',
-    orange: 'white',
-    green: 'rgb(255, 95, 31)',
-    default: 'rgb(255, 95, 31)',
+	blue: 'green',
+	orange: 'white',
+	green: 'rgb(255, 95, 31)',
+	default: 'rgb(255, 95, 31)',
 };
 
 //Game writable 
 let backgroundColorChoice: string;
-backgroundColor.subscribe((a)=>{
+backgroundColor.subscribe((a) => {
 	backgroundColorChoice = a;
-	console.log("gameRender:",  backgroundColorChoice);
+	console.log("gameRender:", backgroundColorChoice);
 });
 
 let paddleSizeChoice: string;
-	paddleSize.subscribe((a)=>{
+paddleSize.subscribe((a) => {
 	paddleSizeChoice = a;
-	console.log("paddleSizeChoice :",  paddleSizeChoice);
+	console.log("paddleSizeChoice :", paddleSizeChoice);
 })
 
 
@@ -49,25 +49,25 @@ export function drawHalfwayLine(ctx: CanvasRenderingContext2D, color: string) {
 export function drawLeftDashedLine(ctx: CanvasRenderingContext2D, color: string) {
 	ctx.beginPath();
 	ctx.setLineDash([2, 4]);
-	ctx.strokeStyle = color; 
-	ctx.moveTo(0, GameDimensions.height /6);
-	ctx.lineTo(GameDimensions.width , GameDimensions.height /6);
+	ctx.strokeStyle = color;
+	ctx.moveTo(0, GameDimensions.height / 6);
+	ctx.lineTo(GameDimensions.width, GameDimensions.height / 6);
 	ctx.stroke();
-	ctx.moveTo(0, (GameDimensions.height /6) * 5);
-	ctx.lineTo(GameDimensions.width , (GameDimensions.height /6) * 5);
+	ctx.moveTo(0, (GameDimensions.height / 6) * 5);
+	ctx.lineTo(GameDimensions.width, (GameDimensions.height / 6) * 5);
 	ctx.stroke();
-	
-  }
 
-  export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string) {
-    ctx.beginPath();
-    ctx.setLineDash([2, 4]);
-    ctx.strokeStyle = color; 
-    ctx.moveTo((GameDimensions.width / 10) * 9, GameDimensions.height /6);
-    ctx.lineTo((GameDimensions.width / 10) * 9, (GameDimensions.height /6)*5); 
+}
+
+export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string) {
+	ctx.beginPath();
+	ctx.setLineDash([2, 4]);
+	ctx.strokeStyle = color;
+	ctx.moveTo((GameDimensions.width / 10) * 9, GameDimensions.height / 6);
+	ctx.lineTo((GameDimensions.width / 10) * 9, (GameDimensions.height / 6) * 5);
 	ctx.stroke();
-	ctx.moveTo((GameDimensions.width / 10), GameDimensions.height /6);
-    ctx.lineTo((GameDimensions.width / 10), (GameDimensions.height /6)*5); 
+	ctx.moveTo((GameDimensions.width / 10), GameDimensions.height / 6);
+	ctx.lineTo((GameDimensions.width / 10), (GameDimensions.height / 6) * 5);
 	ctx.stroke();
 }
 
@@ -88,20 +88,20 @@ InvitedUserLogin.subscribe((a) => {
 export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
 	// let widthFactor: number;
 	// let heightFactor: number;
-	
+
 	if (paddleSizeChoice === 'small') {
 		//  console.log(" class Paddle: size === PaddleSize.Small ", paddleSizeChoice);
 		Paddle.width = 30;
 		Paddle.height = 160;
-	} else if(paddleSizeChoice === 'invisible'){
+	} else if (paddleSizeChoice === 'invisible') {
 		Paddle.width = 40;
 		Paddle.height = 0;
 	}
 	else {
-		Paddle.width  = 40;
+		Paddle.width = 40;
 		Paddle.height = 200;
 	}
-	
+
 	ctx.fillRect(paddle.x - Paddle.width / 2, paddle.y - Paddle.height / 2, Paddle.width, Paddle.height);
 }
 
@@ -115,7 +115,7 @@ let isModalOpen = false;
 export function handleBackHomeModal() {
 	isModalOpen = true;
 }
-export function handleCancelLeaveGame(){
+export function handleCancelLeaveGame() {
 	isModalOpen = false
 }
 
@@ -125,30 +125,30 @@ export function leaveGame() {
 }
 export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 	let backgroundColor: string;
-    let paddleColor: string;
+	let paddleColor: string;
 
-    // switch (backgroundColorChoice) {
+	// switch (backgroundColorChoice) {
 	// 	case 'blue':
-    //         backgroundColor = 'rgb(65, 135, 225)';
-    //         paddleColor = 'green';
-    //         break;
-    //     case 'orange':
-    //         backgroundColor = 'rgb(255, 143, 31)';
-    //         paddleColor = 'white';
-    //         break;
-    //     case 'green':
-    //         backgroundColor = 'rgb(0, 100, 0)';
-    //         paddleColor = 'rgb(255, 95, 31)';
-    //         break;
-    //     default:
-    //         backgroundColor = 'rgb(0, 100, 0)'; // Default background color
-    //         paddleColor = 'rgb(255, 95, 31)'; // Default paddle color
-    //         break;
-    // }
+	//         backgroundColor = 'rgb(65, 135, 225)';
+	//         paddleColor = 'green';
+	//         break;
+	//     case 'orange':
+	//         backgroundColor = 'rgb(255, 143, 31)';
+	//         paddleColor = 'white';
+	//         break;
+	//     case 'green':
+	//         backgroundColor = 'rgb(0, 100, 0)';
+	//         paddleColor = 'rgb(255, 95, 31)';
+	//         break;
+	//     default:
+	//         backgroundColor = 'rgb(0, 100, 0)'; // Default background color
+	//         paddleColor = 'rgb(255, 95, 31)'; // Default paddle color
+	//         break;
+	// }
 	backgroundColor = BackgroundColors[backgroundColorChoice] || BackgroundColors.default;
-    paddleColor  = PaddleColors[backgroundColorChoice] || PaddleColors.default;
+	paddleColor = PaddleColors[backgroundColorChoice] || PaddleColors.default;
 	ctx.fillStyle = backgroundColor;
-	
+
 	ctx.fillRect(0, 0, GameDimensions.width, GameDimensions.height);
 	ctx.fillStyle = paddleColor;
 	ctx.lineWidth = 8;
@@ -157,10 +157,10 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 
 	switch (state.gameStatus) {
 		case GameStatus.WAITING:
-			 drawTextCenter(ctx, 'Waiting an Opponent...');
-            break;
+			drawTextCenter(ctx, 'Waiting an Opponent...');
+			break;
 		case GameStatus.PLAYING:
-			drawHalfwayLine(ctx,'white');
+			drawHalfwayLine(ctx, 'white');
 			drawLeftDashedLine(ctx, 'white');
 			drawRightDashedLine(ctx, 'white');
 			renderBall(ctx, state.ball);

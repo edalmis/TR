@@ -115,7 +115,7 @@
 		InvitedUserLogin.subscribe((a) => {
 			userLoginToInvite = a;
 		});
-		session.subscribe((a) => {
+		session.subscribe((a: any) => {
 			wsClient = a;
 		});
 
@@ -250,7 +250,6 @@
 				//123
 				room = await client.create("privateRoom", roomOptions);
 			} else {
-
 				room = await client.joinById(gameData.roomId, roomOptions);
 				iAmInvited.set(false);
 			}
@@ -305,15 +304,6 @@
 				LeaveGame();
 			});
 			handleDisconnection();
-			// let wsClient: any;
-			// session.subscribe((a) => {
-			// 	wsClient = a;
-			// })
-			// wsClient.on("refuseCloseGame", (data: any, message: string) =>{
-			// 	message = "the other player refused the game"
-			// 		alert(message);
-			// 	goto("/");
-			// })
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);
 		}
@@ -359,14 +349,13 @@
 			case "ArrowUp":
 			case "ArrowDown":
 			case "W":
-    		case "S":
+			case "S":
 			case "w":
-    		case "s":
+			case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
 				break;
 		}
 	}
-
 
 	function resizeCanvas() {
 		const scale = Math.min(

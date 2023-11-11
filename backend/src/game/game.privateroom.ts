@@ -3,6 +3,7 @@ import { PaddleDirection, Physics, PhysicsOptions } from "./game.physics";
 import { GameState, GameStatus } from "./game.serverSchema";
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/users/user.service';
+import { timeout } from 'rxjs';
 
 export interface PaddleMoveMessage {
 	newDirection: PaddleDirection;
@@ -16,7 +17,7 @@ export interface UserInfos {
 	client: Client,
 	idToInvite: number,
 	loginToInvite: string,
-	speed:number,
+	speed: number,
 	paddleSize: string,
 	scoreToWin: number,
 	colorMode: string,
@@ -45,7 +46,7 @@ export class privateRoom extends Room<GameState> {
 	public lpUserId: number = 41;
 	public rpUserId: number = 42;
 	private winningScore: number;
-	
+
 	onCreate(options: any) {
 		console.log(' -[ (Private) - onCreate () ]- -> Options : ', options);
 
@@ -55,9 +56,9 @@ export class privateRoom extends Room<GameState> {
 			paddleSpeed: 0.5, // Default value for paddleSpeed
 			ballAngle: 0, // Default value for ballAngle
 		};
-		this.physics = new Physics(this.state.ball, this.state.leftPaddle, this.state.rightPaddle, physicsOptions );
+		this.physics = new Physics(this.state.ball, this.state.leftPaddle, this.state.rightPaddle, physicsOptions);
 		this.winningScore = options.scoreToWin;
-		this.setMetadata({ idToInvite: options.idToInvite});
+		this.setMetadata({ idToInvite: options.idToInvite });
 	}
 
 	async onJoin(client: Client, options: any) {
@@ -199,24 +200,24 @@ export class privateRoom extends Room<GameState> {
 				//console.log('[ tentative - Increment Rank Left Won ]...')
 				this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 				this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
-				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin : this.lpUserName}, { except: [this.client2] });
-				this.broadcast('gameFinished', { message: looserMessage, winnerLogin : this.lpUserName }, { except: [this.client1] });
+				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
+				this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.lpUserName }, { except: [this.client1] });
 				//this.broadcast('winnerLogin', {winnerLogin : this.lpUserName});
-			
-        console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
-        console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
+
+				console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
+				console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
 			}
 			else //  [ *Right Player Won* ]
 			{
 				console.log('[ tentative - Increment Rank Right Won ]...')
 				this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 				this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
-				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin : this.rpUserName }, { except: [this.client1] });
-				this.broadcast('gameFinished', { message: looserMessage, winnerLogin : this.rpUserName }, { except: [this.client2] });
+				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
+				this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.rpUserName }, { except: [this.client2] });
 				// this.broadcast('winnerLogin', {winnerLogin : this.rpUserName})
 
-		console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
-		console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
+				console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
+				console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
 			}
 		}
 
@@ -240,12 +241,13 @@ export class privateRoom extends Room<GameState> {
 		}
 		if (!this.lpId || !this.rpId) {
 			this.state.gameStatus = GameStatus.INTERRUPTED;
+
 		}
 		if (!this.lpId && !this.rpId) {
 			this.disconnect();
 		}
 	}
-	
+
 	//  onLeave(client: Client, consented?: boolean) {
 	// 	console.log("-[ (Private) - onLeave() ]-");
 
@@ -265,7 +267,7 @@ export class privateRoom extends Room<GameState> {
 	// 	}
 	// 	this.disconnect();
 	// }
-	
+
 	onDispose() {
 		console.log("-[ (Private) - onDispose() ]- ");
 		// console.info('Disposing privateRoom');

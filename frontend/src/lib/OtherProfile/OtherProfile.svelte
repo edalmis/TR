@@ -5,6 +5,7 @@
 	import {
 		InvitedUserId,
 		InvitedUserLogin,
+		InvitedUserUsername,
 		session,
 		userId,
 	} from "$lib/store/store";
@@ -84,7 +85,9 @@
 					hasBlocked = user.isInBlockList;
 					isBlockedBy = user.isInBlockedByList;
 
+					// Set Writtable en cas de lancement d'invitation
 					InvitedUserLogin.set(user.login);
+					InvitedUserUsername.set(user.username);
 					InvitedUserId.set(user.id);
 				}
 

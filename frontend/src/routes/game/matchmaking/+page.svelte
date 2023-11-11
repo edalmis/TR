@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
-	import { clientColyseus } from "$lib/store/store";
+	import { clientColyseus, roomColyseus } from "$lib/store/store";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
 	// import { PaddleDirection } from "$lib/game/PaddleDirection";
@@ -33,7 +33,6 @@
 	let id: number;
 	let client: any;
 	// **************      **************      ************** //
-	
 
 	// Writable userInfos
 	let username: string = "john";
@@ -147,8 +146,6 @@
 		// console.log("Le composant [Game/Create] a été démonté.");
 	});
 
-
-
 	// export async function sendHttpRequest(url: string, data: any, message: string ) {
 	// const jwt = localStorage.getItem("jwt");
 	// 	const headers = {
@@ -190,7 +187,6 @@
 	// }
 
 	async function LeaveGame() {
-	
 		const jwt = localStorage.getItem("jwt");
 		const response = await fetch("http://localhost:3000/user/leaveGame", {
 			method: "POST",
@@ -205,7 +201,6 @@
 			wsClient.emit("inGameUpdate", { myId: id });
 		}
 	}
-
 
 	async function registerScoreHistory(data: any) {
 		const jwt = localStorage.getItem("jwt");
@@ -225,7 +220,7 @@
 			console.log("-[ Match History ]-  Set !");
 		}
 	}
-			
+
 	async function initializeGame() {
 		try {
 			const roomOptions = {
@@ -240,6 +235,7 @@
 
 			inGame.set(true);
 			room = await client.joinOrCreate("pong", roomOptions);
+			roomColyseus.set(room);
 			state = room.state;
 
 			room.onMessage("state", (message: any) => {
@@ -304,9 +300,9 @@
 			case "ArrowUp":
 			case "ArrowDown":
 			case "W":
-    		case "S":
+			case "S":
 			case "w":
-    		case "s":
+			case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
 				break;
 		}
@@ -326,7 +322,6 @@
 		gameRender(ctx, state);
 	}
 </script>
-
 
 <svelte:window
 	on:resize={resizeCanvas}

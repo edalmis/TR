@@ -1,36 +1,44 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onDestroy} from "svelte";
+	import { onDestroy } from "svelte";
 	import {
-		winnerScore, 
-		ballSpeed, 
-		InvitedUserLogin, 
+		winnerScore,
+		ballSpeed,
+		InvitedUserLogin,
 		backgroundColor,
 		paddleSize,
-	 } from "$lib/store/store";
-    import GameModal from "$lib/game/gameModal.svelte";
-    import { showModal } from "$lib/store/ModalValues";
-	let speed:number = 1; // Default value for speed
+		InvitedUserUsername,
+	} from "$lib/store/store";
+	import GameModal from "$lib/game/gameModal.svelte";
+	import { showModal } from "$lib/store/ModalValues";
+	let speed: number = 1; // Default value for speed
 	let scoreToWin: string = "3"; // Default value for score to win
 	let isModalOpen = false;
-	let colorMode: string = 'blue';
-	let paddle: string = 'normal';
+	let colorMode: string = "blue";
+	let paddle: string = "normal";
 
 	let borderColors: Record<string, string> = {
-        green: 'rgb(0,100,0)',
-        blue: 'rgb(70,130,180)',
-    	orange:'rgb(255,143,31)',
-    };
-	
+		green: "rgb(0,100,0)",
+		blue: "rgb(70,130,180)",
+		orange: "rgb(255,143,31)",
+	};
+
 	$: {
-        const selectedColor = colorMode;
-        if (selectedColor in borderColors) {
-            document.documentElement.style.setProperty('--border-color', borderColors[selectedColor]);
-        }
-    }
-	let invited: string;	 // Game User Login to Invite
+		const selectedColor = colorMode;
+		if (selectedColor in borderColors) {
+			document.documentElement.style.setProperty(
+				"--border-color",
+				borderColors[selectedColor]
+			);
+		}
+	}
+	let invitedLogin: string; // Game User Login to Invite
 	InvitedUserLogin.subscribe((a) => {
-		invited = a;
+		invitedLogin = a;
+	});
+	let invitedUsername: string;
+	InvitedUserUsername.subscribe((a) => {
+		invitedUsername = a;
 	});
 
 	const openModal = () => {
@@ -39,35 +47,32 @@
 	const closeModal = () => {
 		isModalOpen = false;
 	};
-	
-	function openGameRuleModal(){
+
+	function openGameRuleModal() {
 		showModal.set(true);
 	}
 	function closeGameRuleModal() {
-        showModal.set(false);
-    }
-	function redirectToMatchmaking() {
-    	goto('/game/matchmaking');
-  	}
+		showModal.set(false);
+	}
+	// function redirectToMatchmaking() {
+	// 	goto("/game/matchmaking");
+	// }
 
 	const onSubmit = () => {
-
 		const winnerScoreMap: Record<string, number> = {
 			"3": 3,
 			"5": 5,
-		}
+		};
 		winnerScore.set(winnerScoreMap[scoreToWin]);
 
 		const winnerScoreValue = winnerScoreMap[scoreToWin];
 		winnerScore.set(winnerScoreValue);
-
 
 		paddleSize.set(paddle);
 		backgroundColor.set(colorMode);
 		ballSpeed.set(speed);
 		closeModal();
 		goto("/game/create");
-		
 	};
 	onDestroy(() => {
 		closeModal();
@@ -75,84 +80,103 @@
 </script>
 
 <main class="game-background">
-	<div class ='button-container'>
+	<div class="button-container">
 		<!-- <button style="margin-top: 2px"
 		on:click={redirectToMatchmaking} class="create-privateRoom-button" > MatchMaking 
 		</button> -->
-		<button style="margin-top: 2px" on:click={openModal} class="create-privateRoom-button">Create PrivateGame with '{invited}' </button>
-		<button style="margin-top: 2px"on:click={openGameRuleModal} class="create-privateRoom-button">
+		<button
+			style="margin-top: 2px"
+			on:click={openModal}
+			class="create-privateRoom-button"
+			>Create PrivateGame with '{invitedUsername}'
+		</button>
+		<button
+			style="margin-top: 2px"
+			on:click={openGameRuleModal}
+			class="create-privateRoom-button"
+		>
 			Game Rules
-		  </button>
+		</button>
 	</div>
 </main>
 <!-- <h1>[Create Game] with 🎋 * {invited} * 🏓</h1> -->
 
 {#if $showModal}
-<div class="modal">
-    <div class="modal-content">
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <span class="close" on:click={closeGameRuleModal}>&times;</span>
-        <h2 class="py-2 text-4xl text-white">Game Rules</h2>
+	<div class="modal">
+		<div class="modal-content">
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<span class="close" on:click={closeGameRuleModal}>&times;</span>
+			<h2 class="py-2 text-4xl text-white">Game Rules</h2>
 
-            <p >To win, be the first to reach the winning score.</p>
+			<p>To win, be the first to reach the winning score.</p>
 			<p>Designate right and left players; left player starts.</p>
 			<p>Use 'up','down', 'W','S' to move paddle and hit the ball.</p>
 			<p>Invitations initiated by the left player.</p>
 			<p>Choose between 3vs3 or 5vs5 games.</p>
 			<p>Select game speed (0-3).</p>
 			<p>Customize your paddle size.</p>
-           	<p>Stay in the game; disconnecting forfeits the match to your opponent.</p>
-    </div>
-</div>
+			<p>
+				Stay in the game; disconnecting forfeits the match to your
+				opponent.
+			</p>
+		</div>
+	</div>
 {/if}
 
 <GameModal bind:isOpen={isModalOpen} on:close={closeModal}>
-<form on:submit|preventDefault={onSubmit}>
-	<div class="onSubmitPrivateRoom-container">
-		<h2 class="py-2 text-4xl text-white">Let's Play with '{invited}'</h2>
-		<label>
-			Choose ping-pong court color :
-			<select bind:value={colorMode}>
-				<option value="green">Sprite</option>
-				<option value="blue">Pepsi Blue</option>
-				<option value="orange">Fanta</option>
-			</select>
-		</label>
+	<form on:submit|preventDefault={onSubmit}>
+		<div class="onSubmitPrivateRoom-container">
+			<h2 class="py-2 text-4xl text-white">
+				Let's Play with '{invitedUsername}'
+			</h2>
+			<label>
+				Choose ping-pong court color :
+				<select bind:value={colorMode}>
+					<option value="green">Sprite</option>
+					<option value="blue">Pepsi Blue</option>
+					<option value="orange">Fanta</option>
+				</select>
+			</label>
 
-
-		<!-- <label for="basic-range">Range Label</label>
+			<!-- <label for="basic-range">Range Label</label>
 		<Range on:change={(e ) => speed = e.detail.speed} id="basic-silder" /> -->
 
 			<label for="speed-range" class="label">
-				Speed : 
-				<input type="range" id="speed-range" min="1" max="3" bind:value={speed} class="range" />
-				<span > {speed} / 3</span>
+				Speed :
+				<input
+					type="range"
+					id="speed-range"
+					min="1"
+					max="3"
+					bind:value={speed}
+					class="range"
+				/>
+				<span> {speed} / 3</span>
 			</label>
 
-		<label>
-			Paddle Size :
-			<select bind:value={paddle}>
-				<option value="normal">normal</option>
-				<option value="small">small</option>
-				<option value="invisible">invisible</option>
-			</select>
-		</label>
+			<label>
+				Paddle Size :
+				<select bind:value={paddle}>
+					<option value="normal">normal</option>
+					<option value="small">small</option>
+					<option value="invisible">invisible</option>
+				</select>
+			</label>
 
-		<label>
-			Score to Win :
-			<select bind:value={scoreToWin}>
-				<option value="3">3 vs 3</option>
-				<option value="5">5 vs 5</option>
-			</select>
-		</label>
-		<button type="submit">Create Game</button>
-	</div>
-</form>
+			<label>
+				Score to Win :
+				<select bind:value={scoreToWin}>
+					<option value="3">3 vs 3</option>
+					<option value="5">5 vs 5</option>
+				</select>
+			</label>
+			<button type="submit">Create Game</button>
+		</div>
+	</form>
 </GameModal>
 
 <style>
-
 	.button-container {
 		display: flex;
 		justify-content: center; /* Center horizontally */
@@ -175,7 +199,7 @@
 
 	.create-privateRoom-button {
 		background-color: #03080cbd; /* Blue background color */
-		font-family: 'fantasy';
+		font-family: "fantasy";
 		color: white; /* White text color */
 		border: none;
 		padding: 10px 20px; /* Add padding to make the button larger */
@@ -186,9 +210,8 @@
 		/* Center the button horizontally */
 		display: block;
 		margin: 0 auto;
+	}
 
-		}
-		
 	.create-privateRoom-button:hover {
 		background-color: #007bff; /* Darker blue color on hover */
 	}
@@ -197,7 +220,7 @@
 		/* display: block; */
 		display: flex;
 		/* flex-direction: column; */
-		align-items: center;  /* text aligns with the column.*/
+		align-items: center; /* text aligns with the column.*/
 		margin-bottom: 10px;
 		color: rgb(29, 41, 131);
 		/* margin: px; */
@@ -206,48 +229,54 @@
 	}
 
 	.range {
-    width: 30%; /* Adjust the width as needed */
-    background: linear-gradient(to right, #007bff, #00cc99); /* Gradient background */
-    border: none;
-    border-radius: 10px; /* Rounded corners */
-    padding: 1px;
-    margin: 2px 0;
-    -webkit-appearance: none; /* Remove default appearance */
-}
+		width: 30%; /* Adjust the width as needed */
+		background: linear-gradient(
+			to right,
+			#007bff,
+			#00cc99
+		); /* Gradient background */
+		border: none;
+		border-radius: 10px; /* Rounded corners */
+		padding: 1px;
+		margin: 2px 0;
+		-webkit-appearance: none; /* Remove default appearance */
+	}
 
-.range::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Remove default appearance for thumb */
-    width: 20px; /* Set thumb width */
-    height: 20px; /* Set thumb height */
-    background: #00cc99; /* Thumb color */
-    border: 2px solid #d5dfe9; /* Thumb border */
-    border-radius: 66%; /* Rounded thumb */
-    cursor: pointer; /* Show pointer cursor on hover */
-}
+	.range::-webkit-slider-thumb {
+		-webkit-appearance: none; /* Remove default appearance for thumb */
+		width: 20px; /* Set thumb width */
+		height: 20px; /* Set thumb height */
+		background: #00cc99; /* Thumb color */
+		border: 2px solid #d5dfe9; /* Thumb border */
+		border-radius: 66%; /* Rounded thumb */
+		cursor: pointer; /* Show pointer cursor on hover */
+	}
 
-	input, select, button {
-    background: rgba(217, 204, 204, 0.8);
-    border: none;
-    padding: 10px;
-    border-radius: 20px;
-}
-.py-2{
-	font-family: fantasy;	
-}
+	input,
+	select,
+	button {
+		background: rgba(217, 204, 204, 0.8);
+		border: none;
+		padding: 10px;
+		border-radius: 20px;
+	}
+	.py-2 {
+		font-family: fantasy;
+	}
 
-button {
-    cursor: pointer;
-    color: white; /* Change text color to white */
-    background: #007bff; /* A cool blue color */
-    border-radius: 3px;
-    padding: 10px 20px;
-    font-size: 18px;
-    border: 2px solid #eff1f4;
-    transition: background 0.3s ease, color 0.3s ease;
-	border-radius: 30px;
-}
+	button {
+		cursor: pointer;
+		color: white; /* Change text color to white */
+		background: #007bff; /* A cool blue color */
+		border-radius: 3px;
+		padding: 10px 20px;
+		font-size: 18px;
+		border: 2px solid #eff1f4;
+		transition: background 0.3s ease, color 0.3s ease;
+		border-radius: 30px;
+	}
 
-button:hover {
-    background: #245a1a; /* Darker blue on hover */
-}
+	button:hover {
+		background: #245a1a; /* Darker blue on hover */
+	}
 </style>
