@@ -20,6 +20,7 @@ export let gameUserToInvite = writable("");
 // Game Options
 export let gameState = writable<GameState>();
 export let clientColyseus = writable();
+export let roomColyseus = writable();
 export let backgroundColor = writable("");
 export let paddleSize = writable("");
 export let ballSpeed = writable(0);
@@ -28,6 +29,7 @@ export let dataGame = writable(null);
 export let leftPlayerUsername = writable('John');
 export let rightPlayerUsername = writable('Tony');
 export let InvitedUserLogin = writable('Bob');
+export let InvitedUserUsername = writable('Boby 🤓 🦄');
 export let InvitedUserId = writable(0);
 export let inviteNotif = writable(false);
 export let inviteNotifModal = writable(false);
