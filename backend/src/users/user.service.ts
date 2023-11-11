@@ -432,9 +432,9 @@ export class UserService {
 		// transforme id en objet user 
 		let usersInGameDatas: any[] = [];
 		if (inGameIdList.length != 0)
-			for (const id of inGameIdList) {
+			for (const idUser of inGameIdList) {
 		// console.log('test [ ID ] : ', id)
-				const user = await this.find_user_by_id(id);
+				const user = await this.find_user_by_id(idUser);
 				usersInGameDatas.push({ id: user.id, username: user.userName, avatar: user.avatar });
 			}
 		console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
