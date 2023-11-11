@@ -3,7 +3,6 @@ import { PaddleDirection, Physics, PhysicsOptions } from "./game.physics";
 import { GameState, GameStatus } from "./game.serverSchema";
 import { Injectable } from '@nestjs/common';
 import { UserService } from 'src/users/user.service';
-import { timeout } from 'rxjs';
 
 export interface PaddleMoveMessage {
 	newDirection: PaddleDirection;
@@ -165,8 +164,7 @@ export class privateRoom extends Room<GameState> {
 
 
 	private update(deltaTime: number, loginName: string) {
-		if (this.state.gameStatus !== GameStatus.PLAYING) return;
-
+		if (this.state.gameStatus !== GameStatus.PLAYING && this.state.gameStatus !== GameStatus.INTERRUPTED) return;
 		if (this.physics.checkLeftWall()) {
 			this.state.scoreboard.right += 1;
 			this.state.ball.center();
@@ -177,52 +175,56 @@ export class privateRoom extends Room<GameState> {
 			this.state.ball.center();
 			this.physics.setAngle(Math.PI);
 		}
+		if (this.state.gameStatus === GameStatus.INTERRUPTED) {
 
-		// -[ End of Game ]- 
-		if (this.state.scoreboard.left >= this.winningScore || this.state.scoreboard.right >= this.winningScore) {
-			this.state.gameStatus = GameStatus.FINISHED;
-
-			let winnerMessage: string = 'Good Job *** You WON *** !';
-			let looserMessage: string = ' *** L O O S E R ***';
-			// Enregistrement Scores (Match History)
-			// console.log(' -[ GameFinisheD ]- LpUsername: ', this.lpUserName, ' - scoreLeft: ', this.state.scoreboard.left, '  RpUsername: ', this.rpUserName, '  scoreRight: ', this.state.scoreboard.right)
-			// console.log(' -[ GameFinisheD ]- scoreLeft: ', this.state.scoreboard.left, '  scoreRight: ', this.state.scoreboard.right)
-			const gameResults = {
-				lpUserId: this.lpUserId,
-				lpScore: this.state.scoreboard.left,
-				rpUserId: this.rpUserId,
-				rpScore: this.state.scoreboard.right,
-			}
-			console.log('-------Game Finished:');
-			if (this.state.scoreboard.left > this.state.scoreboard.right) // [* Left Player Won *]
-			{
-				console.log(' - Game Results:', gameResults);
-				//console.log('[ tentative - Increment Rank Left Won ]...')
-				this.broadcast('updateWinningScore', { winningScore: this.winningScore });
-				this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
-				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
-				this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.lpUserName }, { except: [this.client1] });
-				//this.broadcast('winnerLogin', {winnerLogin : this.lpUserName});
-
-				console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
-				console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
-			}
-			else //  [ *Right Player Won* ]
-			{
-				console.log('[ tentative - Increment Rank Right Won ]...')
-				this.broadcast('updateWinningScore', { winningScore: this.winningScore });
-				this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
-				this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
-				this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.rpUserName }, { except: [this.client2] });
-				// this.broadcast('winnerLogin', {winnerLogin : this.rpUserName})
-
-				console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
-				console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
-			}
 		}
 
-		this.physics.update(deltaTime);
+		else {
+			// -[ End of Game ]- 
+			if (this.state.scoreboard.left >= this.winningScore || this.state.scoreboard.right >= this.winningScore) {
+				this.state.gameStatus = GameStatus.FINISHED;
 
+				let winnerMessage: string = 'Good Job *** You WON *** !';
+				let looserMessage: string = ' *** L O O S E R ***';
+				// Enregistrement Scores (Match History)
+				// console.log(' -[ GameFinisheD ]- LpUsername: ', this.lpUserName, ' - scoreLeft: ', this.state.scoreboard.left, '  RpUsername: ', this.rpUserName, '  scoreRight: ', this.state.scoreboard.right)
+				// console.log(' -[ GameFinisheD ]- scoreLeft: ', this.state.scoreboard.left, '  scoreRight: ', this.state.scoreboard.right)
+				const gameResults = {
+					lpUserId: this.lpUserId,
+					lpScore: this.state.scoreboard.left,
+					rpUserId: this.rpUserId,
+					rpScore: this.state.scoreboard.right,
+				}
+				console.log('-------Game Finished:');
+				if (this.state.scoreboard.left > this.state.scoreboard.right) // [* Left Player Won *]
+				{
+					console.log(' - Game Results:', gameResults);
+					//console.log('[ tentative - Increment Rank Left Won ]...')
+					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
+					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
+					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
+					this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.lpUserName }, { except: [this.client1] });
+					//this.broadcast('winnerLogin', {winnerLogin : this.lpUserName});
+
+					console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
+					console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
+				}
+				else //  [ *Right Player Won* ]
+				{
+					console.log('[ tentative - Increment Rank Right Won ]...')
+					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
+					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
+					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
+					this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.rpUserName }, { except: [this.client2] });
+					// this.broadcast('winnerLogin', {winnerLogin : this.rpUserName})
+
+					console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
+					console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
+				}
+			}
+
+			this.physics.update(deltaTime);
+		}
 		this.onMessage('paddleMove', (client, message) => {
 			if (client.id === this.rpId) {
 				this.physics.setRightPaddleDirection(message.newDirection);
@@ -240,8 +242,31 @@ export class privateRoom extends Room<GameState> {
 			this.rpId = undefined;
 		}
 		if (!this.lpId || !this.rpId) {
-			this.state.gameStatus = GameStatus.INTERRUPTED;
-
+			if (this.state.gameStatus !== GameStatus.FINISHED) {
+				this.state.gameStatus = GameStatus.FINISHED;
+				if (!this.lpId) {
+					this.state.scoreboard.left = 0;
+					this.state.scoreboard.right = 7;
+				}
+				else {
+					this.state.scoreboard.left = 7;
+					this.state.scoreboard.right = 0;
+				}
+				const gameResults = {
+					lpUserId: this.lpUserId,
+					lpScore: this.state.scoreboard.left,
+					rpUserId: this.rpUserId,
+					rpScore: this.state.scoreboard.right,
+				}
+				if (!this.lpId) {
+					this.broadcast('opponentLeft', {}, { except: [this.client1] });
+					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
+				}
+				else {
+					this.broadcast('opponentLeft', {}, { except: [this.client2] });
+					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
+				}
+			}
 		}
 		if (!this.lpId && !this.rpId) {
 			this.disconnect();

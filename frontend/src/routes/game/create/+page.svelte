@@ -296,6 +296,10 @@
 				registerScoreHistory(data);
 			});
 
+			room.onMessage("opponentLeft", () => {
+				alert("You Won Bro!, Your opponent left");
+			});
+
 			room.onMessage("gameFinished", (message: any) => {
 				// alert(message.winner);
 				if (message.winnerLogin) {
