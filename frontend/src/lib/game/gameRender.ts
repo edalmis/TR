@@ -173,8 +173,7 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 			drawTextCenter(ctx, 'Game Over');
 			break;
 		case GameStatus.INTERRUPTED:
-			drawTextCenter(ctx, 'Opponent left');
-			
+			drawTextCenter(ctx, 'Opponent left, You Won Bro !');
 			break;
 	}
 
