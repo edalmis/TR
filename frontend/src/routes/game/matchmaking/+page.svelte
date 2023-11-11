@@ -267,6 +267,10 @@
 				}
 				LeaveGame();
 			});
+			// room.onMessage('interupted', () => {
+			// 	// client.disconnection();
+			// 	room.leave();
+			// })
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);
 		}

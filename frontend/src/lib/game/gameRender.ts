@@ -174,6 +174,7 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 			break;
 		case GameStatus.INTERRUPTED:
 			drawTextCenter(ctx, 'Opponent left');
+			
 			break;
 	}
 

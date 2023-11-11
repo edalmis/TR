@@ -148,6 +148,8 @@ export class PongRoom extends Room<GameState> {
 				UserService.inGameUsersSet.add(this.lpUserId);
 				PongRoom.roomPlayerInfosMap.set(1, userInfos);
 
+				
+
 				// // [ Debug ] // // // // // // // // // // // // //
 				// mapSize = PongRoom.roomPlayerInfosMap.size;
 				// console.log(" -[ OnJoin ]- mapSize: ", mapSize)
@@ -238,11 +240,13 @@ export class PongRoom extends Room<GameState> {
 		}
 		if (!this.lpId || !this.rpId) {
 			this.state.gameStatus = GameStatus.INTERRUPTED;
+			// this.broadcast('interupted');
+			
 		}
 		if (!this.lpId && !this.rpId) {
 			this.disconnect();
 		}
-		//this.disconnect();
+		// this.disconnect();
 	}
 	onDispose() {
 		console.log("-[ onDispose() ]- ");
