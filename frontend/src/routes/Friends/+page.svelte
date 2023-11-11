@@ -540,7 +540,7 @@
 </script>
 
 <ul role="list" class="divide-y divide-gray-100">
-	<h1>Find friends</h1>
+	<!-- <h1>Find friends</h1> -->
 	{#if show_Modal}
 		<div>
 			<Modal>
@@ -566,7 +566,7 @@
 								}}>Send Direct message</button
 							> -->
 		<div>
-			<h2>Online Users</h2>
+			<h3>Online Users</h3>
 			<li class="flex justify-between" />
 			{#if onlineUserDatasEmptyArray === true}
 				<li class="flex justify-between gap-x-6 py-5">
@@ -586,7 +586,7 @@
 						<li class="flex justify-between gap-x-6 py-5">
 							<div class="flex min-w-0 gap-x-4">
 								<img
-									class="h-12 w-13 flex-none rounded-full bg-gray-50"
+									class="h-12 w-12 flex-none rounded-full bg-gray-50"
 									style="margin-left: 20px;"
 									src={avatar}
 									alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
@@ -1221,12 +1221,34 @@
 </ul>
 
 <style>
+
+	li {
+		line-height: 1.0; 
+	}
+
+	.text-xs,
+	.text-sm {
+		line-height: 0.85;
+		/* text-indent: 1em; */
+	}
+
 	h2 {
+		text-indent: 1em;
+		line-height:0.5;
 		color: rgb(241, 58, 58);
 		align-items: center;
+		
 	}
-	h1 {
+	h3 {
+		text-indent: 1em;
+		line-height:2;
+		color: rgb(241, 58, 58);
+		align-items: center;
+		
+	}
+	/* h1 {
 		color: rgb(134, 58, 241);
 		align-items: center;
-	}
+		line-height:3;
+	} */
 </style>

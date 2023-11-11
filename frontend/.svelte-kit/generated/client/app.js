@@ -13,20 +13,21 @@ export const nodes = [
 	() => import('./nodes/9'),
 	() => import('./nodes/10'),
 	() => import('./nodes/11'),
-	() => import('./nodes/12')
+	() => import('./nodes/12'),
+	() => import('./nodes/13')
 ];
 
 export const server_loads = [0];
 
 export const dictionary = {
-		"/": [5],
-		"/Chat": [6],
-		"/DM": [7],
-		"/Friends": [8],
-		"/Profile": [9],
-		"/game": [10,[2]],
-		"/game/create": [11,[2,3]],
-		"/game/matchmaking": [12,[2,4]]
+		"/": [6],
+		"/Chat": [7],
+		"/DM": [8],
+		"/Friends": [9,[2]],
+		"/Profile": [10],
+		"/game": [11,[3]],
+		"/game/create": [12,[3,4]],
+		"/game/matchmaking": [13,[3,5]]
 	};
 
 export const hooks = {

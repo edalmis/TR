@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/game/create/+layout.svelte";
+export { default as component } from "../../../../src/routes/game/+layout.svelte";

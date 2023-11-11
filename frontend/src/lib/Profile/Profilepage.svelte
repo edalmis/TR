@@ -463,7 +463,7 @@
 	h1 {
 		font-family: inherit;
 		align-items: center;
-		color:  rgb(26, 112, 26);
+		color:  rgb(227, 238, 227);
 	}
 
 	h3 {

@@ -35,8 +35,6 @@ export let inviteNotif = writable(false);
 export let inviteNotifModal = writable(false);
 export let iAmInvited = writable(false);
 
-
-
 export let inGame = writable(false);
 export let launchedGame = writable(false);
 
