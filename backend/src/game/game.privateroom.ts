@@ -271,6 +271,7 @@ export class privateRoom extends Room<GameState> {
 		if (!this.lpId && !this.rpId) {
 			this.disconnect();
 		}
+		this.disconnect();
 	}
 
 	//  onLeave(client: Client, consented?: boolean) {

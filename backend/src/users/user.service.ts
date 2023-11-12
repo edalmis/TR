@@ -431,11 +431,16 @@ export class UserService {
 		const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
 		// transforme id en objet user 
 		let usersInGameDatas: any[] = [];
-		if (inGameIdList.length != 0)
+		console.log(' [ getInGameUsers ] inGameIdList.length: ', inGameIdList.length);
+		console.log(' [ getInGameUsers ] inGameIdList[]: ', inGameIdList);
+		const idListLength: number = inGameIdList.length;
+		if (idListLength != 0)
 			for (const idUser of inGameIdList) {
-		// console.log('test [ ID ] : ', id)
-				const user = await this.find_user_by_id(idUser);
-				usersInGameDatas.push({ id: user.id, username: user.userName, avatar: user.avatar });
+				console.log('test [ ID ] : ', idUser)
+				if (idUser != 0) {
+					const user = await this.find_user_by_id(idUser);
+					usersInGameDatas.push({ id: user.id, username: user.userName, avatar: user.avatar });
+				}
 			}
 		console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
 		return usersInGameDatas;

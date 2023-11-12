@@ -2,7 +2,11 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
-	import { clientColyseus, roomColyseus } from "$lib/store/store";
+	import {
+		clientColyseus,
+		isItARefreshement,
+		roomColyseus,
+	} from "$lib/store/store";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
 	// import { PaddleDirection } from "$lib/game/PaddleDirection";
@@ -19,6 +23,7 @@
 		launchedGame,
 		navbar,
 	} from "$lib/store/store";
+	import { goto } from "$app/navigation";
 
 	let state: GameState;
 	let room: Room<GameState>;
@@ -38,23 +43,21 @@
 	let username: string = "john";
 
 	let wsClient: any;
-	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
 
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-			wsClient.emit("inGameUpdate", { myId: id });
-		}
-	}
+	let refresh: boolean;
 
 	onMount(() => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ Matchmaking ] ! ***[ Refresh ]*** !");
+			// localStorage.removeItem("jwt");
+			// localStorage.clear();
+			goto("/");
+		} else {
+			console.log(" [ Matchmaking ] *{ Not a Refresh ! }* ");
+		}
 		// [ MatchMaking ] // // // // // // // // // // // // // // // // // // // // // //
 		winnerScore.set(3);
 		ballSpeed.set(3);
@@ -135,15 +138,21 @@
 	});
 
 	onDestroy(() => {
-		room.send("player_disconnected", {
+		// if (refresh === false) {
+		let theRoom: any;
+		roomColyseus.subscribe((a: any) => {
+			theRoom = a;
+		});
+		theRoom.send("player_disconnected", {
 			messageDuFront: "Salut du Frontend onDestroy SveltKit !",
 		});
-		room.leave();
+		theRoom.leave();
 		inGame.set(false);
 		LeaveGame();
 		closeModal();
 		navbar.set(true);
 		// console.log("Le composant [Game/Create] a été démonté.");
+		// }
 	});
 
 	// export async function sendHttpRequest(url: string, data: any, message: string ) {
@@ -185,6 +194,24 @@
 	// 	const message = "-[ Enter Game Button ]-";
 	// 	await sendHttpRequest(url,null , message);
 	// }
+	async function EnterGame() {
+		const jwt = localStorage.getItem("jwt");
+		const response = await fetch("http://localhost:3000/user/enterGame", {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${jwt}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (response.ok) {
+			console.log("-[ Enter Game Button ]- ");
+			session.subscribe((a: any) => {
+				wsClient = a;
+			});
+			wsClient.emit("inGameUpdate", { myId: id });
+		}
+	}
 
 	async function LeaveGame() {
 		const jwt = localStorage.getItem("jwt");

@@ -7,7 +7,14 @@
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues";
-	import { authentificated, session, user, userId, dmNotif} from "$lib/store/store";
+	import { dmNotif } from "$lib/store/store";
+	import {
+		authentificated,
+		isItARefreshement,
+		session,
+		user,
+		userId,
+	} from "$lib/store/store";
 	import OtherProfile from "$lib/OtherProfile/OtherProfile.svelte";
 	// import ImgPreviewProfile from "$lib/Profile/ImgPreviewProfile.svelte";
 
@@ -35,7 +42,7 @@
 		JSON.parse(sessionStorage.getItem("messagedUsers") || "[]")
 	);
 	let id: number;
-	id = $user.id;
+	// id = $user.id;
 	userId.subscribe((a: number) => {
 		id = a;
 	});
@@ -91,7 +98,18 @@
 	// let friendsListEmptyArray: boolean = false;
 	let pictureLink: string;
 
+	let refresh: boolean;
 	onMount(async () => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ Friends ] ! ***[ Refresh ]*** !");
+			goto("/");
+		} else {
+			console.log(" [ Friends ] *{ Not a Refresh ! }* ");
+		}
+
 		try {
 			const jwt = localStorage.getItem("jwt");
 			if (!jwt) {
@@ -400,11 +418,9 @@
 			console.log("Friend OnMount PB");
 		}
 		$session.on("newMessagedm", (data: any) => {
-			
-			alert("You have new directmessage!");//--------------------3
+			alert("You have new directmessage!"); //--------------------3
 			dmNotif.set(true); //---------------4
-		
-			});
+		});
 	});
 
 	onDestroy(() => {
@@ -413,7 +429,7 @@
 		socket.off("friendListUpdate");
 		socket.off("pendingListUpdate");
 		socket.off("sentRequestsListUpdate");
-		$session.off('newMessagedm');
+		$session.off("newMessagedm");
 		// socket.off('');
 	});
 
@@ -512,8 +528,12 @@
 
 	function handleButtonClick(use: string) {
 		// console.log('use-----------', use)
-		const isBlockedByMe = usersIBlockedList.some(user => user.username === use);
-        const isBlockedByOthers = usersWhoBlockedMeList.some(user => user.username === use);
+		const isBlockedByMe = usersIBlockedList.some(
+			(user) => user.username === use
+		);
+		const isBlockedByOthers = usersWhoBlockedMeList.some(
+			(user) => user.username === use
+		);
 
 		if (isBlockedByMe || isBlockedByOthers) {
 			alert("Sending direct message blocked!");
@@ -622,7 +642,8 @@
 										>
 									</p>
 								</div>
-								<button class="mt-1 truncate text-xs leading-5 text-gray-500"
+								<button
+									class="mt-1 truncate text-xs leading-5 text-gray-500"
 									on:click={() => handleButtonClick(username)}
 								>
 									Send DM</button
@@ -762,7 +783,8 @@
 									>
 								</p>
 							</div>
-							<button class="mt-1 truncate text-xs leading-5 text-gray-500"
+							<button
+								class="mt-1 truncate text-xs leading-5 text-gray-500"
 								on:click={() => handleButtonClick(username)}
 							>
 								Send DM</button
@@ -991,7 +1013,7 @@
 								<p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
-									<button 
+									<button
 										on:click={() => {
 											handleSeeProfil(username);
 										}}
@@ -1228,9 +1250,8 @@
 </ul>
 
 <style>
-
 	li {
-		line-height: 1.0; 
+		line-height: 1;
 	}
 
 	.text-xs,
@@ -1241,17 +1262,15 @@
 
 	h2 {
 		text-indent: 1em;
-		line-height:0.5;
+		line-height: 0.5;
 		color: rgb(241, 58, 58);
 		align-items: center;
-		
 	}
 	h3 {
 		text-indent: 1em;
-		line-height:2;
+		line-height: 2;
 		color: rgb(241, 58, 58);
 		align-items: center;
-		
 	}
 	/* h1 {
 		color: rgb(134, 58, 241);

@@ -1,8 +1,14 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { session, user, dmNotif} from "$lib/store/store";
+	import {
+		session,
+		user,
+		dmNotif,
+		isItARefreshement,
+	} from "$lib/store/store";
 	import { browser } from "$app/environment";
 	import EmojiPicker from "../../components/EmojiPicker.svelte";
+	import { goto } from "$app/navigation";
 
 	let isPageFocused = true;
 	let rooms: Array<any> = [];
@@ -16,7 +22,7 @@
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 	let blockedUsername: boolean = false;
 	let messageListContainer: any = null;
-	let msg:any;
+	let msg: any;
 
 	interface Emoji {
 		unicode: string;
@@ -44,7 +50,18 @@
 		messageListContainer.scrollTop = messageListContainer.scrollHeight;
 	}
 
+	let refresh: boolean;
 	onMount(() => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ DM ] ! ***[ Refresh ]*** !");
+			goto("/");
+		} else {
+			console.log(" [ DM ] *{ Not a Refresh ! }* ");
+		}
+
 		// askNotificationPermission();
 
 		if (!browser || !$session) return;
@@ -109,11 +126,12 @@
 
 		$session.on("newMessagedm", (data: any) => {
 			messages = [...messages, data.messages];
-			const isNOnDMPage = !window.location.href.includes("localhost/DM");///1-------
+			const isNOnDMPage = !window.location.href.includes("localhost/DM"); ///1-------
 
-			if (!isPageFocused && isNOnDMPage) {//------2
+			if (!isPageFocused && isNOnDMPage) {
+				//------2
 				// showNotification(data.messages.message);
-				alert("You have new directmessage!");//--------------------3
+				alert("You have new directmessage!"); //--------------------3
 				dmNotif.set(true); //---------------4
 			}
 			scrollToBottom();
@@ -126,54 +144,57 @@
 		};
 	});
 
-	function handleClick(use: number, logine:string) {
-        // console.log('use----------',use)
-        if (!(
-			blockedUsername = usersIBlockedList.some(blockedUser => blockedUser.username == logine)
-        )) blockedUsername = usersWhoBlockedMeList.some(blockedBy => blockedBy.username == logine);
-        
-		
-        // console.log('blockedusername--', blockedUsername);
-        if (blockedUsername) {
-            alert('Sending direct message blocked!');
-        }
-        else{
-            $session.emit('sendMessage', {
-                        message: chatMessage,
-                        sendBy: $user.id,
-                        sendTo: use
-                    })
-                    chatMessage = '';
-                    showEmojiPicker = false;
-        }
-    }
+	function handleClick(use: number, logine: string) {
+		// console.log('use----------',use)
+		if (
+			!(blockedUsername = usersIBlockedList.some(
+				(blockedUser) => blockedUser.username == logine
+			))
+		)
+			blockedUsername = usersWhoBlockedMeList.some(
+				(blockedBy) => blockedBy.username == logine
+			);
+
+		// console.log('blockedusername--', blockedUsername);
+		if (blockedUsername) {
+			alert("Sending direct message blocked!");
+		} else {
+			$session.emit("sendMessage", {
+				message: chatMessage,
+				sendBy: $user.id,
+				sendTo: use,
+			});
+			chatMessage = "";
+			showEmojiPicker = false;
+		}
+	}
 
 	function handleKeyPress(event: any) {
 		if (event.key === "Enter" && !event.shiftKey) {
-					event.preventDefault();
-					handleClick(
-		(rooms[roomSelected].userOne.id === $user.id)
-			? rooms[roomSelected].userTwo.id
-			: rooms[roomSelected].userOne.id,
-		(rooms[roomSelected].userOne.id === $user.id)
-			? rooms[roomSelected].userTwo.login
-			: rooms[roomSelected].userOne.login
-		);        }
+			event.preventDefault();
+			handleClick(
+				rooms[roomSelected].userOne.id === $user.id
+					? rooms[roomSelected].userTwo.id
+					: rooms[roomSelected].userOne.id,
+				rooms[roomSelected].userOne.id === $user.id
+					? rooms[roomSelected].userTwo.login
+					: rooms[roomSelected].userOne.login
+			);
 		}
+	}
 
 	function handleEmojiSelect(event: any) {
-    const selectedEmoji = event.detail.emoji;
-    chatMessage += selectedEmoji;
-    // console.log('emo',selectedEmoji)
-    // Do something with the selectedEmoji
-  }
+		const selectedEmoji = event.detail.emoji;
+		chatMessage += selectedEmoji;
+		// console.log('emo',selectedEmoji)
+		// Do something with the selectedEmoji
+	}
 </script>
 
 <svelte:window
 	on:focus={() => (isPageFocused = true)}
 	on:blur={() => (isPageFocused = false)}
 />
-
 
 <div class="w-full h-full flex">
 	<div class="room-list">
@@ -202,19 +223,21 @@
 				class="message-list overflow-y-scroll"
 				bind:this={messageListContainer}
 			>
-			{#each messages.filter(msg => 
-				!usersIBlockedList.some(user => user.username === msg.senderLogin) &&
-				!usersWhoBlockedMeList.some(user => user.username === msg.senderLogin)) as msg}
-                <div class="relative w-full h-40 p-2">
-                    <div class="message {msg.sendBy == $user.id ? 'right-0' : 'left-0'}">
-                        <strong>|{msg.senderLogin}|</strong>
-                        <strong style="margin-right: 1rem;">:</strong>
-                        <br>{msg.message}<br>
-                        <strong style="margin-right: 1rem;"></strong>
-                        <small>[{msg.date}]</small>
-                    </div>
-                </div>
-            {/each}
+				{#each messages.filter((msg) => !usersIBlockedList.some((user) => user.username === msg.senderLogin) && !usersWhoBlockedMeList.some((user) => user.username === msg.senderLogin)) as msg}
+					<div class="relative w-full h-40 p-2">
+						<div
+							class="message {msg.sendBy == $user.id
+								? 'right-0'
+								: 'left-0'}"
+						>
+							<strong>|{msg.senderLogin}|</strong>
+							<strong style="margin-right: 1rem;">:</strong>
+							<br />{msg.message}<br />
+							<strong style="margin-right: 1rem;" />
+							<small>[{msg.date}]</small>
+						</div>
+					</div>
+				{/each}
 			</div>
 
 			<div class="chat-wrapper">
@@ -225,24 +248,28 @@
 				/>
 				<button
 					class="absolute right-5 top-1/2 -translate-y-1/2 p-3 bg-blue-400"
-					on:click={() => handleClick(
-					(rooms[roomSelected].userOne.id === $user.id)
-						? rooms[roomSelected].userTwo.id
-						: rooms[roomSelected].userOne.id,
-					(rooms[roomSelected].userOne.id === $user.id)
-						? rooms[roomSelected].userTwo.login
-						: rooms[roomSelected].userOne.login)
-						}
-                    >send
+					on:click={() =>
+						handleClick(
+							rooms[roomSelected].userOne.id === $user.id
+								? rooms[roomSelected].userTwo.id
+								: rooms[roomSelected].userOne.id,
+							rooms[roomSelected].userOne.id === $user.id
+								? rooms[roomSelected].userTwo.login
+								: rooms[roomSelected].userOne.login
+						)}
+					>send
 				</button>
-				<button class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400" on:click={() => showEmojiPicker = !showEmojiPicker}>
+				<button
+					class="absolute right-20 top-1/2 -translate-y-1/2 p-3 bg-yellow-400"
+					on:click={() => (showEmojiPicker = !showEmojiPicker)}
+				>
 					😀
 				</button>
-				 {#if showEmojiPicker}
-								<div class="custom-div">  
-									<EmojiPicker on:emojiSelect={handleEmojiSelect} />
-								</div>
-				{/if}  
+				{#if showEmojiPicker}
+					<div class="custom-div">
+						<EmojiPicker on:emojiSelect={handleEmojiSelect} />
+					</div>
+				{/if}
 			</div>
 		</div>
 	{/if}
@@ -331,24 +358,25 @@
 	}
 
 	.room:hover {
-		filter: brightness(0.9);    }
+		filter: brightness(0.9);
+	}
 
-    .room:hover {
-        background-color: red;
-        color: white;
-    }
-    .custom-div {
-        position: absolute;
-        bottom: 70px;
-        right: 20px;
-        border: 1px solid #000; /* Black border */
-        padding: 10px;
-        transition: background-color 0.3s; /* Smooth background color transition */
-        cursor: pointer;
-    }
+	.room:hover {
+		background-color: red;
+		color: white;
+	}
+	.custom-div {
+		position: absolute;
+		bottom: 70px;
+		right: 20px;
+		border: 1px solid #000; /* Black border */
+		padding: 10px;
+		transition: background-color 0.3s; /* Smooth background color transition */
+		cursor: pointer;
+	}
 
-    /* Define hover styles */
-    .custom-div:hover {
-        background-color: #555; /* Change the background color on hover */
-    }
+	/* Define hover styles */
+	.custom-div:hover {
+		background-color: #555; /* Change the background color on hover */
+	}
 </style>

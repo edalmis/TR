@@ -4,15 +4,29 @@
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
 	import { io } from "socket.io-client";
-	import { dataGame, inviteNotif, inviteNotifModal, launchedGame, session, user,navbar} from "$lib/store/store";
-	import { isGoogleAuthActivated, qrGoogle, userLogin, userId, actualUsername} from "$lib/store/store";
+	import {
+		dataGame,
+		inviteNotif,
+		inviteNotifModal,
+		launchedGame,
+		session,
+		user,
+		navbar,
+		isItARefreshement,
+	} from "$lib/store/store";
+	import {
+		isGoogleAuthActivated,
+		qrGoogle,
+		userLogin,
+		userId,
+		actualUsername,
+	} from "$lib/store/store";
 	import { authentificated } from "$lib/store/store";
 	import Modal from "$lib/modals/Modal.svelte";
 	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
 	import LoginFortyTwo from "$lib/Login/LoginFortyTwo.svelte";
 	import GameInvitation from "$lib/game/GameInvitation.svelte";
 	import GameNavbar from "$lib/game/GameNavbar.svelte";
-
 
 	let login: any;
 	let auth: boolean = false;
@@ -24,7 +38,6 @@
 	qrGoogle.subscribe((a) => {
 		ImgQrCode = a;
 	});
-	
 
 	let googleActivated = false;
 	isGoogleAuthActivated.subscribe((a) => {
@@ -54,6 +67,7 @@
 		});
 		$session = socket;
 		session.set(socket);
+		isItARefreshement.set(false);
 
 		socket.on("receivedGameInvitation", (data) => {
 			console.log(
@@ -77,14 +91,15 @@
 				},
 			});
 			if (response.ok) {
-				const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
-				$user = user;
-				userLogin.set(user.login);
-				userId.set(user.id);
-				actualUsername.set(user.userName);
+				const moi = await response.json(); // Convertit la réponse JSON en objet JavaScript
+				// $user = user;
+				user.set(moi);
+				userLogin.set(moi.login);
+				userId.set(moi.id);
+				actualUsername.set(moi.userName);
 
 				console.log("2fa Value from user: [ ", user.fa2, " ]");
-				return user.id;
+				return moi.id;
 			} else {
 				localStorage.clear();
 				authentificated.set(false);
@@ -127,7 +142,10 @@
 						authentificated.set(true);
 
 						let id = await getUserInfo(token);
-						if (id == -1) return;
+						if (id == -1) {
+							console.log(" [ Layout ] GetUserInfos Failed");
+							return;
+						}
 						// Créer une connexion websocket si auth est ok
 						connectSocket(id);
 
@@ -214,7 +232,6 @@
 		});
 	}
 </script>
-
 
 <div class="w-full h-full">
 	{#if !auth}

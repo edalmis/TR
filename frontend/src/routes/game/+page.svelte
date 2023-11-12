@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onDestroy } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 	import {
 		winnerScore,
 		ballSpeed,
@@ -8,6 +8,7 @@
 		backgroundColor,
 		paddleSize,
 		InvitedUserUsername,
+		isItARefreshement,
 	} from "$lib/store/store";
 	import GameModal from "$lib/game/gameModal.svelte";
 	import { showModal } from "$lib/store/ModalValues";
@@ -22,6 +23,19 @@
 		blue: "rgb(70,130,180)",
 		orange: "rgb(255,143,31)",
 	};
+
+	let refresh: boolean;
+	onMount(() => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ First GamePage ] ! ***[ Refresh ]*** !");
+			goto("/");
+		} else {
+			console.log(" [ First GamePage ] *{ Not a Refresh ! }* ");
+		}
+	});
 
 	$: {
 		const selectedColor = colorMode;

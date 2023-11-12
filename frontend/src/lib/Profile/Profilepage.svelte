@@ -21,7 +21,11 @@
 	});
 	///////////////////////////////////////////////////
 
-	import { actualUsername, authentificated } from "$lib/store/store";
+	import {
+		actualUsername,
+		authentificated,
+		isItARefreshement,
+	} from "$lib/store/store";
 	import { googleAuth } from "$lib/store/store";
 	let Google2fa: boolean = false;
 
@@ -49,13 +53,22 @@
 	function handleOpenModal() {
 		isModalOpen = true;
 	}
-	function handleCancelModal(){
-		isModalOpen = false
+	function handleCancelModal() {
+		isModalOpen = false;
 	}
 
-
-
+	let refresh: boolean;
 	onMount(async () => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ ProfilePage ] ! ***[ Refresh ]*** !");
+			goto("/");
+		} else {
+			console.log(" [ ProfilePage ] *{ Not a Refresh ! }* ");
+		}
+
 		try {
 			const jwt = localStorage.getItem("jwt");
 			if (!jwt) {
@@ -139,10 +152,9 @@
 	}
 
 	// async function handleChangeImage() {
-	async function resetProfilePhoto () {
-
+	async function resetProfilePhoto() {
 		const jwt = localStorage.getItem("jwt");
-		const data = { login: login, img: originalPictureLink};
+		const data = { login: login, img: originalPictureLink };
 		const response = await fetch("http://localhost:3000/auth/changeImage", {
 			method: "POST",
 			headers: {
@@ -152,9 +164,8 @@
 			body: JSON.stringify({ data }),
 		});
 
-		
 		if (response.ok) {
-			// const user = await response.json(); 
+			// const user = await response.json();
 			// pictureLink = user.avatar;
 			console.log("-[ Change Image ]- New Image bien Set");
 		}
@@ -162,22 +173,22 @@
 		goto("/");
 	}
 
-// 	function resetProfilePhoto() {
-//     pictureLink = originalPictureLink;
-//   }
+	// 	function resetProfilePhoto() {
+	//     pictureLink = originalPictureLink;
+	//   }
 	//////teste///
 	let people = [
-		{ newImg: 'images/defaultAvatar.jpg' },
-		{ newImg: 'images/Happiness.jpeg' },
-		{ newImg: 'images/Love.jpeg' },
-		{ newImg: 'images/Anger.jpeg' },
-		{ newImg: 'images/Disgust.jpeg' },
-		{ newImg: 'images/Fear.jpeg' },
-		{ newImg: 'images/Sadness.jpeg' },
+		{ newImg: "images/defaultAvatar.jpg" },
+		{ newImg: "images/Happiness.jpeg" },
+		{ newImg: "images/Love.jpeg" },
+		{ newImg: "images/Anger.jpeg" },
+		{ newImg: "images/Disgust.jpeg" },
+		{ newImg: "images/Fear.jpeg" },
+		{ newImg: "images/Sadness.jpeg" },
 	];
 
-	let prefix = '';
-	let newImg = '';
+	let prefix = "";
+	let newImg = "";
 	let i = 0;
 
 	$: filteredPeople = prefix
@@ -192,7 +203,7 @@
 	$: reset_inputs(selected);
 
 	function reset_inputs(person: any) {
-		newImg = person ? person.newImg : '';
+		newImg = person ? person.newImg : "";
 	}
 </script>
 
@@ -224,11 +235,15 @@
 	<div class="profile-Page">
 		<!-- <h1 > {username} Profile:  You will get a Cookie if you are a Good Boy</h1> -->
 		<h1>
-			<span class="profileName">{username}</span> 's Profile 
+			<span class="profileName">{username}</span> 's Profile
 			<span> You will get a Cookie if you are a Good Boy </span>
 		</h1>
 		<div>
-			<img class="profile-pic" src={pictureLink} alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :" />
+			<img
+				class="profile-pic"
+				src={pictureLink}
+				alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
+			/>
 		</div>
 		<div>
 			<p>Login : {login}</p>
@@ -238,94 +253,151 @@
 			<p>Total Won: {win} - {loose} :Lost</p>
 			<p>
 				<span> Google Authentificator : </span>
-					{#if Google2fa === true}
-						<span>
-							<button
-								on:click={() => {
-									openModal("Try Disable 2fa");
-									goto("/Profile");
-								}}
-							>
-								Disable
-							</button>
-						</span>
-					{:else}
-						<span>
-							<button
-								on:click={() => {
-									openModal("Try Enable 2fa");
-									goto("/Profile");
-								}}
-							>
-								Enable
-							</button>
-						</span>
-					{/if}
-				</p>
+				{#if Google2fa === true}
+					<span>
+						<button
+							on:click={() => {
+								openModal("Try Disable 2fa");
+								goto("/Profile");
+							}}
+						>
+							Disable
+						</button>
+					</span>
+				{:else}
+					<span>
+						<button
+							on:click={() => {
+								openModal("Try Enable 2fa");
+								goto("/Profile");
+							}}
+						>
+							Enable
+						</button>
+					</span>
+				{/if}
+			</p>
 			<p2 class="flex-container">
 				<!-- <p2> -->
-					<span class="label">Change username :</span>
-					<input
-						type="text"
-						placeholder="new username"
-						bind:value={newUserName}
-					/>
-					<!-- <button on:click={handleChangeName}>Change</button> -->
-					<button
-						on:click={async () => {
-							if (!newUserName.length) {
-								indication_username = "Cannot be empty";
-							} else if (newUserName.length > 20) {
-								indication_username = "20 char Max";
-							} else {
-								handleOpenModal();
-							}
-						}}>Change
-					</button>
-					{#if indication_username !== ""}
+				<span class="label">Change username :</span>
+				<input
+					type="text"
+					placeholder="new username"
+					bind:value={newUserName}
+				/>
+				<!-- <button on:click={handleChangeName}>Change</button> -->
+				<button
+					on:click={async () => {
+						if (!newUserName.length) {
+							indication_username = "Cannot be empty";
+						} else if (newUserName.length > 20) {
+							indication_username = "20 char Max";
+						} else {
+							handleOpenModal();
+						}
+					}}
+					>Change
+				</button>
+				{#if indication_username !== ""}
 					<div class="indication">{indication_username}</div>
 				{/if}
 				<!-- </p2> -->
 			</p2>
-			
+
 			{#if isModalOpen}
-			<div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-				<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-			
-				<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-				<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-					<div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-						<div class="sm:flex sm:items-start">
-						<div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-							<svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-							<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-							</svg>
-						</div>
-						<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-							<h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Change username</h3>
-							<div class="mt-2">
-							<p class="text-sm text-gray-500">Are you sure to change this username? Once you change, you can stil change again. Don't worry, all your histories remain.</p>
+				<div
+					class="relative z-10"
+					aria-labelledby="modal-title"
+					role="dialog"
+					aria-modal="true"
+				>
+					<div
+						class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+					/>
+
+					<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+						<div
+							class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+						>
+							<div
+								class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+							>
+								<div
+									class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4"
+								>
+									<div class="sm:flex sm:items-start">
+										<div
+											class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+										>
+											<svg
+												class="h-6 w-6 text-red-600"
+												fill="none"
+												viewBox="0 0 24 24"
+												stroke-width="1.5"
+												stroke="currentColor"
+												aria-hidden="true"
+											>
+												<path
+													stroke-linecap="round"
+													stroke-linejoin="round"
+													d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+												/>
+											</svg>
+										</div>
+										<div
+											class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left"
+										>
+											<h3
+												class="text-base font-semibold leading-6 text-gray-900"
+												id="modal-title"
+											>
+												Change username
+											</h3>
+											<div class="mt-2">
+												<p
+													class="text-sm text-gray-500"
+												>
+													Are you sure to change this
+													username? Once you change,
+													you can stil change again.
+													Don't worry, all your
+													histories remain.
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div
+									class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+								>
+									<button
+										id="leaveGameButton"
+										on:click={handleChangeName}
+										type="button"
+										class="inline-flex w-full justify-center rounded-md bg-emerald-200 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+										>Change it</button
+									>
+									<button
+										on:click={handleCancelModal}
+										type="button"
+										class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+										>Cancel</button
+									>
+								</div>
 							</div>
 						</div>
-						</div>
-					</div>
-					<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-						<button id="leaveGameButton" on:click={handleChangeName} type="button" class="inline-flex w-full justify-center rounded-md bg-emerald-200 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Change it</button>
-						<button on:click={handleCancelModal} type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
-					</div>
 					</div>
 				</div>
-				</div>
-			</div>
-  			{/if}
+			{/if}
 
-			  <p2 class="flex-container">
+			<p2 class="flex-container">
 				<span class="label">Change Avatar : </span>
-			
-				<label><input bind:value={newImg} placeholder="newImg"/></label>
-			
-				<button on:click={async () => {
+
+				<label><input bind:value={newImg} placeholder="newImg" /></label
+				>
+
+				<button
+					on:click={async () => {
 						if (!newImg.length) {
 							indication_avatar = "Cannot be empty";
 						} else if (newImg.length > 200) {
@@ -334,8 +406,10 @@
 							// handleOpenModal()
 							openModal("Try Avatar");
 							goto("/Profile");
-						}}}> 
-						Preview
+						}
+					}}
+				>
+					Preview
 				</button>
 
 				<button on:click={resetProfilePhoto}>Reset</button>
@@ -347,7 +421,6 @@
 				{#if indication_avatar !== ""}
 					<div class="indication">{indication_avatar}</div>
 				{/if}
-			
 			</p2>
 
 			<select bind:value={i} size={4}>
@@ -355,7 +428,7 @@
 					<option value={i}>{person.newImg}</option>
 				{/each}
 			</select>
-<!-- 			
+			<!-- 			
 
 			<div>
 				<span> Google Authentificator : </span>
@@ -439,14 +512,13 @@
 		/* margin: 0 auto; */
 	}
 
-	p{
+	p {
 		/* margin-top: 0; */
 		color: rgb(32, 43, 33);
 		/* margin-left: 0px;	 */
 		font-family: inherit;
 		align-items: center;
 	}
-
 
 	/*label {
 		max-width: 100%;
@@ -462,11 +534,11 @@
 
 	.label {
 		flex: 0.5; /* This will make the label take up all available space */
-	
-	/* Adjust the margin as needed */
+
+		/* Adjust the margin as needed */
 	}
 
-	.profileName{
+	.profileName {
 		align-items: center;
 		color: rgb(237, 228, 228);
 		font-size: 30px;
@@ -477,7 +549,7 @@
 	h1 {
 		font-family: inherit;
 		align-items: center;
-		color:  rgb(227, 238, 227);
+		color: rgb(227, 238, 227);
 	}
 
 	h3 {

@@ -275,7 +275,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const title = data.title;
 		const isPrivate = data.isPrivate;
 		let password = data.password; // Moved outside of destructuring to handle encryption            const userId = data.userId;
-		const userId = data.userId;
+		const userId = data.IdduUser;
 		let hashedPassword; // To store the hashed password
 		// console.log("USERRRRR", data)
 		// console.log("TiTLE", tittle)

@@ -33,6 +33,7 @@
 		leftPlayerUsername,
 		navbar,
 		launchedGame,
+		isItARefreshement,
 	} from "$lib/store/store";
 
 	// let state: GameState;
@@ -81,8 +82,18 @@
 			wsClient.emit("inGameUpdate", { myId: id });
 		}
 	}
-
+	let refresh: boolean;
 	onMount(() => {
+		isItARefreshement.subscribe((a: boolean) => {
+			refresh = a;
+		});
+		if (refresh === true) {
+			console.log(" [ CreateGame ] ! ***[ Refresh ]*** !");
+			goto("/");
+		} else {
+			console.log(" [ CreateGame ] *{ Not a Refresh ! }* ");
+		}
+
 		console.log("Connection Ws Colyseus [ 3001 ]");
 		client = new Colyseus.Client("ws://localhost:3001");
 		clientColyseus.set(client);
