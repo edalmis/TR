@@ -7,7 +7,7 @@
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues";
-	import { authentificated, session, user, userId } from "$lib/store/store";
+	import { authentificated, session, user, userId, dmNotif} from "$lib/store/store";
 	import OtherProfile from "$lib/OtherProfile/OtherProfile.svelte";
 	// import ImgPreviewProfile from "$lib/Profile/ImgPreviewProfile.svelte";
 
@@ -399,6 +399,12 @@
 		} catch (e) {
 			console.log("Friend OnMount PB");
 		}
+		$session.on("newMessagedm", (data: any) => {
+			
+			alert("You have new directmessage!");//--------------------3
+			dmNotif.set(true); //---------------4
+		
+			});
 	});
 
 	onDestroy(() => {
@@ -407,6 +413,7 @@
 		socket.off("friendListUpdate");
 		socket.off("pendingListUpdate");
 		socket.off("sentRequestsListUpdate");
+		$session.off('newMessagedm');
 		// socket.off('');
 	});
 

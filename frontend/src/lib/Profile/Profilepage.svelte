@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onMount } from "svelte";
+	import { onMount, onDestroy} from "svelte";
 
 	// Imports -[ MODALS ]- ///////////////////////////
 	import Modal from "$lib/modals/Modal.svelte";
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues"; // Est ce que Display une Modal  -[ boolean ]-
+	import { session, dmNotif} from "$lib/store/store";
+
+	
 	let show_Modal: boolean;
 	showModal.subscribe((a: boolean) => {
 		show_Modal = a;
@@ -96,6 +99,17 @@
 		googleAuth.subscribe((a) => {
 			Google2fa = a;
 		});
+		$session.on("newMessagedm", (data: any) => {
+			
+			alert("You have new directmessage!");//--------------------3
+			dmNotif.set(true); //---------------4
+		
+		});
+	});
+
+	onDestroy(() => {
+		$session.off('newMessagedm');
+		// socket.off('');
 	});
 
 	async function handleChangeName() {

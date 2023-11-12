@@ -215,12 +215,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
 		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
 		if (userOne) {
-			userOne.emit('newMessage', {
+			userOne.emit('newMessagedm', {
 				messages: a
 			})
 		}
 		if (userTwo) {
-			userTwo.emit('newMessage', {
+			userTwo.emit('newMessagedm', {
 				messages: a
 			})
 		}
@@ -241,12 +241,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const userOne = this.socketsByUserID.get(data.sendBy.toString());
 		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
 		if (userOne) {
-			userOne.emit('newMessage', {
+			userOne.emit('newMessagedm', {
 				messages: a
 			})
 		}
 		if (userTwo) {
-			userTwo.emit('newMessage', {
+			userTwo.emit('newMessagedm', {
 				messages: a
 			})
 		}

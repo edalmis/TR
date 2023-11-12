@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { session, user ,kickEndTimes, muteEndTimes} from "$lib/store/store";
+    import { session, user ,kickEndTimes, muteEndTimes, dmNotif} from "$lib/store/store";
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte"
 
@@ -228,6 +228,12 @@ $session.on("roomUpdated", (updatedRoom: any) => {
                 chatRooms = [...chatRooms]; // Re-assign to trigger reactivity in Svelte
             }
         });
+        $session.on("newMessagedm", (data: any) => {
+			
+			alert("You have new directmessage!");//--------------------3
+			dmNotif.set(true); //---------------4
+		
+			});
 
         return (() => {
             $session.off('repChatRooms');
@@ -241,6 +247,8 @@ $session.on("roomUpdated", (updatedRoom: any) => {
             $session.off("mutedFromRoom");
             $session.off("bannedFromRoom");
             $session.off("roomUpdated");
+            $session.off('newMessagedm');
+
 
             
 
