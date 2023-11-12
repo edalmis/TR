@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 	import { closeModal } from "$lib/store/ModalValues";
 	import {
-    	dataGame,
+		dataGame,
 		iAmInvited,
 		inviteNotif,
 		inviteNotifModal,
@@ -12,6 +12,7 @@
 		leftPlayerUsername,
 		backgroundColor,
 		paddleSize,
+		isInvitationStillOn,
 	} from "$lib/store/store";
 	import { onDestroy } from "svelte";
 
@@ -21,29 +22,45 @@
 	});
 	let gameData: any;
 	dataGame.subscribe((a) => {
-		gameData= a;
+		gameData = a;
 	});
+
+	let isInvitOn: boolean;
 
 	function handleAccept() {
 		inviteNotif.set(false);
 		inviteNotifModal.set(false);
 		iAmInvited.set(true);
-		
-		// InvitedUserLogin.set(gameData.login);
-		winnerScore.set(gameData.scoreToWin);
-		rightPlayerUsername.set(gameData.loginToInvite);
-		leftPlayerUsername.set(gameData.login);
-		backgroundColor.set(gameData.colorMode);
-		paddleSize.set(gameData.paddleSize);
-		closeModal();
-		goto("/game/create");
+		isInvitationStillOn.subscribe((a) => {
+			isInvitOn = a;
+		});
+		if (isInvitOn) {
+			// InvitedUserLogin.set(gameData.login);
+			winnerScore.set(gameData.scoreToWin);
+			rightPlayerUsername.set(gameData.loginToInvite);
+			leftPlayerUsername.set(gameData.login);
+			backgroundColor.set(gameData.colorMode);
+			paddleSize.set(gameData.paddleSize);
+			closeModal();
+			goto("/game/create");
+		} else {
+			alert("Your Opponent Canceled the Game");
+			iAmInvited.set(false);
+			closeModal();
+		}
 	}
 
 	function handleRefuse() {
-		wsClient.emit("refuseGameInvitation", gameData);
-		// console.log(" [GameInvitaion -- handleRefuse] data:", data);
+		isInvitationStillOn.subscribe((a) => {
+			isInvitOn = a;
+		});
+		if (isInvitOn) {
+			wsClient.emit("refuseGameInvitation", gameData);
+			// console.log(" [GameInvitaion -- handleRefuse] data:", data);
+		}
 		inviteNotif.set(false);
 		inviteNotifModal.set(false);
+		iAmInvited.set(false);
 		closeModal();
 		// goto("/game");
 	}

@@ -13,6 +13,8 @@
 		user,
 		navbar,
 		isItARefreshement,
+		isInvitationStillOn,
+		iAmInvited,
 	} from "$lib/store/store";
 	import {
 		isGoogleAuthActivated,
@@ -27,6 +29,7 @@
 	import LoginFortyTwo from "$lib/Login/LoginFortyTwo.svelte";
 	import GameInvitation from "$lib/game/GameInvitation.svelte";
 	import GameNavbar from "$lib/game/GameNavbar.svelte";
+	import { closeModal } from "$lib/store/ModalValues";
 
 	let login: any;
 	let auth: boolean = false;
@@ -77,7 +80,16 @@
 			launchedGame.set(true);
 			inviteNotif.set(true);
 			dataGame.set(data);
+			isInvitationStillOn.set(true);
 			// goto("/game/create");
+		});
+
+		socket.on("updateInvitation", () => {
+			inviteNotif.set(false);
+			isInvitationStillOn.set(false);
+			iAmInvited.set(false);
+			// closeModal();
+			// goto("/");
 		});
 	}
 

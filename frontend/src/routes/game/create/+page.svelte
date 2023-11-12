@@ -34,6 +34,8 @@
 		navbar,
 		launchedGame,
 		isItARefreshement,
+		dataToCancelInvitation,
+		hasInvitedSomeone,
 	} from "$lib/store/store";
 
 	// let state: GameState;
@@ -64,6 +66,7 @@
 	let invited: boolean;
 	let gameData: any;
 	let login: string;
+	let hasInvited: boolean;
 
 	let state: GameState;
 
@@ -186,6 +189,10 @@
 		LeaveGame();
 		closeModal();
 		navbar.set(true);
+		session.subscribe((a: any) => {
+			wsClient = a;
+		});
+		wsClient.off("refuseCloseGame");
 		console.log("Le composant [Game/Create] a été démonté.");
 	});
 
@@ -202,6 +209,17 @@
 		if (response.ok) {
 			console.log("-[ Leave Game ]- ");
 			wsClient.emit("inGameUpdate", { myId: id });
+			let datas: any;
+			dataToCancelInvitation.subscribe((a) => {
+				datas = a;
+			});
+			hasInvitedSomeone.subscribe((a) => {
+				hasInvited = a;
+			});
+			if (hasInvited === true) {
+				hasInvitedSomeone.set(false);
+				wsClient.emit("cancelInvitation", datas);
+			}
 		}
 	}
 
@@ -254,7 +272,11 @@
 				paddleSize: paddleSizeChoice,
 				backgroundColor: backgroundColorChoice,
 			};
+			dataToCancelInvitation.set(roomOptions);
 			inGame.set(true);
+			iAmInvited.subscribe((a) => {
+				invited = a;
+			});
 			console.log(" [ initiationGame ] gameData: ", gameData);
 			console.log(" [ initiationGame ] invited: ", invited);
 			if (invited === false) {
@@ -286,6 +308,7 @@
 					session.subscribe((a: any) => {
 						wsServer = a;
 					});
+					hasInvitedSomeone.set(true);
 					wsServer.emit("sendGameInvitation", data);
 				}
 			});

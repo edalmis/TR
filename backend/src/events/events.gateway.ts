@@ -151,6 +151,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		this.server.emit('inGameFriendUpdate', inGameUsersList)
 	}
 
+	@SubscribeMessage('cancelInvitation')
+	invitationUpdate(client: Socket, data: any) {
+		console.log(' -[ Events cancelInvitation ]- data: ', data);
+		let friendClient: any = this.socketsByUserID.get(data.idToInvite.toString());
+		friendClient.emit('updateInvitation');
+
+	}
+
 	// [ Game Invitation ] // // // // // // // // // //
 	@SubscribeMessage('sendGameInvitation')
 	async sendGameInvitation(client: Socket, data: any) {
