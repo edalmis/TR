@@ -1,6 +1,14 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { session, user ,kickEndTimes, muteEndTimes} from "$lib/store/store";
+    import {
+        session,
+        user,
+        kickEndTimes,
+        muteEndTimes,
+        isItARefreshement,
+        userId,
+        dmNotif,
+    } from "$lib/store/store";
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte";
     import { goto } from "$app/navigation";
@@ -257,11 +265,9 @@
             }
         });
         $session.on("newMessagedm", (data: any) => {
-			
-			alert("You have new directmessage!");//--------------------3
-			dmNotif.set(true); //---------------4
-		
-			});
+            alert("You have new directmessage!"); //--------------------3
+            dmNotif.set(true); //---------------4
+        });
 
         return () => {
             $session.off("repChatRooms");
@@ -275,11 +281,7 @@
             $session.off("mutedFromRoom");
             $session.off("bannedFromRoom");
             $session.off("roomUpdated");
-
-            
-
-        });
-
+        };
     });
 
     function fetchMembersInRoom(roomId: string) {
