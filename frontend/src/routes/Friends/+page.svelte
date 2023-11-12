@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { onDestroy, onMount } from "svelte";
-
 	// Imports -[ MODALS ]- ///////////////////////////
 	import Modal from "$lib/modals/Modal.svelte";
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
@@ -93,7 +92,7 @@
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 
 	//let users: string[] = ["Henry", "john", "boby"];
-	let userToDisplay: string;
+	let userLoginToDisplay: string;
 	// let onlineUserEmptyArray: boolean = false;
 	// let friendsListEmptyArray: boolean = false;
 	let pictureLink: string;
@@ -227,25 +226,7 @@
 				// [ OnlineUsersDatas ]
 				socket.emit("getOnlineUsersDatas");
 
-				// const onlineUsers_url =
-				// 	"http://localhost:3000/auth/onlineUsers";
-				// const onlineUserResponse = await fetch(onlineUsers_url, {
-				// 	// const onlineUserResponse = await fetchData(onlineUsers_url, {
-				// 	method: "GET",
-				// 	headers: {
-				// 		Authorization: `Bearer ${jwt}`,
-				// 		"Content-Type": "application/json",
-				// 	},
-				// });
-
-				// if (onlineUserResponse.ok) {
-				// 	// onlineUsers = await onlineUserResponse.json();
-				// 	onlineUsers = await onlineUserResponse.json();
-				// 	if (onlineUsers.length === 0) {
-				// 		onlineUserEmptyArray = true;
-				// 	}
-				// 	console.log("onlineUsers: ", onlineUsers);
-				// }
+				// [ User - Me]
 				const response = await fetch(
 					"http://localhost:3000/user/profile",
 					{
@@ -261,7 +242,7 @@
 					pictureLink = user.avatar;
 				}
 
-				// InGame Users
+				// [ InGame Users ]
 				const inGameUsersListResponse = await fetch(
 					`http://localhost:3000/user/inGameUsers`,
 					{
@@ -280,7 +261,7 @@
 					console.log("inGameUsersList: ", inGameUsersList);
 				}
 
-				// Pending List
+				// [ Pending List ]
 				const pendingListResponse = await fetch(
 					`http://localhost:3000/user/pendingList`,
 					{
@@ -303,7 +284,7 @@
 					goto("/");
 				}
 
-				// Friends List
+				// [ Friends List ]
 				const friendsListResponse = await fetch(
 					`http://localhost:3000/user/friendsList`,
 					{
@@ -324,7 +305,7 @@
 					console.log("friendsListDatas: ", friendsListDatas);
 				}
 
-				// Sent Requests List
+				// [ Sent Requests List ]
 				const sentRequestsListResponse = await fetch(
 					`http://localhost:3000/user/sentRequestsList`,
 					{
@@ -343,7 +324,7 @@
 					console.log("sendRequest List: ", sentRequestsList);
 				}
 
-				// Users I Blocked List
+				// [ Users I Blocked List ]
 				const blockedUsersListResponse = await fetch(
 					`http://localhost:3000/user/blockUserList`,
 					{
@@ -362,7 +343,7 @@
 					console.log("usersIblockedList: ", usersIBlockedList);
 				}
 
-				// Users Who Blocked Me
+				// [ Users Who Blocked Me ]
 				const usersWhoBlockedMeListResponse = await fetch(
 					`http://localhost:3000/user/blockedByList`,
 					{
@@ -433,15 +414,18 @@
 		// socket.off('');
 	});
 
-	async function handleSeeProfil(username: string) {
-		userToDisplay = username;
+	///////////////////////////////////////////////////////////////
+	//			[  Handle Functions  ]
+	///////////////////////////////////////////////////////////////
+	async function handleSeeProfil(login: string) {
+		userLoginToDisplay = login;
 		openModal("OtherProfile");
 		goto("/Friends");
 	}
 
-	async function handleAcceptFriend(username: string) {
+	async function handleAcceptFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToAccept: friendId };
 		//console.log("-[ Add Friend ]- username sent: ", username);
 		const response = await fetch("http://localhost:3000/user/addFriend", {
 			method: "POST",
@@ -454,11 +438,11 @@
 		if (response.ok) {
 			// console.log("response { OK } du [ Add Friend ]");
 			await socket.emit("acceptOrRefuseFriendRequest", {
-				username: username,
+				idToAccept: friendId,
 				myId: id,
 			});
 			await socket.emit("updateFriendList", {
-				username: username,
+				idToAccept: friendId,
 				myId: id,
 			});
 		} else {
@@ -468,9 +452,9 @@
 		closeModal();
 	}
 
-	async function handleRefuseFriendRequest(username: string) {
+	async function handleRefuseFriendRequest(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToRefuse: friendId };
 		const response = await fetch(
 			"http://localhost:3000/user/refuseFriendRequest",
 			{
@@ -485,7 +469,7 @@
 		if (response.ok) {
 			console.log("response { OK } du [ Refuse Friend ] : ", response.ok);
 			socket.emit("acceptOrRefuseFriendRequest", {
-				username: username,
+				idToAccept: friendId,
 				myId: id,
 			});
 		} else {
@@ -495,9 +479,9 @@
 		closeModal();
 	}
 
-	async function handleRemoveFriend(username: string) {
+	async function handleRemoveFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const response = await fetch(
 			"http://localhost:3000/user/removeFriend",
@@ -512,7 +496,10 @@
 		);
 		if (response.ok) {
 			console.log("response { OK } du [ Undo Friend ] ", response.ok);
-			socket.emit("updateFriendList", { username: username, myId: id });
+			await socket.emit("updateFriendList", {
+				idToAccept: friendId,
+				myId: id,
+			});
 		} else {
 			console.log("response { NOT OK } du [ Undo Friend ]");
 		}
@@ -573,7 +560,7 @@
 			<Modal>
 				{#if selectedModal === "OtherProfile"}
 					<OtherProfile
-						username={userToDisplay}
+						username={userLoginToDisplay}
 						on:closeModal={closeModal}
 					/>
 				{/if}
@@ -608,7 +595,7 @@
 			{:else}
 				<!--  -->
 
-				{#each onlineUsersDatas as { id, username, avatar }}
+				{#each onlineUsersDatas as { id, login, username, avatar }}
 					{#if id != myId}
 						<li class="flex justify-between gap-x-6 py-5">
 							<div class="flex min-w-0 gap-x-4">
@@ -629,7 +616,7 @@
 									>
 										<button
 											on:click={() => {
-												handleSeeProfil(username);
+												handleSeeProfil(login);
 											}}
 											>See Profile
 										</button>
@@ -670,71 +657,6 @@
 				{/each}
 			{/if}
 			<li class="flex justify-between" />
-			<!-- 
-						<li>{username}</li>
-						<button on:click={() => handleButtonClick(id)}
-							>Envoyer ID</button
-						>
-					{/each} -->
-
-			<!--  -->
-			<!-- {#each onlineUsers as user}
-					<li class="flex justify-between gap-x-6 py-5">
-						<div class="flex min-w-0 gap-x-4">
-							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
-								style="margin-left: 20px;"
-								src={pictureLink}
-								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
-							/>
-							<div class="min-w-0 flex-auto">
-								<p
-									class="text-sm font-semibold leading-6 text-gray-900"
-								>
-									{user}
-								</p>
-								<p
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
-								>
-									<button
-										on:click={() => {
-											handleSeeProfil(user);
-										}}
-										>See Profile
-									</button>
-								</p>
-								<p
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
-								>
-									<button on:click={resetMessagedUsers}
-										>Reset DM</button
-									>
-								</p>
-							</div>
-							<button on:click={() => handleButtonClick(user)}>
-								Send DM</button
-							>
-						</div>
-
-						<div class="mt-1 flex items-center gap-x-1.5">
-							<div
-								class="flex-none rounded-full bg-emerald-500/20 p-1"
-							>
-								<div
-									class="h-2 w-2 rounded-full bg-emerald-500"
-								/>
-							</div>
-							<p
-								class="text-xs leading-5 text-gray-500"
-								style="margin-right: 130px;"
-							>
-								Online
-							</p>
-						</div>
-					</li>
-				{/each}
-			{/if}
-			<li class="flex justify-between" /> -->
 
 			<h2>Online Friends</h2>
 			{#if onlineFriendsEmptyArray === true}
@@ -750,7 +672,7 @@
 				</li>
 			{:else}
 				<!-- {#each onlineFriendsList as user} -->
-				{#each onlineFriendsList as { id, username, avatar }}
+				{#each onlineFriendsList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -770,7 +692,7 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
@@ -791,13 +713,6 @@
 							>
 						</div>
 
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-									<button 
-										on:click={() => { handleSeeProfil(user);}}>See Profile 
-									</button>
-								</p>
-							</div> -->
 						<div class="mt-1 flex items-center gap-x-1.5">
 							<div
 								class="flex-none rounded-full bg-emerald-500/20 p-1"
@@ -830,7 +745,7 @@
 					</div>
 				</li>
 			{:else}
-				{#each inGameFriendsList as { id, username, avatar }}
+				{#each inGameFriendsList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<!-- <img
@@ -850,20 +765,14 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
 								</p>
 							</div>
 						</div>
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-								<button 
-									on:click={() => { handleSeeProfil(user);}}>See Profile 
-								</button>
-							</p>
-						</div> -->
+
 						<div class="mt-1 flex items-center gap-x-1.5">
 							<div
 								class="flex-none rounded-full bg-emerald-500/20 p-1"
@@ -897,7 +806,7 @@
 					</div>
 				</li>
 			{:else}
-				{#each friendsListDatas as { id, username, avatar }}
+				{#each friendsListDatas as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -917,20 +826,13 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
 								</p>
 							</div>
 						</div>
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-								<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-									<button 
-										on:click={() => {handleSeeProfil(friendUser);}}>See Profile
-									</button>
-								</p>
-							</div> -->
 
 						<div
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
@@ -941,7 +843,7 @@
 							>
 								<button
 									on:click={() => {
-										handleRemoveFriend(username);
+										handleRemoveFriend(id);
 									}}
 									>Undo Friendship
 								</button>
@@ -967,9 +869,6 @@
 							<div
 								class="hidden shrink-0 sm:flex sm:flex-col sm:items-center"
 							>
-								<!-- <p class="text-sm leading-6 text-gray-900">
-										level
-										</p> -->
 								<p
 									class="mt-1 text-xs leading-5 text-gray-500"
 									style="margin-right: 130px;"
@@ -995,7 +894,7 @@
 				</li>
 			{:else}
 				<!-- {#each pendingList as pendingUser} -->
-				{#each pendingList as { id, username, avatar }}
+				{#each pendingList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -1015,21 +914,13 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
 								</p>
 							</div>
 						</div>
-
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-								<button
-								on:click={() => {handleSeeProfil(pendingUser);}}>See Profile
-								</button>
-							</p>
-						</div> -->
 
 						<div
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
@@ -1040,7 +931,7 @@
 							>
 								<button
 									on:click={() => {
-										handleAcceptFriend(username);
+										handleAcceptFriend(id);
 									}}
 									>Accept
 								</button>
@@ -1055,7 +946,7 @@
 							>
 								<button
 									on:click={() => {
-										handleRefuseFriendRequest(username);
+										handleRefuseFriendRequest(id);
 									}}
 									>Refuse
 								</button>
@@ -1093,7 +984,7 @@
 				<p class="text-xs leading-5 text-gray-500">
 					Waiting an answer from
 				</p>
-				{#each sentRequestsList as { id, username, avatar }}
+				{#each sentRequestsList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -1113,21 +1004,13 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
 								</p>
 							</div>
 						</div>
-
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-								<button
-								on:click={() => {handleSeeProfil(requestedUser);}}>See Profile
-								</button>
-							</p>
-						</div> -->
 					</li>
 				{/each}
 			{/if}
@@ -1143,7 +1026,7 @@
 						</p>
 					</div>
 				</li>
-				{#each usersIBlockedList as { id, username, avatar }}
+				{#each usersIBlockedList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -1163,31 +1046,14 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
 								</p>
 							</div>
 						</div>
-
-						<!-- <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-							<p class="mt-1 truncate text-xs leading-5 text-gray-500">
-								<button
-								on:click={() => {handleSeeProfil(blockedUser);}}>See Profile
-								
-								</button>
-							</p>
-						</div> -->
 					</li>
-					<!-- <div class="user-card">
-							<p>{blockedUser}</p>
-							<button
-								on:click={() => {
-									handleSeeProfil(blockedUser);
-								}}>See Profile</button
-							>
-						</div> -->
 				{/each}
 			{/if}
 
@@ -1202,7 +1068,7 @@
 						</p>
 					</div>
 				</li>
-				{#each usersWhoBlockedMeList as { id, username, avatar }}
+				{#each usersWhoBlockedMeList as { id, login, username, avatar }}
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
@@ -1222,7 +1088,7 @@
 								>
 									<button
 										on:click={() => {
-											handleSeeProfil(username);
+											handleSeeProfil(login);
 										}}
 										>See Profile
 									</button>
@@ -1230,23 +1096,10 @@
 							</div>
 						</div>
 					</li>
-					<!-- <div class="user-card">
-							<p>{blockedUser}</p>
-							<button
-								on:click={() => {
-									handleSeeProfil(blockedUser);
-								}}>See Profile</button
-							>
-						</div> -->
 				{/each}
 			{/if}
 		</div>
 	{/if}
-	<!-- </div> -->
-	<!-- <div>
-		<img src="images/imgT3.jpg" alt="Image presentation" />
-	</div> -->
-	<!-- </div> -->
 </ul>
 
 <style>

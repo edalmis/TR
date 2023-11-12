@@ -67,14 +67,15 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			// Get l'ensemble des onLineUsers et creer la List
 			const usersDatas: any[] = [];
 			for (const [id, user] of this.onlineUsersMap) {
-				usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+				const usr = await this.userService.find_user_by_id(user.id);
+				usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
 			}
 			this.server.emit('onlineUsersUpdate', usersDatas);
 			console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
 		}
 	}
 
-	handleDisconnect(client: Socket) {
+	async handleDisconnect(client: Socket) {
 		this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
 		this.userIdFindHelper.delete(client.id);
 
@@ -87,7 +88,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
 		const usersDatas: any[] = [];
 		for (const [id, user] of this.onlineUsersMap) {
-			usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+			const usr = await this.userService.find_user_by_id(user.id);
+			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
 		}
 		this.server.emit('onlineUsersUpdate', usersDatas);
 		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
@@ -99,7 +101,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
 		client.emit('pendingListUpdate', mynewPendingList)
 
-		const friend = await this.userService.find_user_by_userName(data.username);
+		const friend = await this.userService.find_user_by_id(data.idToAccept);
 		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
 		let friendClient = this.socketsByUserID.get(friend.id.toString());
 		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
@@ -108,13 +110,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('SendFriendRequest')
 	async sendFriendRequest(client: Socket, data: any) {
 		const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
-		await this.userService.sendFriendRequest(moi.login, data.username);
+		await this.userService.sendFriendRequest(moi.login, data.otherLogin);
 
 		console.log('-[ *Events* Send friend request]- datas : ', data);
-		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friend: UserEntity = await this.userService.find_user_by_login(data.otherLogin);
 		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
 		let friendClient = this.socketsByUserID.get(friend.id.toString());
-		console.log('-[ *Events* Send friend request]- ', data.username, '  newPendingList : ', friendnewPendingList);
+		console.log('-[ *Events* Send friend request]- ', data.otherLogin, '  newPendingList : ', friendnewPendingList);
 		friendClient.emit('pendingListUpdate', friendnewPendingList);
 
 		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
@@ -125,7 +127,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('updateFriendList')
 	async updateFriend(client: Socket, data: any) {
 		console.log(' -[ EventsGateway ]- acceptFriend');
-		const friend: UserEntity = await this.userService.find_user_by_userName(data.username);
+		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
 		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
 		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
 		friendClient.emit('friendListUpdate', friendnewFriendList);
@@ -136,11 +138,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 
 	@SubscribeMessage('getOnlineUsersDatas')
-	sendOnlineUsersDatas(client: Socket) {
+	async sendOnlineUsersDatas(client: Socket) {
 		console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
 		const usersDatas: any[] = [];
 		for (const [id, user] of this.onlineUsersMap) {
-			usersDatas.push({ id: id, username: user.userName, avatar: user.avatar });
+			const usr = await this.userService.find_user_by_id(user.id);
+			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+			// usersDatas.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		client.emit('onlineUsersDatas', usersDatas);
 	}

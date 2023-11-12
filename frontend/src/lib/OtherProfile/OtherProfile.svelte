@@ -13,6 +13,7 @@
 
 	export let username: string;
 
+	let otherUser: any;
 	let login: string;
 	let id: number;
 	let pictureLink: string;
@@ -26,7 +27,7 @@
 	let isRequested: boolean;
 	let hasBlocked: boolean;
 	let isBlockedBy: boolean;
-    let isModalOpen: boolean = false;
+	let isModalOpen: boolean = false;
 
 	let games: any = [];
 	// = [
@@ -53,10 +54,10 @@
 		myId = a;
 	});
 
-	let selectedGame:any  = null;
+	let selectedGame: any = null;
 	function selectGame(game: any) {
-    selectedGame = game;
-  }
+		selectedGame = game;
+	}
 
 	onMount(async () => {
 		try {
@@ -74,27 +75,27 @@
 					},
 				});
 				if (response.ok) {
-					const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
-					console.log(" -[ Profile Other ]- User: ", user);
-					login = user.login;
-					id = user.id;
-					pictureLink = user.avatar;
-					username = user.username;
-					rank = user.rank;
-					title = user.title;
-					win = user.win;
-					loose = user.loose;
+					otherUser = await response.json(); // Convertit la réponse JSON en objet JavaScript
+					console.log(" -[ Profile Other ]- User: ", otherUser);
+					login = otherUser.login;
+					id = otherUser.id;
+					pictureLink = otherUser.avatar;
+					username = otherUser.username;
+					rank = otherUser.rank;
+					title = otherUser.title;
+					win = otherUser.win;
+					loose = otherUser.loose;
 
-					isFriend = user.isMyFriend;
-					isPending = user.isInPending;
-					isRequested = user.isInSentRequest;
-					hasBlocked = user.isInBlockList;
-					isBlockedBy = user.isInBlockedByList;
+					isFriend = otherUser.isMyFriend;
+					isPending = otherUser.isInPending;
+					isRequested = otherUser.isInSentRequest;
+					hasBlocked = otherUser.isInBlockList;
+					isBlockedBy = otherUser.isInBlockedByList;
 
 					// Set Writtable en cas de lancement d'invitation
-					InvitedUserLogin.set(user.login);
-					InvitedUserUsername.set(user.username);
-					InvitedUserId.set(user.id);
+					InvitedUserLogin.set(otherUser.login);
+					InvitedUserUsername.set(otherUser.username);
+					InvitedUserId.set(otherUser.id);
 				}
 
 				// Get Match History
@@ -120,6 +121,7 @@
 
 	async function handleSendFriendRequest() {
 		socket.emit("SendFriendRequest", {
+			otherLogin: otherUser.login,
 			username: username,
 			myId: $userId,
 		});
@@ -157,9 +159,9 @@
 	// 	// goto("/");
 	// }
 
-	async function handleAcceptFriend() {
+	async function handleAcceptFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToAccept: friendId };
 		//console.log("-[ Add Friend ]- username sent: ", username);
 		const response = await fetch("http://localhost:3000/user/addFriend", {
 			method: "POST",
@@ -171,11 +173,14 @@
 		});
 		if (response.ok) {
 			// console.log("response { OK } du [ Add Friend ]");
-			socket.emit("acceptOrRefuseFriendRequest", {
-				username: username,
+			await socket.emit("acceptOrRefuseFriendRequest", {
+				idToAccept: friendId,
 				myId: id,
 			});
-			socket.emit("updateFriendList", { username: username, myId: id });
+			await socket.emit("updateFriendList", {
+				idToAccept: friendId,
+				myId: id,
+			});
 		} else {
 			console.log("response { NOT OK } du [ Add Friend ]");
 		}
@@ -183,9 +188,35 @@
 		closeModal();
 	}
 
-	async function handleRefuseFriendRequest() {
+	// async function handleAcceptFriend() {
+	// 	const jwt = localStorage.getItem("jwt");
+	// 	const data = { username: username };
+	// 	//console.log("-[ Add Friend ]- username sent: ", username);
+	// 	const response = await fetch("http://localhost:3000/user/addFriend", {
+	// 		method: "POST",
+	// 		headers: {
+	// 			Authorization: `Bearer ${jwt}`,
+	// 			"Content-Type": "application/json",
+	// 		},
+	// 		body: JSON.stringify({ data }),
+	// 	});
+	// 	if (response.ok) {
+	// 		// console.log("response { OK } du [ Add Friend ]");
+	// 		socket.emit("acceptOrRefuseFriendRequest", {
+	// 			idToAccept: friendId,
+	// 			myId: id,
+	// 		});
+	// 		socket.emit("updateFriendList", { username: username, myId: id });
+	// 	} else {
+	// 		console.log("response { NOT OK } du [ Add Friend ]");
+	// 	}
+
+	// 	closeModal();
+	// }
+
+	async function handleRefuseFriendRequest(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToRefuse: friendId };
 		const response = await fetch(
 			"http://localhost:3000/user/refuseFriendRequest",
 			{
@@ -198,21 +229,48 @@
 			}
 		);
 		if (response.ok) {
-			// console.log("response { OK } du [ Add Friend ]");
+			console.log("response { OK } du [ Refuse Friend ] : ", response.ok);
 			socket.emit("acceptOrRefuseFriendRequest", {
-				username: username,
+				idToAccept: friendId,
 				myId: id,
 			});
 		} else {
-			console.log("response { NOT OK } du [ Add Friend ]");
+			console.log("response { NOT OK } du [ Refuse Friend ]");
 		}
 
 		closeModal();
 	}
 
-	async function handleRemoveFriend() {
+	// async function handleRefuseFriendRequest() {
+	// 	const jwt = localStorage.getItem("jwt");
+	// 	const data = { username: username };
+	// 	const response = await fetch(
+	// 		"http://localhost:3000/user/refuseFriendRequest",
+	// 		{
+	// 			method: "POST",
+	// 			headers: {
+	// 				Authorization: `Bearer ${jwt}`,
+	// 				"Content-Type": "application/json",
+	// 			},
+	// 			body: JSON.stringify({ data }),
+	// 		}
+	// 	);
+	// 	if (response.ok) {
+	// 		// console.log("response { OK } du [ Add Friend ]");
+	// 		socket.emit("acceptOrRefuseFriendRequest", {
+	// 			idToAccept: friendId,
+	// 			myId: id,
+	// 		});
+	// 	} else {
+	// 		console.log("response { NOT OK } du [ Add Friend ]");
+	// 	}
+
+	// 	closeModal();
+	// }
+
+	async function handleRemoveFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
-		const data = { username: username };
+		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const response = await fetch(
 			"http://localhost:3000/user/removeFriend",
@@ -226,15 +284,43 @@
 			}
 		);
 		if (response.ok) {
-			// console.log("response { OK } du [ Remove Friend ]");
-			socket.emit("updateFriendList", { username: username, myId: id });
+			console.log("response { OK } du [ Undo Friend ] ", response.ok);
+			await socket.emit("updateFriendList", {
+				idToAccept: friendId,
+				myId: id,
+			});
 		} else {
-			console.log("response { NOT OK } du [ Remove Friend ]");
+			console.log("response { NOT OK } du [ Undo Friend ]");
 		}
 
 		closeModal();
-		// goto("/");
 	}
+
+	// async function handleRemoveFriend() {
+	// 	const jwt = localStorage.getItem("jwt");
+	// 	const data = { username: username };
+	// 	//console.log("-[ Remove Friend ]- username sent: ", username);
+	// 	const response = await fetch(
+	// 		"http://localhost:3000/user/removeFriend",
+	// 		{
+	// 			method: "POST",
+	// 			headers: {
+	// 				Authorization: `Bearer ${jwt}`,
+	// 				"Content-Type": "application/json",
+	// 			},
+	// 			body: JSON.stringify({ data }),
+	// 		}
+	// 	);
+	// 	if (response.ok) {
+	// 		// console.log("response { OK } du [ Remove Friend ]");
+	// 		socket.emit("updateFriendList", { username: username, myId: id });
+	// 	} else {
+	// 		console.log("response { NOT OK } du [ Remove Friend ]");
+	// 	}
+
+	// 	closeModal();
+	// 	// goto("/");
+	// }
 
 	async function handleBlockUser() {
 		const jwt = localStorage.getItem("jwt");
@@ -274,17 +360,16 @@
 		} else {
 			console.log("response { NOT OK } du [ Unblock User ]");
 		}
-		isModalOpen = false
+		isModalOpen = false;
 		closeModal();
 		goto("/");
 	}
-function handleOpenModal() {
-        isModalOpen = true;
-    }
-    function handleCancelModal(){
-        isModalOpen = false
-    }
-
+	function handleOpenModal() {
+		isModalOpen = true;
+	}
+	function handleCancelModal() {
+		isModalOpen = false;
+	}
 </script>
 
 <div class="profile-Page">
@@ -306,18 +391,18 @@ function handleOpenModal() {
 	{#if isFriend === true}
 		<button
 			on:click={() => {
-				handleRemoveFriend();
+				handleRemoveFriend(id);
 			}}>undo Friendship</button
 		>
 	{:else if isPending === true}
 		<button
 			on:click={() => {
-				handleAcceptFriend();
+				handleAcceptFriend(id);
 			}}>accept Friend</button
 		>
 		<button
 			on:click={() => {
-				handleRefuseFriendRequest();
+				handleRefuseFriendRequest(id);
 			}}>Refuse Friendship</button
 		>
 	{:else if isRequested === false}
@@ -329,14 +414,16 @@ function handleOpenModal() {
 	{/if}
 
 	{#if hasBlocked === true}
-	<button class="button"
-		on:click={() => {
-			handleUnblockUser();
-			// handleOpenModal()
-		}}>Unblock</button
-	>
+		<button
+			class="button"
+			on:click={() => {
+				handleUnblockUser();
+				// handleOpenModal()
+			}}>Unblock</button
+		>
 	{:else if hasBlocked === false}
-		<button class="buttonBlock"
+		<button
+			class="buttonBlock"
 			on:click={() => {
 				// handleBlockUser();
 				handleOpenModal();
@@ -350,106 +437,125 @@ function handleOpenModal() {
 		<p>You have been blocked By {username} !</p>
 	{/if}
 </div>
-<!-- <div>
-	{#if hasBlocked === true}
-		<button
-			on:click={() => {
-				handleUnblockUser();
-			}}>Unblock</button
-		>
-	{:else if hasBlocked === false}
-		<button
-			on:click={() => {
-				handleBlockUser();
-			}}>Block</button
-		>
-	{/if} 
-</div> -->
+
 <InviteToPlayButton />
-<!-- <div>
-	<h1>Game History</h1>
-	{#if games.length > 0}
-		{#each games as game, i}
-			<p>
-				{game.player1}
-				{game.scorePlayer1} vs {game.scorePlayer2}
-				{game.player2}
-			</p>
-		{/each}
-	{:else}
-		<p>Aucune partie trouvée.</p>
-	{/if}
-</div> -->
 
 <div>
 	<h1>Game History</h1>
 	{#if games.length > 0}
-	  <ul>
-		{#each games as game, i}
-		  <!-- svelte-ignore a11y-click-events-have-key-events -->
-		  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		  <li
-			class:selected={selectedGame === game}
-			on:click={() => selectGame(game)}
-		  >
-			{game.player1} {game.scorePlayer1} vs {game.scorePlayer2} {game.player2}
-		  </li>
-		{/each}
-	  </ul>
+		<ul>
+			{#each games as game, i}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+				<li
+					class:selected={selectedGame === game}
+					on:click={() => selectGame(game)}
+				>
+					{game.player1}
+					{game.scorePlayer1} vs {game.scorePlayer2}
+					{game.player2}
+				</li>
+			{/each}
+		</ul>
 	{:else}
-	  <p>Aucune partie trouvée.</p>
+		<p>Aucune partie trouvée.</p>
 	{/if}
-  </div>
+</div>
 
-  {#if isModalOpen}
-  <div class="relative z-10" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-	  <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-	
-	  <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
-		<div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-		  <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-			<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-			  <div class="sm:flex sm:items-start">
-				<div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-				  <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-				  </svg>
+{#if isModalOpen}
+	<div
+		class="relative z-10"
+		aria-labelledby="modal-title"
+		role="dialog"
+		aria-modal="true"
+	>
+		<div
+			class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+		/>
+
+		<div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+			<div
+				class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+			>
+				<div
+					class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
+				>
+					<div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+						<div class="sm:flex sm:items-start">
+							<div
+								class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+							>
+								<svg
+									class="h-6 w-6 text-red-600"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"
+									/>
+								</svg>
+							</div>
+							<div
+								class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left"
+							>
+								<h3
+									class="text-base font-semibold leading-6 text-gray-900"
+									id="modal-title"
+								>
+									Block!?
+								</h3>
+								<div class="mt-2">
+									<p class="text-sm text-gray-500">
+										Are you sure? Once you block '{username}',
+										Don't worry, still can undo it.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div
+						class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6"
+					>
+						<button
+							id="leaveGameButton"
+							on:click={handleBlockUser}
+							type="button"
+							class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+							>Block '{username}''</button
+						>
+						<button
+							on:click={handleCancelModal}
+							type="button"
+							class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+							>Cancel</button
+						>
+					</div>
 				</div>
-				<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-				  <h3 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Block!?</h3>
-				  <div class="mt-2">
-					<p class="text-sm text-gray-500">Are you sure?  Once you block '{username}', Don't worry, still can undo it.</p>
-				  </div>
-				</div>
-			  </div>
 			</div>
-			<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-			  <button id="leaveGameButton" on:click={handleBlockUser} type="button" class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">Block '{username}''</button>
-			  <button on:click={handleCancelModal} type="button" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Cancel</button>
-			</div>
-		  </div>
 		</div>
-	  </div>
 	</div>
-	{/if}
-  
+{/if}
 
 <!-- Faire affichage de differents buttons en fonction du friend status -> sendFriendRequest,
 Unfriend -->
 
 <style>
+	li {
+		cursor: pointer;
+		padding: 0.5rem;
+		margin: 0.5rem;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+	}
 
-li {
-    cursor: pointer;
-    padding: 0.5rem;
-    margin: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-
-  li:selected {
-    background-color: #e2e8f0;
-  }
+	li:selected {
+		background-color: #e2e8f0;
+	}
 
 	button {
 		color: white; /* Change text color to white */
@@ -465,7 +571,6 @@ li {
 		margin-right: 0;
 		cursor: pointer;
 	}
-
 
 	.buttonBlock {
 		color: white; /* Change text color to white */

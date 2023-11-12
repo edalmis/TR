@@ -45,7 +45,7 @@ export class UserController {
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			const requesterProfile = await this.userService.find_user_by_login(decoded.login);
 			try {
-				const userProfile = await this.userService.find_user_by_userName(username);
+				const userProfile = await this.userService.find_user_by_login(username);
 				const user = {
 					login: userProfile.login,
 					id: userProfile.id,
@@ -99,9 +99,10 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const friendUsername: string = req.body.data.username;
+			// const friendUsername: string = req.body.data.username;
+			const friendId: number = req.body.data.idToRefuse;
 
-			const user2login = await this.userService.find_user_by_userName(friendUsername);
+			const user2login = await this.userService.find_user_by_id(friendId);
 			const user1username = await this.userService.find_user_by_login(decoded.login);
 			// clear pending and request List of User
 			await this.userService.clearUpdatePendingAndRequestList(user1username.userName, user2login.login);
@@ -119,13 +120,17 @@ export class UserController {
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			//console.log('New Jwt encode: ', decoded);
 
-			const friendUsername: string = req.body.data.username;
+			// const friendUsername: string = req.body.data.username;
+			const friendId: number = req.body.data.idToAccept;
+			console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
+
+
 			//console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
 			//console.log(" -[ addFriends  / UsrCtrl ]-  friend Username: [", friendUsername, '] et decoded.login [', decoded.login, "]");
 
-			this.userService.addFriend(decoded.login, friendUsername);
+			this.userService.addFriend(decoded.login, friendId);
 
-			const user2login = await this.userService.find_user_by_userName(friendUsername);
+			const user2login = await this.userService.find_user_by_id(friendId);
 			const user1username = await this.userService.find_user_by_login(decoded.login);
 			//this.userService.addFriend(user2login.login, user1username.userName);
 			// clear pending and request List of User
@@ -142,7 +147,12 @@ export class UserController {
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-			const friendUsername: string = req.body.data.username;
+
+			// const friendUsername: string = req.body.data.username;
+			const friendId: number = req.body.data.idToRemove;
+
+			const friend = await this.userService.find_user_by_id(friendId);
+			const friendUsername: string = friend.userName;
 			await this.userService.removeFriend(decoded.login, friendUsername);
 			const user2login = await this.userService.find_user_by_userName(friendUsername)
 			const user1username = await this.userService.find_user_by_login(decoded.login)

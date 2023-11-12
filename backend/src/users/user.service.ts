@@ -128,9 +128,9 @@ export class UserService {
 	//////////////////////////////////////////////
 
 
-	async sendFriendRequest(login: string, friendUsername: string) {
+	async sendFriendRequest(login: string, friendLogin: string) {
 		let requester = await this.find_user_by_login(login);
-		let receiver = await this.find_user_by_userName(friendUsername);
+		let receiver = await this.find_user_by_login(friendLogin);
 		if (!requester || !receiver) {
 			throw new BadRequestException('User not found');
 		}
@@ -156,10 +156,10 @@ export class UserService {
 	}
 
 
-	async addFriend(login: string, friendUsername: string) {
+	async addFriend(login: string, friendId: number) {
 		// console.log("1  -[ addFriends ]- login: [", login, "]    friendUsername [", friendUsername, "]");
 		let user1 = await this.find_user_by_login(login);
-		let user2 = await this.find_user_by_userName(friendUsername);
+		let user2 = await this.find_user_by_id(friendId);
 		//console.log("2  -[ Friends ]- user1.login [", user1.login, "] user2.login [", user2.login, "]");
 		if (!user1 || !user2) {
 			throw new BadRequestException('User not found');
@@ -179,7 +179,7 @@ export class UserService {
 		}
 
 		user1 = await this.find_user_by_login(login);
-		user2 = await this.find_user_by_userName(friendUsername);
+		user2 = await this.find_user_by_id(friendId);
 		if (!user2.friends.includes(user1.login)) {
 			user2.friends.push(user1.login);
 			await this.userRepository
@@ -260,7 +260,7 @@ export class UserService {
 		let usersPendingList: any[] = [];
 		for (const login of loginPendingList) {
 			const user = await this.find_user_by_login(login);
-			usersPendingList.push({ id: user.id, username: user.userName, avatar: user.avatar });
+			usersPendingList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		return usersPendingList;
 	}
@@ -273,7 +273,7 @@ export class UserService {
 		let userFriendsList: any[] = [];
 		for (const login of loginFriendsList) {
 			const user = await this.find_user_by_login(login);
-			userFriendsList.push({ id: user.id, username: user.userName, avatar: user.avatar });
+			userFriendsList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		return userFriendsList;
 	}
@@ -286,7 +286,7 @@ export class UserService {
 		let usersSentRequestsList: any[] = [];
 		for (const login of loginSentRequestsList) {
 			const user = await this.find_user_by_login(login);
-			usersSentRequestsList.push({ id: user.id, username: user.userName, avatar: user.avatar });
+			usersSentRequestsList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		return usersSentRequestsList;
 	}
@@ -356,7 +356,7 @@ export class UserService {
 		let userBlockList: any[] = [];
 		for (const login of loginUserBlockedList) {
 			const user = await this.find_user_by_login(login);
-			userBlockList.push({ id: user.id, username: user.userName, avatar: user.avatar });
+			userBlockList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		return userBlockList;
 	}
@@ -369,7 +369,7 @@ export class UserService {
 		let userBlockedByList: any[] = [];
 		for (const login of loginUserBlockedByList) {
 			const user = await this.find_user_by_login(login);
-			userBlockedByList.push({ id: user.id, username: user.userName, avatar: user.avatar });
+			userBlockedByList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 		}
 		return userBlockedByList;
 	}
@@ -439,7 +439,7 @@ export class UserService {
 				console.log('test [ ID ] : ', idUser)
 				if (idUser != 0) {
 					const user = await this.find_user_by_id(idUser);
-					usersInGameDatas.push({ id: user.id, username: user.userName, avatar: user.avatar });
+					usersInGameDatas.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 				}
 			}
 		console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
