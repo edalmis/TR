@@ -16,7 +16,7 @@
  <style>
 
     .friend-layout {
-        background-image: url("/images/chat_background.png");
+        background-image: url("/images/chat_background.jpg");
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
@@ -26,6 +26,7 @@
         flex-direction: column;
         position: absolute;
       }
+
     .friend-header {
       display: flex;
       justify-content: space-between;

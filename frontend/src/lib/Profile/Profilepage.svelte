@@ -236,7 +236,7 @@
 		<!-- <h1 > {username} Profile:  You will get a Cookie if you are a Good Boy</h1> -->
 		<h1>
 			<span class="profileName">{username}</span> 's Profile
-			<span> You will get a Cookie if you are a Good Boy </span>
+			<span>Give a Cookie if you are a Good Boy </span>
 		</h1>
 		<div>
 			<img
@@ -246,11 +246,30 @@
 			/>
 		</div>
 		<div>
-			<p>Login : {login}</p>
+			<!-- <p>Login : {login}</p>
 			<p>Username : {username}</p>
 			<p>Rank : {rank}</p>
 			<p>Title : {title}</p>
-			<p>Total Won: {win} - {loose} :Lost</p>
+			<p>Total Won: {win} - {loose} :Lost</p> -->
+			<p class="info-container"> 
+				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Login : </span>
+					{login}
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Username : </span>
+					{username}
+			</p>
+			<p class="info-container"> 
+				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Rank :  </span>
+					{rank}
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Title : </span>
+					{title}
+			</p>
+			<p class="info-container">
+				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Total Won/Lost : </span> 
+					{win} - {loose} 
+			</p>
+			<p>
 			<p>
 				<span> Google Authentificator : </span>
 				{#if Google2fa === true}
@@ -478,7 +497,7 @@
 		cursor: pointer;
 		color: white; /* Change text color to white */
 		border-width: 1px;
-		border-radius: 25%;
+		border-radius: 20%;
 		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
 		/* border-radius: 3px; */
 		padding: 5px 5px;
@@ -502,7 +521,7 @@
 	}
 
 	.profile-pic {
-		max-width: 31%;
+		max-width: 21%;
 		/* max-height: ; */
 		border-radius: 200px;
 		align-items: center;
@@ -534,9 +553,12 @@
 
 	.label {
 		flex: 0.5; /* This will make the label take up all available space */
-
-		/* Adjust the margin as needed */
 	}
+
+	.info-container {
+        display: flex;
+        align-items: center;
+    }
 
 	.profileName {
 		align-items: center;

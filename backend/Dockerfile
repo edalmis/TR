@@ -1,6 +1,6 @@
-FROM node:alpine
+FROM node:14-alpine
 
-WORKDIR /backend/src/app
+WORKDIR /usr/src/app
 
 COPY package*.json ./
 
@@ -10,11 +10,11 @@ COPY . .
 
 RUN npm run build
 
-EXPOSE 3000
+EXPOSE 3000 3001 3002
 
-EXPOSE 3001
-
-CMD [ "npm", "run", "start:dev"]
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
 # CMD  npm run start
 
 # FROM node:alpine AS production

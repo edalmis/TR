@@ -10,7 +10,7 @@
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
 	// import { PaddleDirection } from "$lib/game/PaddleDirection";
-	import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
+	// import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
 		actualUsername,
@@ -155,45 +155,6 @@
 		// }
 	});
 
-	// export async function sendHttpRequest(url: string, data: any, message: string ) {
-	// const jwt = localStorage.getItem("jwt");
-	// 	const headers = {
-	// 		Authorization: `Bearer ${jwt}`,
-	// 		"Content-Type": "application/json",
-	// 	};
-	// 	const requestOptions = {
-	// 		method: "POST",
-	// 		headers,
-	// 	};
-
-	// 	if (data) {
-	// 		requestOptions.body = JSON.stringify(data);
-	// 	}
-
-	// 	const response = await fetch(url, requestOptions);
-
-	// 	if (response.ok) {
-	// 		console.log(message);
-	// 	}
-	// }
-
-	// async function LeaveGame() {
-	// 	const url = "http://localhost:3000/user/leaveGame";
-	// 	const message = "-[ Leave Game ]-";
-	// 	await sendHttpRequest(url, null, message);
-
-	// }
-	// async function registerScoreHistory(data: any) {
-	// 	const url = "http://localhost:3000/user/matchHistory";
-	// 	const message = "-[ Match History ]- Set!";
-	// 	await sendHttpRequest(url, {data},  message);
-	// }
-
-	// async function EnterGame() {
-	// 	const url = "http://localhost:3000/user/enterGame";
-	// 	const message = "-[ Enter Game Button ]-";
-	// 	await sendHttpRequest(url,null , message);
-	// }
 	async function EnterGame() {
 		const jwt = localStorage.getItem("jwt");
 		const response = await fetch("http://localhost:3000/user/enterGame", {
@@ -256,8 +217,6 @@
 				loginName: loginName,
 				id: id,
 				username: username,
-				//tableSize: tableSize,
-				//playMode: playMode,
 			};
 
 			inGame.set(true);
@@ -269,7 +228,6 @@
 				console.log("New game state received:", message);
 			});
 			room.onMessage("startGame", (message: any) => {
-				//createRoomWithColyseus();  // This line might actually lead to recursion, be careful
 			});
 
 			room.onStateChange((newState) => {
@@ -302,6 +260,13 @@
 			console.error("Failed to connect to the game server:", e);
 		}
 	}
+
+	enum PaddleDirection {
+		UP = 0,
+		DOWN,
+		STOP,
+	}
+
 
 	// ... [Handle key events]
 	function handleKeydown(e: KeyboardEvent) {

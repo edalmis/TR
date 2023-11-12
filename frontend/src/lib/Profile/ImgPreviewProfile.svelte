@@ -37,8 +37,16 @@
 		<img class="profile-pic" src={image} alt=" 🤖 ❌ Error 🍪 🤣 " />
 	</div>
 	<div>
-		<p>Login : {login}</p>
-		<p>Name : {username}</p>
+		<!-- <p>Login : {login}</p>
+		<p>Name : {username}</p> -->
+
+		<p class="info-container"> 
+			<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Login : </span>
+				{login}
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Username : </span>
+				{username}
+		</p>
 	</div>
 </div>
 <br />
@@ -46,11 +54,14 @@
 <div>	
 	<div>Make a Choice Son !</div>
 	<button on:click={handleGarderImg}>Garder</button>
-	<button on:click={handleNo}>C'est pas Top!</button>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<button on:click={handleNo}>Pas Top!</button>
 </div>
 
+
 <style>
-	button {
+	/* button {
 		margin-left: 5px;
 		border-width: 1px;
 		border-color: brown;
@@ -58,14 +69,34 @@
 	}
 	button:hover {
 		color: brown;
+	} */
+
+	button {
+		cursor: pointer;
+		color: white; /* Change text color to white */
+		border-width: 1px;
+		border-radius: 20%;
+		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
+		/* border-radius: 3px; */
+		padding: 5px 5px;
+		font-size: 8px;
+		border: 2px solid #eff1f4;
+		transition: background 0.3s ease, color 0.3s ease;
+		margin-left: 0;
+		margin-right: 0;
 	}
+
+	button:hover {
+		background: rgb(67, 90, 26);
+	}
+
 	div {
 		grid-auto-flow: row;
 	}
 
 	.profile-pic {
-		max-width: 42%;
-		max-height: 42%;
+		max-width: 50%;
+		max-height: 50%;
 		border-radius: 200px;
 		align-items: center;
 		position: relative;

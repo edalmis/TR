@@ -5,6 +5,7 @@ import type { ViteDevServer } from 'vite';
 import { Server } from 'socket.io'
 import path from 'path';
 
+
 const webSocketServer = {
 	name: 'webSocketServer',
 	configureServer(server: ViteDevServer) {
@@ -26,10 +27,17 @@ export default defineConfig({
 			allow: ['./lib/game/game.clientSchema.ts']
 		  }
 	},
-	resolve: {
-		alias: {
-		  'PaddleDirection': path.resolve(__dirname, './frontend/src/lib/game/PaddleDirection.ts'),
-		},
-	  },
+
+	// resolve: {
+	// 	alias: {
+	// 	  'PaddleDirection': path.resolve(__dirname, './frontend/src/lib/game/PaddleDirection.ts'),
+	// 	},
+	//   },
+	// resolve: {
+	// 	alias: {
+	// 	  // Add aliases here
+	// 	  '@backend': path.resolve(__dirname, '../../../../../backend/src/game'),
+	// 	},
+	//   },
 	clearScreen: false,
 });

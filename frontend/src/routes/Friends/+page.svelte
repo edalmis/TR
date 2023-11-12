@@ -12,7 +12,7 @@
 		authentificated,
 		isItARefreshement,
 		session,
-		user,
+		// user,
 		userId,
 	} from "$lib/store/store";
 	import OtherProfile from "$lib/OtherProfile/OtherProfile.svelte";
