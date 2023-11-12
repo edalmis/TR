@@ -28,7 +28,7 @@ export let backgroundColor = writable("");
 export let paddleSize = writable("");
 export let ballSpeed = writable(0);
 export let winnerScore = writable(0);
-export let dataGame = writable(null);
+export let dataGame = writable();
 export let leftPlayerUsername = writable('John');
 export let rightPlayerUsername = writable('Tony');
 export let InvitedUserLogin = writable('Bob');
@@ -41,7 +41,9 @@ export let gameUserToInvite = writable("");
 
 export let inGame = writable(false);
 export let launchedGame = writable(false);
-
+export let dataToCancelInvitation = writable();
+export let isInvitationStillOn = writable(false);
+export let hasInvitedSomeone = writable(false);
 
 // DM - Chat
 export let session: any = writable(null);
