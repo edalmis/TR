@@ -32,7 +32,7 @@ import { DirectMessageRoom } from 'src/direct_message/direct_message_room.entity
 
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWTSECRET,
       signOptions: { expiresIn: '8h' },
       //signOptions: { expiresIn: '1m' },
     }),

@@ -90,7 +90,7 @@ export class AuthService {
       // Echange 'code' vs a 42 'access_token' to get User's datas.
       try {
         const uid: string = this.configService.get<string>('UID');
-        const secret: string = this.configService.get<string>('42_SECRET');
+        const secret: string = this.configService.get<string>('SECRET');
         //console.log("uid: ", uid);
         //console.log("secret: ", secret);
         const redirect_uri = encodeURIComponent('http://localhost:3000/auth/42api-return');
