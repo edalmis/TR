@@ -1,7 +1,8 @@
 import { Controller, Body, Post } from '@nestjs/common';
 import { ChatService } from './chat.service'; // Assuming you have a ChatService
 import { VerifyRoomDto } from './dto/verify-room-dto'
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 @Controller('chat')
 export class ChatController {

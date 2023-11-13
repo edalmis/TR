@@ -3,7 +3,6 @@ import { Injectable, UnauthorizedException, BadRequestException, } from '@nestjs
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
-import * as argon2 from 'argon2';
 import * as otplib from 'otplib';
 import { toDataURL } from 'qrcode';
 // import { JwtService } from '@nestjs/jwt';
@@ -264,12 +263,5 @@ export class AuthService {
 
   }
   /////////////////////////////////////////////////////////////////
-
-
-  // * - - - [ Password - H A S H ] - - - *
-  hashData(data: string) {
-    return argon2.hash(data);
-  }
-  ///////////////////////////////////////////
 
 }

@@ -14,7 +14,8 @@ import { ChatRoom } from 'src/chat/chat_room.entity';
 import { DirectMessageService } from 'src/direct_message/direct_message.service';
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
-import * as bcrypt from 'bcrypt';
+// import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 @WebSocketGateway(

@@ -6,8 +6,8 @@ import { ChatMessage } from './chat_message.entity';
 import { ChatRoomMember } from './chat_room_member.entity';
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
-import * as bcrypt from 'bcrypt';
-
+// import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 @Injectable()
 export class ChatService {

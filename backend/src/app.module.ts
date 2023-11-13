@@ -75,7 +75,7 @@ import { GameEntity } from './users/orm/game.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [UserEntity, GameEntity],
+      entities: [UserEntity, GameEntity, __dirname + '/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
       synchronize: true,
     }),

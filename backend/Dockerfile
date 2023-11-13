@@ -4,7 +4,13 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+# RUN rm -rf node_modules
+
 RUN npm install --legacy-peer-deps
+RUN npm install bcryptjs --legacy-peer-deps
+# RUN npm rebuild bcrypt --build-from-source
+# RUN npm install bcrypt@<version> --legacy-peer-deps
+
 
 COPY . .
 
@@ -13,7 +19,9 @@ RUN npm run build
 EXPOSE 3000 3001 3002
 
 COPY entrypoint.sh /
+
 RUN chmod +x /entrypoint.sh
+
 CMD ["/entrypoint.sh"]
 # CMD  npm run start
 
