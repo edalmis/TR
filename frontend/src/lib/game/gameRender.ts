@@ -152,9 +152,9 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 	ctx.fillRect(0, 0, GameDimensions.width, GameDimensions.height);
 	ctx.fillStyle = paddleColor;
 	ctx.lineWidth = 8;
-	ctx.font = 'bold 68px serif';
+	ctx.font = 'italic 42px Arial, sans-serif';
 	ctx.textAlign = "center";
-
+	
 	switch (state.gameStatus) {
 		case GameStatus.WAITING:
 			drawTextCenter(ctx, 'Waiting an Opponent...');
@@ -170,10 +170,10 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 			break;
 		case GameStatus.FINISHED:
 			renderScoreboard(ctx, state.scoreboard);
-			drawTextCenter(ctx, 'Game Over');
+			drawTextCenter(ctx, 'Game Over !');
 			break;
 		case GameStatus.INTERRUPTED:
-			drawTextCenter(ctx, 'Opponent left, You Won Bro !');
+			drawTextCenter(ctx, 'Opponent left, You Win Bro !');
 			break;
 	}
 
