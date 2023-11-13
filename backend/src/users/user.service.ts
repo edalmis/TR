@@ -54,6 +54,7 @@ export class UserService {
 			user.lastName = payload.lastName;
 			user.firstName = payload.firstName;
 			user.avatar = payload.avatar;
+			user.resetAvatar = payload.resetAvatar;
 		}
 		// Non 42 [ Users ]
 		else if (payload.password) {
@@ -69,13 +70,27 @@ export class UserService {
 	}
 
 	async change_username(login: string, newUserName: string) {
+		// const user = await this.find_user_by_login(login);
+		// await this.userRepository.update({ login }, { resetAvatar: user.avatar });
+
 		await this.userRepository.update({ login }, { userName: newUserName });
 		return await this.find_user_by_userName(newUserName);
+
 	}
 
 	async change_avatar(login: string, newAvatar: string) {
+		// const user = await this.find_user_by_login(login);
+		// await this.userRepository.update({ login }, { resetAvatar: user.avatar });
+
 		await this.userRepository.update({ login }, { avatar: newAvatar });
 		return await this.find_user_by_login(login);
+	}
+
+	async reset_avatar(id: number) {
+		const user = await this.find_user_by_id(id);
+		console.log('resetAvatar', user.resetAvatar);
+		// const orignalImage: string = user.resetAvatar;
+		return await this.userRepository.update({ id }, { avatar: user.resetAvatar });
 	}
 
 

@@ -35,6 +35,8 @@ export class UserEntity {
   hash: string;
   @Column({ default: "images/defaultAvatar.jpg" })
   avatar: string;
+  @Column({ default: null})
+  resetAvatar: string;
 
   // 42 Users
   @Column({ default: false })

@@ -14,10 +14,10 @@ services:
       - net
     env_file:
       - .env
-    # volumes:
-      # - ./frontend/src:/app/src
-      # - ./frontend/static:/app/static
-      # - node_modules_frontend:/app/node_modules
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/static:/app/static
+      - node_modules_frontend:/app/node_modules
     depends_on:
       - backend
   backend:

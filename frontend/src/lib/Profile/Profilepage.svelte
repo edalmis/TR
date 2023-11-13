@@ -1,27 +1,11 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { onMount, onDestroy } from "svelte";
-
-	// Imports -[ MODALS ]- ///////////////////////////
 	import Modal from "$lib/modals/Modal.svelte";
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues"; // Est ce que Display une Modal  -[ boolean ]-
 	import { session, dmNotif } from "$lib/store/store";
-
-	let show_Modal: boolean;
-	showModal.subscribe((a: boolean) => {
-		show_Modal = a;
-	});
-
-	let selectedModal: string;
-	selectedPage.subscribe((b: string) => {
-		selectedModal = b;
-	});
-
-	let wsClient: any;
-	///////////////////////////////////////////////////
-
 	import {
 		actualUsername,
 		authentificated,
@@ -35,9 +19,20 @@
 	import Enable2Fa from "./Enable2Fa.svelte";
 	import Disable2Fa from "./Disable2Fa.svelte";
 
+
+	let show_Modal: boolean;
+	showModal.subscribe((a: boolean) => {
+		show_Modal = a;
+	});
+
+	let selectedModal: string;
+	selectedPage.subscribe((b: string) => {
+		selectedModal = b;
+	});
+
+	let wsClient: any;
 	let login: string;
 	let pictureLink: string;
-	let originalPictureLink: string;
 	let rank: string;
 	let title: string;
 	let win: number;
@@ -95,7 +90,6 @@
 					// console.log("Salut du Profile");
 					login = user.login;
 					pictureLink = user.avatar;
-					originalPictureLink = user.avatar;
 					username = user.userName;
 					rank = user.rank;
 					title = user.title;
@@ -123,7 +117,7 @@
 
 	onDestroy(() => {
 		$session.off("newMessagedm");
-		// socket.off('');
+		$session.off("updateAvata");
 	});
 
 	async function handleChangeName() {
@@ -141,44 +135,30 @@
 		});
 
 		if (response.ok) {
-			// console.log("response.ok");
 			username = newUserName;
 			actualUsername.set(newUserName);
 			wsClient.emit("changeUsername");
 			goto("/");
 		} else {
-			// show message erreur Modal
 			openModal("errorMsg");
 			goto("/Profile");
 		}
 	}
 
-	// async function handleChangeImage() {
-	async function resetProfilePhoto() {
-		const jwt = localStorage.getItem("jwt");
-		const data = { login: login, img: originalPictureLink };
-		const response = await fetch("http://localhost:3000/auth/changeImage", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ data }),
-		});
+	async function handleRestAvatar() {
+		// console.log("-[ handleRestAvatar ]-Reset Img bien Set")
+		
+		session.subscribe((a: any) => {
+			wsClient =a;
+		})
+		wsClient.emit('resetAvatar', {login: login});
 
-		if (response.ok) {
-			// const user = await response.json();
-			// pictureLink = user.avatar;
-			console.log("-[ Change Image ]- New Image bien Set");
-		}
-		// resetProfilePhoto()
-		goto("/");
+		wsClient.on("updateAvatar", (datas: any) => {
+			pictureLink = datas.avatar;
+			// console.log(" -[ updateAvatar ]- : ", datas.avatar);
+		});	
 	}
 
-	// 	function resetProfilePhoto() {
-	//     pictureLink = originalPictureLink;
-	//   }
-	//////teste///
 	let people = [
 		{ newImg: "images/defaultAvatar.jpg" },
 		{ newImg: "images/Happiness.jpeg" },
@@ -453,7 +433,7 @@
 					Preview
 				</button>
 
-				<button on:click={resetProfilePhoto}>Reset</button>
+				<button on:click={handleRestAvatar}>Reset</button>
 				<!-- <select bind:value={i} size={4}>
 					{#each filteredPeople as person, i}
 						<option value={i}>{person.newImg}</option>

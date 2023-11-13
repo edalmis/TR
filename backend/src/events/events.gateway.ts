@@ -106,6 +106,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		this.server.emit('onlineUsersUpdate', usersDatas);
 	}
 
+	@SubscribeMessage('resetAvatar')
+	async resetAvatar(client: Socket, data: any) {
+		console.log('resetAvatar data:  ', data)
+		const user= await this.userService.find_user_by_login(data.login);
+		await this.userService.reset_avatar(user.id);
+		const userUpdate = await this.userService.find_user_by_login(data.login);
+		client.emit('updateAvatar', { avatar: userUpdate.avatar } );
+	}
+
+
 	@SubscribeMessage('acceptOrRefuseFriendRequest')
 	async acceptFriendRequest(client: Socket, data: any) {
 		console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);

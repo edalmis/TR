@@ -122,6 +122,7 @@ export class AuthService {
             userName: data.login,
             email: data.email,
             avatar: data.image.link,
+            resetAvatar: data.image.link,
             id42: data.id,
             firstName: data.first_name,
             lastName: data.last_name,
