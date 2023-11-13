@@ -155,6 +155,7 @@
 					} else {
 						onlineFriendsEmptyArray = false;
 					}
+					// socket.emit("updateFriend", { myId: id });
 				});
 				socket.on("friendListUpdate", (newFriendsList: any[]) => {
 					friendsListDatasEmptyArray =

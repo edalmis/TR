@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	import { onMount, onDestroy} from "svelte";
+	import { onMount, onDestroy } from "svelte";
 
 	// Imports -[ MODALS ]- ///////////////////////////
 	import Modal from "$lib/modals/Modal.svelte";
 	import { openModal, selectedPage } from "$lib/store/ModalValues";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { showModal } from "$lib/store/ModalValues"; // Est ce que Display une Modal  -[ boolean ]-
-	import { session, dmNotif} from "$lib/store/store";
+	import { session, dmNotif } from "$lib/store/store";
 
-	
 	let show_Modal: boolean;
 	showModal.subscribe((a: boolean) => {
 		show_Modal = a;
@@ -19,6 +18,8 @@
 	selectedPage.subscribe((b: string) => {
 		selectedModal = b;
 	});
+
+	let wsClient: any;
 	///////////////////////////////////////////////////
 
 	import {
@@ -68,7 +69,9 @@
 		} else {
 			console.log(" [ ProfilePage ] *{ Not a Refresh ! }* ");
 		}
-
+		session.subscribe((a: any) => {
+			wsClient = a;
+		});
 		try {
 			const jwt = localStorage.getItem("jwt");
 			if (!jwt) {
@@ -113,15 +116,13 @@
 			Google2fa = a;
 		});
 		$session.on("newMessagedm", (data: any) => {
-			
-			alert("You have new directmessage!");//--------------------3
+			alert("You have new directmessage!"); //--------------------3
 			dmNotif.set(true); //---------------4
-		
 		});
 	});
 
 	onDestroy(() => {
-		$session.off('newMessagedm');
+		$session.off("newMessagedm");
 		// socket.off('');
 	});
 
@@ -143,6 +144,7 @@
 			// console.log("response.ok");
 			username = newUserName;
 			actualUsername.set(newUserName);
+			wsClient.emit("changeUsername");
 			goto("/");
 		} else {
 			// show message erreur Modal
@@ -251,25 +253,45 @@
 			<p>Rank : {rank}</p>
 			<p>Title : {title}</p>
 			<p>Total Won: {win} - {loose} :Lost</p> -->
-			<p class="info-container"> 
-				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Login : </span>
-					{login}
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Username : </span>
-					{username}
-			</p>
-			<p class="info-container"> 
-				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Rank :  </span>
-					{rank}
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Title : </span>
-					{title}
+			<p class="info-container">
+				<span
+					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+				>
+					Login :
+				</span>
+				{login}
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span
+					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+				>
+					Username :
+				</span>
+				{username}
 			</p>
 			<p class="info-container">
-				<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Total Won/Lost : </span> 
-					{win} - {loose} 
+				<span
+					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+				>
+					Rank :
+				</span>
+				{rank}
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				<span
+					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+				>
+					Title :
+				</span>
+				{title}
 			</p>
-			<p>
+			<p class="info-container">
+				<span
+					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+				>
+					Total Won/Lost :
+				</span>
+				{win} - {loose}
+			</p>
+			<p />
 			<p>
 				<span> Google Authentificator : </span>
 				{#if Google2fa === true}
@@ -556,9 +578,9 @@
 	}
 
 	.info-container {
-        display: flex;
-        align-items: center;
-    }
+		display: flex;
+		align-items: center;
+	}
 
 	.profileName {
 		align-items: center;

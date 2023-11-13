@@ -58,6 +58,7 @@
 	function selectGame(game: any) {
 		selectedGame = game;
 	}
+	let otherId: number;
 
 	onMount(async () => {
 		try {
@@ -85,6 +86,7 @@
 					title = otherUser.title;
 					win = otherUser.win;
 					loose = otherUser.loose;
+					otherId = otherUser.id;
 
 					isFriend = otherUser.isMyFriend;
 					isPending = otherUser.isInPending;
@@ -391,20 +393,20 @@
 	{#if isFriend === true}
 		<button
 			on:click={() => {
-				handleRemoveFriend(id);
+				handleRemoveFriend(otherId);
 			}}>undo Friendship</button
 		>
 	{:else if isPending === true}
-		<button
+		<!-- <button
 			on:click={() => {
-				handleAcceptFriend(id);
+				handleAcceptFriend(otherId);
 			}}>accept Friend</button
 		>
 		<button
 			on:click={() => {
-				handleRefuseFriendRequest(id);
+				handleRefuseFriendRequest(otherId);
 			}}>Refuse Friendship</button
-		>
+		> -->
 	{:else if isRequested === false}
 		<button
 			on:click={() => {

@@ -95,6 +95,16 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
 	}
 
+	@SubscribeMessage('changeUsername')
+	async changeUsername(client: Socket) {
+		const usersDatas: any[] = [];
+		for (const [id, user] of this.onlineUsersMap) {
+			const usr = await this.userService.find_user_by_id(user.id);
+			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+		}
+		this.server.emit('onlineUsersUpdate', usersDatas);
+	}
+
 	@SubscribeMessage('acceptOrRefuseFriendRequest')
 	async acceptFriendRequest(client: Socket, data: any) {
 		console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
@@ -124,8 +134,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		client.emit('sentRequestsListUpdate', myNewRequestedList);
 	}
 
+	// @SubscribeMessage('updateFriend')
+	// async updateFriend(client: Socket, data: any) {
+	// 	const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
+	// 	client.emit('friendListUpdate', myNewFriendList);
+	// }
+
 	@SubscribeMessage('updateFriendList')
-	async updateFriend(client: Socket, data: any) {
+	async updateFriendList(client: Socket, data: any) {
 		console.log(' -[ EventsGateway ]- acceptFriend');
 		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
 		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
