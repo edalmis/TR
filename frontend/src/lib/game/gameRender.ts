@@ -1,7 +1,5 @@
-// import { CollectionSchema } from "@colyseus/schema";
 import { Ball, Paddle, GameState, GameStatus, GameDimensions, Scoreboard } from "./game.clientSchema";
-import { InvitedUserLogin, backgroundColor, paddleSize } from "$lib/store/store";
-import { onMount } from "svelte";
+import { backgroundColor, paddleSize } from "$lib/store/store";
 import { goto } from "$app/navigation";
 
 // Constants for background and paddle colors
@@ -32,7 +30,6 @@ paddleSize.subscribe((a) => {
 	console.log("paddleSizeChoice :", paddleSizeChoice);
 })
 
-
 export function drawTextCenter(ctx: CanvasRenderingContext2D, text: string) {
 	ctx.fillText(text, GameDimensions.width / 2, GameDimensions.height / 2);
 }
@@ -44,7 +41,6 @@ export function drawHalfwayLine(ctx: CanvasRenderingContext2D, color: string) {
 	ctx.moveTo(GameDimensions.width / 2, 0);
 	ctx.lineTo(GameDimensions.width / 2, GameDimensions.height);
 	ctx.stroke();
-	// ctx.setLineDash([]);
 }
 export function drawLeftDashedLine(ctx: CanvasRenderingContext2D, color: string) {
 	ctx.beginPath();
@@ -74,23 +70,13 @@ export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string
 
 export function renderBall(ctx: CanvasRenderingContext2D, ball: Ball) {
 	ctx.beginPath();
-	// ctx.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI); // Assuming Ball has a property radius
-	ctx.arc(ball.x, ball.y, Ball.radius, 0, 2 * Math.PI); // Assuming Ball has a property radius
+	ctx.arc(ball.x, ball.y, Ball.radius, 0, 2 * Math.PI);
 	ctx.closePath();
 	ctx.fill();
 }
 
-let invited: string = "Boby";	 // Game User Login to Invite
-InvitedUserLogin.subscribe((a) => {
-	invited = a;
-});
-
 export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
-	// let widthFactor: number;
-	// let heightFactor: number;
-
 	if (paddleSizeChoice === 'small') {
-		//  console.log(" class Paddle: size === PaddleSize.Small ", paddleSizeChoice);
 		Paddle.width = 30;
 		Paddle.height = 160;
 	} else if (paddleSizeChoice === 'invisible') {
@@ -120,31 +106,14 @@ export function handleCancelLeaveGame() {
 }
 
 export function leaveGame() {
-	isModalOpen = false; // Close the modal
-	goto("/game"); // Redirect to the home page
+	isModalOpen = false;
+	goto("/game");
 }
+
 export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
 	let backgroundColor: string;
 	let paddleColor: string;
 
-	// switch (backgroundColorChoice) {
-	// 	case 'blue':
-	//         backgroundColor = 'rgb(65, 135, 225)';
-	//         paddleColor = 'green';
-	//         break;
-	//     case 'orange':
-	//         backgroundColor = 'rgb(255, 143, 31)';
-	//         paddleColor = 'white';
-	//         break;
-	//     case 'green':
-	//         backgroundColor = 'rgb(0, 100, 0)';
-	//         paddleColor = 'rgb(255, 95, 31)';
-	//         break;
-	//     default:
-	//         backgroundColor = 'rgb(0, 100, 0)'; // Default background color
-	//         paddleColor = 'rgb(255, 95, 31)'; // Default paddle color
-	//         break;
-	// }
 	backgroundColor = BackgroundColors[backgroundColorChoice] || BackgroundColors.default;
 	paddleColor = PaddleColors[backgroundColorChoice] || PaddleColors.default;
 	ctx.fillStyle = backgroundColor;
