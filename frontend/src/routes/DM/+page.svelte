@@ -177,8 +177,8 @@
 					? rooms[roomSelected].userTwo.id
 					: rooms[roomSelected].userOne.id,
 				rooms[roomSelected].userOne.id === $user.id
-					? rooms[roomSelected].userTwo.login
-					: rooms[roomSelected].userOne.login
+					? rooms[roomSelected].userTwo.userName
+					: rooms[roomSelected].userOne.userName
 			);
 		}
 	}

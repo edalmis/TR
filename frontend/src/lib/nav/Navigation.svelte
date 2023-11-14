@@ -122,7 +122,7 @@
 	<!-- <button on:click={() => { goto("/"); openModal("findFriends"); }}>Find Friends</button> -->
 	<button on:click={handleFriends}>Friends</button>
 	{#if notifDm === true}
-		<button class="dmButton" on:click={handleDMNotif}>DM</button>
+		<button on:click={handleDMNotif}>DM</button>
 	{:else}
 		<button on:click={() => goto("/DM")}>DM</button>
 	{/if}
@@ -228,18 +228,17 @@
 	.notif {
 		color: blue;
 	}
-	.dmButton {
-		background-color: blue; /* Button background color */
-		color: white; /* Text color */
-		padding: 10px 20px; /* Padding for the button */
-		border: none; /* Remove the default button border */
-		border-radius: 5px; /* Rounded corners */
-		cursor: pointer; /* Add a pointer cursor on hover */
-		transition: background-color 0.3s; /* Smooth background color transition */
+	/* .dmButton {
+		background-color: blue; 
+		color: white;
+		padding: 10px 20px;
+		border: none;
+		border-radius: 5px;
+		cursor: pointer; 
+		transition: background-color 0.3s; 
 
-		/* Additional styles for hover effect */
+	
 		&:hover {
-			background-color: darkblue; /* Change background color on hover */
-		}
-	}
+			background-color: darkblue; 
+	} */
 </style>
