@@ -385,7 +385,7 @@
 	</div>
 	<div>
 		<p>Login : {login}</p>
-		<p>Name : {username}</p>
+		<p>Username : {username}</p>
 		<p>Total Won: {win} - {loose} :Lost</p>
 		<p>Rank : {rank}</p>
 		<p>Title: {title}</p>

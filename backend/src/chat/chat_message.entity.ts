@@ -32,7 +32,7 @@ export class ChatMessage {
 
 	sender: UserEntity;
 
-	@ManyToOne(() => ChatRoom, (room) => room.messages, { cascade: true })
+	@ManyToOne(() => ChatRoom, (room) => room.messages, { cascade: true, onDelete: 'CASCADE' })
 
 	room: ChatRoom;
 }

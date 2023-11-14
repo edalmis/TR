@@ -101,8 +101,9 @@
 		<button
 			style="margin-top: 2px"
 			on:click={openModal}
-			class="create-privateRoom-button"
-			>Create PrivateGame with '{invitedUsername}'
+			class="create-privateRoom-button">
+			<!-- Create PrivateGame with '{invitedUsername}' -->
+			Create PrivateGame
 		</button>
 		<button
 			style="margin-top: 2px"

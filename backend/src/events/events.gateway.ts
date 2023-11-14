@@ -15,7 +15,7 @@ import { DirectMessageService } from 'src/direct_message/direct_message.service'
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 // import * as bcrypt from 'bcrypt';
-import bcrypt from 'bcryptjs';
+import  * as bcrypt from 'bcryptjs';
 
 @Injectable()
 @WebSocketGateway(
@@ -477,6 +477,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			const userToMute = await this.userService.find_user_by_login(login);
 
 			//------------------------------------------------OFFLINE ADDING
+			const members = await this.chatService.findMembersByRoomId(roomId);
+			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
+			if (!isOwner) {
+				throw new BadRequestException('Only the room owner or admins can mute users');
+			}else {
 			const member = await this.chatService.findMemberInChatRoom(userToMute.id, roomId);
 			member.isMuted = true;
 
@@ -491,7 +496,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (userSocket) {
 				userSocket.emit('mutedFromRoom', { roomId, duration });
 				// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
-			}
+			}}
 
 		} catch (error) {
 			client.emit('muteError', { message: error.message });
@@ -505,8 +510,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			// ... rest of the existing code
 			const userToKick = await this.userService.find_user_by_login(login);
-
+			const room = await this.chatService.findChatRoom(roomId);
+			if (!room) {
+				throw new BadRequestException('Room not found');
+			}
 			//------------------------------------------------OFFLINE ADDING
+			const members = await this.chatService.findMembersByRoomId(roomId);
+			// const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
+			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
+			if (!isOwner) {
+				throw new BadRequestException('Only the room owner or admins can kick users');
+			}
+			else{
 			const member = await this.chatService.findMemberInChatRoom(userToKick.id, roomId);
 			member.isKicked = true;
 
@@ -521,7 +536,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (userSocket) {
 				userSocket.emit('kickedFromRoom', { roomId, duration });
 				// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
-			}
+			}}
 
 		} catch (error) {
 			client.emit('kickError', { message: error.message });
@@ -547,7 +562,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			// Check if the client is the owner
 			// const ownerId = this.userIdFindHelper.get(client.id);
 			// console.log('ownerID----------', ownerId)
-			const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
+			// const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
+			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
 			// console.log('isowner----------', isOwner)
 
 			if (!isOwner) {
@@ -625,7 +641,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			const memberes = await this.chatService.findMembersByRoomId(room.id);
 
-			const isOwner = memberes.some(member => member.role === 'Owner' && member.user.id === user.id);
+			// const isOwner = memberes.some(member => member.role === 'Owner' && member.user.id === user.id);
+			const isOwner = memberes.some(member => (member.role === 'Owner') && member.user.id === user.id);
 			// console.log(isOwner)
 
 			if (isOwner) {
@@ -637,8 +654,9 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 						console.log('New owner selected', done)
 				}
 				else {
-					await this.chatService.deleteRoom(room);
 					this.server.to('1').emit("chatRoomDeleted", { success: true, room });
+					await this.chatService.deleteRoom(room);
+					console.log("[LeaveChatRoom]");
 				}
 			}
 			client.leave(room.id);
@@ -675,7 +693,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			// Check if the client is the owner
 			// console.log('ownerID----------', ownerId)
-			const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
+			// const isOwner = members.some(member => (member.role === 'Owner' || 'Admin') && member.user.id === user.id);
+			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
 			// console.log('isowner----------', isOwner)
 
 			if (!isOwner) {

@@ -39,13 +39,10 @@
     </div>
         <p>Username: {user.userName}</p>
         <p>Login: {user.login}</p>
-   
-        <p>Email: {user.email}</p>
-        <p>Name: {user.lastName}</p>
         <p>Rank: {user.rank}</p>
         <p>Title: {user.title}</p>
         <p>Total Won: {user.wonGameNbr} - {user. lostGameNbr} :Lost</p>
-       <InviteToPlayButton/>
+        <InviteToPlayButton/>
 
     {:else}
         <p>Loading user data...</p>

@@ -34,10 +34,10 @@ export class ChatRoom {
 	hashedPassword: string;
 	
 
-	@OneToMany(() => ChatRoomMember, (member) => member.chatRoom)
+	@OneToMany(() => ChatRoomMember, (member) => member.chatRoom, {onDelete: 'CASCADE'})
 	members: ChatRoomMember[];
 
-	@OneToMany(() => ChatMessage, (message) => message.room)
+	@OneToMany(() => ChatMessage, (message) => message.room, {onDelete: 'CASCADE'})
 	messages: ChatMessage[];
 
 	

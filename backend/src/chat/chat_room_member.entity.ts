@@ -17,7 +17,10 @@ export class ChatRoomMember {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.members)
+	@ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.members, {
+		onDelete: 'CASCADE',
+		onUpdate: 'CASCADE',
+	})
 	chatRoom: ChatRoom;
 	
 

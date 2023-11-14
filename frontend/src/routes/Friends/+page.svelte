@@ -899,7 +899,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"
@@ -1073,7 +1073,7 @@
 					<li class="flex justify-between gap-x-6 py-5">
 						<div class="flex min-w-0 gap-x-4">
 							<img
-								class="h-12 w-13 flex-none rounded-full bg-gray-50"
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
 								style="margin-left: 20px;"
 								src={avatar}
 								alt="error"

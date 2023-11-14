@@ -35,6 +35,7 @@
     let showSendMessage = true;
     let usersInRoom: any[] = [];
     let showEmojiPicker: boolean = false;
+    let showChatRoom: boolean = true;
 
     interface ISocketValue {
         rooms: string;
@@ -49,6 +50,7 @@
     enteredPassword = "";
     // let kickEndTime: any;
     let kickDuration: any;
+        kickDuration=1; 
     // let muteDuration: any;
     interface Message {
         // your message properties here, e.g.,
@@ -473,6 +475,7 @@
             password: isPrivate ? password : null,
         };
         $session.emit("sendChatRooms", payload);
+        showChatRoom = false;
     }
 
     function sendMessage() {
@@ -490,9 +493,11 @@
     }
 
     function clean() {
-        showChatHistory = true;
+        // showChatHistory = true;
         showChatWindow = true;
+        showChatRoom = true;
     }
+
 
     function kickUser(user: any, login: string, roomId: string, duration: any) {
         $session.emit("kickUser", {
@@ -635,6 +640,7 @@
   </div>
 {/if}
 {#if showChatWindow}
+{#if showChatRoom}
     <div class="chat-window">
         <button
             class="close-btn"
@@ -664,9 +670,12 @@
 
             <!-- goto('/current-route'); -->
 
-            <button type="submit">Create Chat Room</button>
+            <button type="submit">
+                Create Chat Room</button>
+    
         </form>
     </div>
+   {/if}
 {/if}
 
 <div class="rooms-list">
@@ -763,7 +772,127 @@
                                 See Profile
                             </button>
                         {/if}
-                        {#if (user.role == "Participant" && usere.login != user.user.login) || (user.role == "Admin" && usere.login != user.user.login)}
+
+
+                        <!-- svelte-ignore empty-block -->
+                        {#if (user.role === "Admin" && usere.login != user.user.login)}
+
+                        <!-- {#if usere.role === "Owner"} -->
+                        <div>
+                            <input
+                                type="number"
+                                class="kickd"
+                                bind:value={kickDuration}
+                                placeholder="Duration (minutes)"
+                                min="1"
+                                max="60"
+                            />
+                            <button
+                                on:click={() =>
+                                    kickUser(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid,
+                                        kickDuration
+                                    )}>Kick</button
+                            >
+                            <button
+                                on:click={() =>
+                                    muteUser(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid,
+                                        kickDuration
+                                    )}>Mute</button
+                            >
+                        </div>
+
+                        <button
+                            on:click={() =>
+                                banUser(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Ban</button
+                        >
+                        <button
+                            on:click={() =>
+                                unbanUser(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Unban</button
+                        >
+
+                        <button
+                            on:click={() =>
+                                makeAdmin(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Make Admin</button
+                        >
+                    <!-- {/if} -->
+
+
+                 {/if }
+                        {#if user.role === "Participant" && user.user.login != usere.login }
+                        <div>
+                            <input
+                                type="number"
+                                class="kickd"
+                                bind:value={kickDuration}
+                                placeholder="Duration (minutes)"
+                                min="1"
+                                max="60"
+                            />
+                            <button
+                                on:click={() =>
+                                    kickUser(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid,
+                                        kickDuration
+                                    )}>Kick</button
+                            >
+                            <button
+                                on:click={() =>
+                                    muteUser(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid,
+                                        kickDuration
+                                    )}>Mute</button
+                            >
+                        </div>
+
+                        <button
+                            on:click={() =>
+                                banUser(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Ban</button
+                        >
+                        <button
+                            on:click={() =>
+                                unbanUser(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Unban</button
+                        >
+
+                        <button
+                            on:click={() =>
+                                makeAdmin(
+                                    usere,
+                                    user.user.login,
+                                    selectedChatRoomid
+                                )}>Make Admin</button
+                        >
+                    {/if}
+                        <!-- {#if (user.role == "Participant" && usere.login != user.user.login) || (user.role == "Admin" && usere.login != user.user.login && usere.user.role == "Owner") || (user.role == "Admin" && usere.login != user.user.login)}
                             <div>
                                 <input
                                     type="number"
@@ -818,7 +947,7 @@
                                         selectedChatRoomid
                                     )}>Make Admin</button
                             >
-                        {/if}
+                        {/if} -->
                     </li>
                 {/each}
             </ul>
