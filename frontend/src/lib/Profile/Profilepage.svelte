@@ -110,7 +110,7 @@
 			Google2fa = a;
 		});
 		$session.on("newMessagedm", (data: any) => {
-			alert("You have new directmessage!"); //--------------------3
+			alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
 			dmNotif.set(true); //---------------4
 		});
 	});

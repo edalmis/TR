@@ -131,7 +131,7 @@
 			if (!isPageFocused && isNOnDMPage) {
 				//------2
 				// showNotification(data.messages.message);
-				alert("You have new directmessage!"); //--------------------3
+				alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
 				dmNotif.set(true); //---------------4
 			}
 			scrollToBottom();

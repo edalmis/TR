@@ -12,7 +12,15 @@
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte";
     import { goto } from "$app/navigation";
+    import { writable } from 'svelte/store'; // Import the store function
 
+    
+    type Notification = {
+    message: string;
+    timestamp: number;
+    };
+    let notifications = writable<Notification[]>([]);
+    const latestNotification = writable<Notification | null>(null);
     let title = "";
     let isPrivate = false;
     let password = "";
@@ -60,6 +68,24 @@
     let isProfileModalOpen = false;
     let userToDisplay: any = null;
     let isModalVisible = false;
+    const sessionStore = writable(null);   
+
+    function showNotification(message: string) {
+    const notification: Notification = {
+      message,
+      timestamp: Date.now(),
+    };
+    notifications.update(prev => [...prev, notification]);
+
+    // Update the latestNotification store
+    latestNotification.set(notification);
+
+    // Optionally, you can add a timeout to remove the notification after a certain period
+    setTimeout(() => {
+      notifications.update(prev => prev.filter(n => n !== notification));
+      latestNotification.set(null);
+    }, 5000); // Remove the notification after 5 seconds
+  }
 
     function promptPasswordAndEnter(room: any) {
         enteredPassword = prompt("Enter password for room:");
@@ -104,6 +130,15 @@
 
     let refresh: boolean;
     onMount(() => {
+          // Ensure sessionStore is initialized
+    const currentSession = $session;
+    if (!currentSession) {
+      // Redirect to the home page when sessionStore is null
+      goto('/');
+    } else {
+      // Set the initial value of sessionStore to the current value of $session
+      sessionStore.set(currentSession);
+      // Update sessionStore with the current value of $session
         isItARefreshement.subscribe((a: boolean) => {
             refresh = a;
         });
@@ -117,10 +152,9 @@
         user.subscribe((a: any) => {
             usere = a;
         });
-        userId.subscribe((a) => {
+        userId.subscribe((a:any) => {
             IdduUser = a;
         });
-
         $session.emit("getChatRooms");
 
         // General event listener for debugging
@@ -155,6 +189,8 @@
         });
 
         $session.on("joinedChatRoom", ({ room, user, role }: any) => {
+            const notificationMessage = `${user.login} joined room "${room.title}" as ${role}`;
+            showNotification(notificationMessage);
             // console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
         });
 
@@ -204,11 +240,15 @@
             const { channel } = data;
             //  console.log("newRoom", channel)
             chatRooms = [...chatRooms, channel];
+            const notificationMessage = `${channel.title} created as a room`;
+            showNotification(notificationMessage);
         });
         $session.on("chatRoomDeleted", (data: any) => {
             const { room } = data;
             //  console.log("deletedRoom", room)
             chatRooms = chatRooms.filter((item) => item.id !== room.id);
+            const notificationMessage = `room ${room.title} deleted`;
+            showNotification(notificationMessage);
         });
 
         $session.on("membersList", (data: any) => {
@@ -219,6 +259,8 @@
         $session.on("kickedFromRoom", ({ roomId, duration }: any) => {
             const newEndTime = new Date().getTime() + duration * 60 * 1000;
             kickEndTimes[roomId] = newEndTime;
+            const notificationMessage = `${usere.userName} kicked from room ${selectedChatRoom.title} for ${duration} minutes`;
+            showNotification(notificationMessage)
             if (roomId === selectedChatRoomid) {
                 // Calculate the time at which the kicked duration will end.
                 showChatHistory = false;
@@ -231,11 +273,14 @@
                 }, duration * 60 * 1000); // The duration until chat history will be closed
                 clearTimeout(timer);
             }
+            ;
         });
 
         $session.on("mutedFromRoom", ({ roomId, duration }: any) => {
             const newEndTime = new Date().getTime() + duration * 60 * 1000;
             muteEndTimes[roomId] = newEndTime;
+            const notificationMessage = `${usere.userName} muted from room ${selectedChatRoom.title} for ${duration} minutes`;
+            showNotification(notificationMessage)
             if (roomId === selectedChatRoomid) {
                 showSendMessage = false;
                 const timer = setTimeout(() => {
@@ -251,7 +296,10 @@
             if (roomId === selectedChatRoomid) {
                 showChatHistory = false;
                 showSendMessage = false;
+                const notificationMessage = `${usere.userName} banned from room ${selectedChatRoom.title} entering this room is forbiden!`;
+                showNotification(notificationMessage)
             }
+            
         });
 
         // Handle an updated room
@@ -263,9 +311,11 @@
                 chatRooms[index] = updatedRoom;
                 chatRooms = [...chatRooms]; // Re-assign to trigger reactivity in Svelte
             }
+            const notificationMessage = `Attention room ${selectedChatRoom.title} updated!`;
+                showNotification(notificationMessage)
         });
         $session.on("newMessagedm", (data: any) => {
-            alert("You have new directmessage!"); //--------------------3
+            alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
             dmNotif.set(true); //---------------4
         });
 
@@ -281,7 +331,7 @@
             $session.off("mutedFromRoom");
             $session.off("bannedFromRoom");
             $session.off("roomUpdated");
-        };
+        };}
     });
 
     function fetchMembersInRoom(roomId: string) {
@@ -466,6 +516,9 @@
     }
     function makeAdmin(user: any, login: string, roomId: string) {
         $session.emit("makeAdmin", { user, roomId: roomId, login: login });
+        const notificationMessage = `New Admin selected in room "${selectedChatRoom.title}" congratulations!`;
+        showNotification(notificationMessage);
+        // fetchMembersInRoom(selectedChatRoomid);
     }
 
     function unbanUser(user: any, userId: any, roomId: any) {
@@ -576,6 +629,11 @@
     }
 </script>
 
+{#if $latestNotification}
+  <div class="notification" class:showNotification>
+    <p>{$latestNotification.message}</p>
+  </div>
+{/if}
 {#if showChatWindow}
     <div class="chat-window">
         <button
@@ -796,6 +854,43 @@
 <button on:click={clean}>New window</button>
 
 <style>
+  .notification {
+    position: fixed;
+    top: 7%;
+    right: 50%;
+    padding: 10px;
+    background-color: #a9abc2;
+    border: 1px solid #181313;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Red shadow */
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+    max-width: 300px; /* Adjust the maximum width as needed */
+  }
+
+  .notification:hover {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger shadow on hover */
+  }
+  .notification:active {
+    position: fixed;
+    top: 15%;
+    left: 28%;
+    width: 38%;
+    padding: 10px;
+    background-color: #a9abc2;
+    border: 1px solid #181313;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger red shadow on active */
+    border-radius: 10px;
+  }
+  .showNotification {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .notification:not(.showNotification) {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none; /* Prevent interaction with hidden notification */
+  }
     .chat-message p {
         white-space: pre-wrap;
     }
