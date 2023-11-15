@@ -160,13 +160,15 @@
 	}
 
 	let people = [
-		{ newImg: "images/defaultAvatar.jpg" },
-		{ newImg: "images/Happiness.jpeg" },
-		{ newImg: "images/Love.jpeg" },
-		{ newImg: "images/Anger.jpeg" },
-		{ newImg: "images/Disgust.jpeg" },
-		{ newImg: "images/Fear.jpeg" },
-		{ newImg: "images/Sadness.jpeg" },
+		{ newImg: "images/Kyle.png" },
+		{ newImg: "images/Kenny.png" },
+		{ newImg: "images/Eric.png" },
+		{ newImg: "images/Randy.png" },
+		{ newImg: "images/Wendy.png" },
+		{ newImg: "images/Stan.png" },
+		{ newImg: "images/Herbert.png" },
+		{ newImg: "images/Butters.png" },
+		{ newImg: "images/Chef.png" },
 	];
 
 	let prefix = "";
@@ -444,7 +446,7 @@
 				{/if}
 			</p2>
 
-			<select bind:value={i} size={4}>
+			<select bind:value={i} size={9}>
 				{#each filteredPeople as person, i}
 					<option value={i}>{person.newImg}</option>
 				{/each}
@@ -523,9 +525,9 @@
 	}
 
 	.profile-pic {
-		max-width: 21%;
+		max-width: 19%;
 		/* max-height: ; */
-		border-radius: 200px;
+		border-radius: 40%;
 		align-items: center;
 		/* position: relative; */
 		border-color: rgb(111, 151, 142);
