@@ -700,6 +700,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (!isOwner) {
 				throw new BadRequestException('Only the room owner or admins can Adminning users');
 			}
+			else{
 			// Add Admin logic here. This could be saving the Admin to a database, or an in-memory list.
 			// For simplicity, let's say you have a AdminService (you'd need to create this) which can add Admins:
 
@@ -712,7 +713,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (userSocket) {
 				userSocket.emit('AdminnedFromRoom', { roomId });
 			}
-		}
+		}}
 		catch (error) {
 			client.emit('AdminningError', { message: error.message });
 		}

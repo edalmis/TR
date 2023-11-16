@@ -521,8 +521,8 @@
     }
     function makeAdmin(user: any, login: string, roomId: string) {
         $session.emit("makeAdmin", { user, roomId: roomId, login: login });
-        const notificationMessage = `New Admin selected in room "${selectedChatRoom.title}" congratulations!`;
-        showNotification(notificationMessage);
+        // const notificationMessage = `New Admin selected in room "${selectedChatRoom.title}" congratulations!`;
+        // showNotification(notificationMessage);
         // fetchMembersInRoom(selectedChatRoomid);
     }
 
