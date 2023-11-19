@@ -272,26 +272,6 @@ export class privateRoom extends Room<GameState> {
 		this.disconnect();
 	}
 
-	//  onLeave(client: Client, consented?: boolean) {
-	// 	console.log("-[ (Private) - onLeave() ]-");
-
-	// 	// const loginName = this.playerInfo.get(client)?.loginName;
-	// 	// if (loginName === this.lpUserName) {
-	// 	//   this.lpUserName = undefined;
-	// 	// } else if (loginName === this.rpUserName) {
-	// 	//   this.rpUserName = undefined;
-	// 	// }
-
-	// 	if (!this.lpUserName || !this.rpUserName) {
-	// 		this.state.gameStatus = GameStatus.INTERRUPTED;
-	// 	}
-
-	// 	if (!this.lpUserName && !this.rpUserName) {
-	// 		this.disconnect();
-	// 	}
-	// 	this.disconnect();
-	// }
-
 	onDispose() {
 		console.log("-[ (Private) - onDispose() ]- ");
 		// console.info('Disposing privateRoom');
