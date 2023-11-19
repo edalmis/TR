@@ -18,9 +18,7 @@ export class AuthService {
     private userService: UserService,
     private configService: ConfigService,
     private jwtAuthService: JwtAuthService,
-    // private jwtService: JwtService,
-    
-
+  
   ) { }
 
   // // * - - - [  OnLine Users - MAP< number, User > -  ] - - - *

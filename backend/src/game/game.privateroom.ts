@@ -63,8 +63,8 @@ export class privateRoom extends Room<GameState> {
 	async onJoin(client: Client, options: any) {
 		// let mapSize = privateRoom.roomPlayerInfosMap.size;
 		// console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
-		if (this.clients.length === 1) {
-			if (options.loginName !== undefined) {
+		if (this.clients.length === 1 && options.loginName !== undefined) {
+			// if (options.loginName !== undefined) {
 
 				console.log(' -[ (Private) - onJoin() ]- Player [1]');
 				this.client1 = client;
@@ -110,11 +110,10 @@ export class privateRoom extends Room<GameState> {
 				console.log(' -[ (Private) - onJoin() ]- Player [1] -> Broadcast Send...');
 				this.broadcast('invitation', userInfos);
 
-				// // // // // // // // // // // // // // // // // //
-
-			}
-		} else if (this.clients.length === 2) {
-			if (options.loginName !== undefined) {
+				// // // // // // // // // // // // // // // // // // 
+				// }
+		} else if (this.clients.length === 2 && options.loginName !== undefined) {
+			// if (options.loginName !== undefined) {
 				const userinfos = privateRoom.roomPlayerInfosMap.get(1);
 				if (userinfos.login !== options.loginName) {
 
@@ -141,11 +140,10 @@ export class privateRoom extends Room<GameState> {
 
 					UserService.inGameUsersSet.add(this.rpUserId);
 					privateRoom.roomPlayerInfosMap.set(2, userInfos);
-
 					privateRoom.roomPlayerInfosMap.clear();
 					this.state.gameStatus = GameStatus.PLAYING;
 					this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
-				}
+				//}
 			}
 		}
 

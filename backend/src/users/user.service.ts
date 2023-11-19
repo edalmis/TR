@@ -415,11 +415,27 @@ export class UserService {
 		await this.userRepository.save(user);
 	}
 
+	// async incrementLost(id: number) {
+	// 	let user = await this.find_user_by_id(id);
+	// 	user.lostGameNbr += 1;
+	// 	await this.userRepository.save(user);
+	// }
+
 	async incrementLost(id: number) {
-		let user = await this.find_user_by_id(id);
-		user.lostGameNbr += 1;
-		await this.userRepository.save(user);
-	}
+	 try {
+        const user = await this.find_user_by_id(id);
+        if (user) {
+            user.lostGameNbr += 1;
+            await this.userRepository.save(user);
+        } else {
+            console.error('User not found');
+            // Handle user not found scenario
+        }
+    } catch (error) {
+        console.error('Error incrementing lostGameNbr:', error);
+        // Handle other errors or throw them further
+        throw error;
+    }}
 
 	async add_inGameUser(id: number) {
 		UserService.inGameUsersSet.add(id);

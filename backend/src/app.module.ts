@@ -70,8 +70,8 @@ import { GameEntity } from './users/orm/game.entity';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      // host: 'localhost',
-      host: 'db',
+      host: 'localhost',
+      // host: 'db',
       port: 5432,
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,

@@ -9,7 +9,6 @@
 	} from "$lib/store/store";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
-	// import { PaddleDirection } from "$lib/game/PaddleDirection";
 	// import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
@@ -138,7 +137,6 @@
 	});
 
 	onDestroy(() => {
-		// if (refresh === false) {
 		let theRoom: any;
 		roomColyseus.subscribe((a: any) => {
 			theRoom = a;
@@ -151,8 +149,6 @@
 		LeaveGame();
 		closeModal();
 		navbar.set(true);
-		// console.log("Le composant [Game/Create] a été démonté.");
-		// }
 	});
 
 	async function EnterGame() {
@@ -217,6 +213,7 @@
 				loginName: loginName,
 				id: id,
 				username: username,
+				//isReady:isReady
 			};
 
 			inGame.set(true);
@@ -266,7 +263,6 @@
 		DOWN,
 		STOP,
 	}
-
 
 	// ... [Handle key events]
 	function handleKeydown(e: KeyboardEvent) {

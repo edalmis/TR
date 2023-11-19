@@ -36,6 +36,7 @@ export class PongRoom extends Room<GameState> {
 	public lpUserId: number = 41;
 	public rpUserId: number = 42;
 	private winningScore: number;
+	private roomLocked: boolean = false;
 
 	onCreate(options: any) {
 		// console.log(' -[ onCreate () ]- -> Options : ', options);
@@ -121,7 +122,12 @@ export class PongRoom extends Room<GameState> {
 
 	async onJoin(client: Client, options: any) {
 		let mapSize = PongRoom.roomPlayerInfosMap.size;
-		console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
+		// console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
+			if (this.roomLocked) {
+			  console.log('Matchmaking room is locked!');
+			  return;
+			}
+		
 		if (this.clients.length === 1) {
 			if (options.loginName !== undefined) {
 
@@ -130,14 +136,6 @@ export class PongRoom extends Room<GameState> {
 				this.lpId = client.id;
 				this.lpUserName = options.username;
 				this.lpUserId = options.id;
-
-				// // [ Debug ] // // // // // // // // // // // // // // // // // // // // // //
-				// console.log("onJoin ===> [1] OPTIONS: [* ");
-				// console.log(options, " *]")
-				// console.log("onJoin ===> [1] lpId: [", this.lpId, "]");
-				// console.log("onJoin ===> [1] lpUserName: [", this.lpUserName, "]");
-				// console.log("onJoin ===> [1] lpUserId: [", this.lpUserId, "]");
-				// // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 				const userInfos: UserInfos = {
 					roomId: this.roomId,
@@ -151,19 +149,9 @@ export class PongRoom extends Room<GameState> {
 				UserService.inGameUsersSet.add(this.lpUserId);
 				PongRoom.roomPlayerInfosMap.set(1, userInfos);
 
-
-
-				// // [ Debug ] // // // // // // // // // // // // //
-				// mapSize = PongRoom.roomPlayerInfosMap.size;
-				// console.log(" -[ OnJoin ]- mapSize: ", mapSize)
-				// PongRoom.roomPlayerInfosMap.forEach((infos) => {
-				// 	console.log("Map Infos: -> ", infos)
-				// });
-				// // // // // // // // // // // // // // // // // //
-
 			}
-		} else if (this.clients.length === 2) {
-			if (options.loginName !== undefined) {
+		} else if (this.clients.length === 2 && options.loginName !== undefined) {
+			// if (options.loginName !== undefined) {
 				const userinfos = PongRoom.roomPlayerInfosMap.get(1);
 				if (userinfos.login !== options.loginName) {
 
@@ -173,16 +161,8 @@ export class PongRoom extends Room<GameState> {
 					this.rpUserName = options.username;
 					this.rpUserId = options.id;
 
-					// // [ Debug ] // // // // // // // // // // // // // // // // // // // // // //
-					// console.log("onJoin ===> [2] OPTIONS: [* ");
-					// console.log(options, " *]")
-					// console.log("onJoin ===> [2] rpId: [", this.rpId, "]");
-					// console.log("onJoin ===> [2] rpUserName: [", this.rpUserName, "]");
-					// console.log("onJoin ===> [2] rpUserId: [", this.rpUserId, "]");
-					// console.log("onJoin ===> [1] lpId: [", this.lpId, "]");
-					// console.log("onJoin ===> [1] lpUserName: [", this.lpUserName, "]");
-					// console.log("onJoin ===> [1] lpUserId: [", this.lpUserId, "]");
-					// // // // // // // // // // // // // // // // // // // // // // // // // // //
+					// this.roomLocked = true;
+					// this.lock();
 
 					const userInfos: UserInfos = {
 						roomId: this.roomId,
@@ -192,49 +172,50 @@ export class PongRoom extends Room<GameState> {
 						clientId: client.sessionId,
 						client: client,
 					};
+					
 					// Ajout a la liste des InGame Friends
 					UserService.inGameUsersSet.add(this.rpUserId);
 					PongRoom.roomPlayerInfosMap.set(2, userInfos);
-
-					// // [ Debug ] // // // // // // // // // // // // // //
-					// const mapSize = PongRoom.roomPlayerInfosMap.size;
-					// console.log(" -[ OnJoin ]- mapSize: ", mapSize)
-					// PongRoom.roomPlayerInfosMap.forEach((infos) => {
-					// 	console.log("Map Infos: -> ", infos)
-					// });
-					// // // // // // // // // // // // // // // // // // //
-
 					PongRoom.roomPlayerInfosMap.clear();
-					this.state.gameStatus = GameStatus.PLAYING;
-					this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
-				}
+					this.lockRoomAndStartGame(options.loginName);
+					// this.state.gameStatus = GameStatus.PLAYING;
+					// this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
+			// }
 			}
 		}
+		this.handlePlayerDisconnection();
+		// this.onMessage('player_disconnected', (client, message) => {
+		// 	console.log('-[ onJoin() - onMessage\'PlayerDisconected\' )]- message: ', message);
+		// 	console.log(' -- Before -- appel onLeave()');
+		// 	this.onLeave(client);
+		// 	console.log(' -- After -- appel onLeave()');
+		// 	this.onDispose();
+		// 	PongRoom.roomPlayerInfosMap.clear();
+		// 	const mapSize = PongRoom.roomPlayerInfosMap.size;
+		// 	console.log(" -[ OnMessage -disconect- ]- mapSize (end): { ", mapSize, ' }')
+		// 	client.leave();
+		// });
+	}
 
+	private lockRoomAndStartGame(loginName: string) {
+		this.roomLocked = true;
+		this.lock();
+		this.state.gameStatus = GameStatus.PLAYING;
+		this.setSimulationInterval(deltaTime => this.update(deltaTime, loginName));
+	}
+
+	private handlePlayerDisconnection() {
 		this.onMessage('player_disconnected', (client, message) => {
-			console.log('-[ onJoin() - onMessage\'PlayerDisconected\' )]- message: ', message);
-			console.log(' -- Before -- appel onLeave()');
+			console.log('-[ onJoin() - onMessage \'PlayerDisconnected\' )]- message: ', message);
+			console.log(' -- Before -- call onLeave()');
 			this.onLeave(client);
-			console.log(' -- After -- appel onLeave()');
+			console.log(' -- After -- call onLeave()');
 			this.onDispose();
 			PongRoom.roomPlayerInfosMap.clear();
-			const mapSize = PongRoom.roomPlayerInfosMap.size;
-			console.log(" -[ OnMessage -disconect- ]- mapSize (end): { ", mapSize, ' }')
+			console.log(" -[ OnMessage -disconnect- ]- mapSize (end): ", PongRoom.roomPlayerInfosMap.size);
 			client.leave();
 		});
 	}
-
-
-	// async onLeave(client: Client, consented?: boolean) {
-	// 	if (!this.lpUserName || !this.rpUserName) {
-	// 		this.state.gameStatus = GameStatus.INTERRUPTED;
-	// 	}
-	// 	if (!this.lpUserName && !this.rpUserName) {
-	// 		this.disconnect();
-	// 	}
-	// 	this.disconnect();
-	// }
-
 	async onLeave(client: Client, consented?: boolean) {
 		console.log('client Onleave ')
 		if (client.id === this.lpId) {

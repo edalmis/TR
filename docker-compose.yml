@@ -1,48 +1,48 @@
 version: "3.8"
 
-networks:
-  net:
-    driver: bridge
+# networks:
+#   net:
+#     driver: bridge
 
 services:
-  frontend:
-    container_name: frontend
-    build: ./frontend
-    ports:
-      - "5173:5173"
-    networks:
-      - net
-    env_file:
-      - .env
-    volumes:
-      - ./frontend/src:/app/src
-      - ./frontend/static:/app/static
-      - node_modules_frontend:/app/node_modules
-    depends_on:
-      - backend
-  backend:
-    container_name: backend
-    build: ./backend
-    volumes:
-      - ./backend:/usr/src/app
-      - node_modules_backend:/usr/src/app/node_modules
-    ports:
-      - 3000:3000
-      - 3001:3001
-      - 3002:3002
-    env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
-      UID: ${UID}
-      SECRET: ${SECRET}
-      JWTSECRET: ${JWTSECRET}
-    networks:
-      - net 
-    depends_on:
-      - db
+  # frontend:
+    # container_name: frontend
+    # build: ./frontend
+    # ports:
+    #   - "5173:5173"
+    # networks:
+    #   - net
+    # env_file:
+  #     - .env
+  #   volumes:
+  #     - ./frontend/src:/app/src
+  #     - ./frontend/static:/app/static
+  #     - node_modules_frontend:/app/node_modules
+  #   depends_on:
+  #     - backend
+  # backend:
+  #   container_name: backend
+  #   build: ./backend
+  #   volumes:
+  #     - ./backend:/usr/src/app
+  #     - node_modules_backend:/usr/src/app/node_modules
+  #   ports:
+  #     - 3000:3000
+  #     - 3001:3001
+  #     - 3002:3002
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: ${POSTGRES_DB}
+  #     UID: ${UID}
+  #     SECRET: ${SECRET}
+  #     JWTSECRET: ${JWTSECRET}
+  #   networks:
+  #     - net 
+  #   depends_on:
+  #     - db
   db:
     container_name: "db"
     image: postgres:14.5
@@ -51,8 +51,8 @@ services:
       - volume_db:/var/lib/postgresql/data
     env_file:
       - .env
-    networks:
-      - net
+    # networks:
+    #   - net
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -61,8 +61,8 @@ services:
       - "5432:5432"
 volumes:
   volume_db:
-  node_modules_frontend:
-  node_modules_backend:
+  # node_modules_frontend:
+  # node_modules_backend:
 
 
 

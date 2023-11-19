@@ -40,10 +40,12 @@ export let iAmInvited = writable(false);
 export let gameUserToInvite = writable("");
 
 export let inGame = writable(false);
+
 export let launchedGame = writable(false);
 export let dataToCancelInvitation = writable();
 export let isInvitationStillOn = writable(false);
 export let hasInvitedSomeone = writable(false);
+
 
 // DM - Chat
 export let session: any = writable(null);

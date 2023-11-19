@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	// import { PaddleDirection } from "$lib/game/PaddleDirection"
-	// import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
+	//import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
 	import { closeModal } from "$lib/store/ModalValues";
