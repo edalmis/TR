@@ -29,6 +29,7 @@
 	let isBlockedBy: boolean;
 	let isModalOpen: boolean = false;
 
+
 	let games: any = [];
 	// = [
 	// 	{
@@ -44,7 +45,7 @@
 	// 		player2Score: 2,
 	// 	},
 	// ];
-
+	let wsClient: any
 	let socket: any;
 	session.subscribe((a: any) => {
 		socket = a;
@@ -101,18 +102,25 @@
 				}
 
 				// Get Match History
-				const url_History = `http://localhost:3000/user/getMatchHistory`;
-				const response_history = await fetch(url_History, {
-					method: "GET",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				});
-				if (response_history.ok) {
-					games = await response_history.json();
-					console.log("-[ Game History ]- Response: [Games]", games);
-				}
+				session.subscribe((a: any) => {
+                    wsClient = a;
+                });
+                wsClient.emit("getOtherGameHistory", { otherId: otherUser.id });
+                wsClient.on("otherGameHistory", (data: any) => {
+                    games = data;
+                });
+				// const url_History = `http://localhost:3000/user/getMatchHistory`;
+				// const response_history = await fetch(url_History, {
+				// 	method: "GET",
+				// 	headers: {
+				// 		Authorization: `Bearer ${jwt}`,
+				// 		"Content-Type": "application/json",
+				// 	},
+				// });
+				// if (response_history.ok) {
+				// 	games = await response_history.json();
+				// 	console.log("-[ Game History ]- Response: [Games]", games);
+				// }
 			}
 		} catch (e) {}
 	});
