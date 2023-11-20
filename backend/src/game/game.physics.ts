@@ -11,11 +11,9 @@ export interface PhysicsOptions {
 	ballSpeed: number;
 	paddleSpeed: number;
 	ballAngle: number;
-	// speed: number;
 }
 
 export class Physics {
-	// game components
 	private ball: Ball;
 	private lp: Paddle;
 	private rp: Paddle;
@@ -24,7 +22,6 @@ export class Physics {
 	private rpDirection = PaddleDirection.STOP;
 	paddleSpeed: number;
 
-	// ball angle and speed
 	private angle: number = 0; // initialized to 0 but immediately updated by setAngle() in constructor() 
 	private ballSpeed: number;
 

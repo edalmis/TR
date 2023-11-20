@@ -31,12 +31,12 @@ paddleSize.subscribe((a) => {
 })
 
 export function drawTextCenter(ctx: CanvasRenderingContext2D, text: string) {
-    ctx.font = 'italic 42px Arial, sans-serif';
+    ctx.font = 'italic 58px Arial, sans-serif';
     ctx.fillText(text, GameDimensions.width / 2, GameDimensions.height / 2);
 }
 
 export function drawText(ctx: CanvasRenderingContext2D, text: string) {
-    ctx.font = 'italic 21px Arial, sans-serif';
+    ctx.font = 'italic 42px Arial, sans-serif';
     ctx.fillText(text, GameDimensions.width / 2,(GameDimensions.height * 2) / 3);
 }
 
@@ -98,6 +98,7 @@ export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
 }
 
 export function renderScoreboard(ctx: CanvasRenderingContext2D, scoreboard: Scoreboard) {
+    ctx.font = 'italic 58px Arial, sans-serif';
     ctx.fillText(scoreboard.left.toString(), GameDimensions.width * (1 / 4), 100);
     ctx.fillText(scoreboard.right.toString(), GameDimensions.width * (3 / 4), 100);
 }
@@ -154,6 +155,5 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
         case GameStatus.STOPSOLO:
             drawTextCenter(ctx, 'Opponent is yourself!  Stop playing solo!');
             break;
-
     }
 }

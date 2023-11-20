@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount, onDestroy } from "svelte";
-	//import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import type { Room } from "colyseus.js";
 	import * as Colyseus from "colyseus.js";
 	import { closeModal } from "$lib/store/ModalValues";
@@ -9,7 +8,6 @@
 	import {
 		GameState,
 		GameDimensions,
-		// } from "../../../../../backend/src/game/game.serverSchema";
 	} from "$lib/game/game.clientSchema";
 
 	import {
@@ -37,15 +35,15 @@
 		hasInvitedSomeone,
 	} from "$lib/store/store";
 
-	// let state: GameState;
+
 	let room: Room<GameState>;
 	let canvas: HTMLCanvasElement;
 	let ctx: CanvasRenderingContext2D;
 	let isDisconnected = false;
 	let isGamePaused = false;
-	// let showWinnerModal = false;
-	// let winnerLogin = '';
+	let client: any;
 
+	// **************      ************** //
 	// Game options writables
 	let speed: number;
 	let scoreToWin: number;
@@ -56,9 +54,6 @@
 	let backgroundColorChoice: string;
 	let paddleSizeChoice: string;
 
-	// **************      ************** //
-	let client: any;
-	// **************      ************** //
 	// Writable userInfos
 	let username: string = "john";
 	let wsClient: any;
@@ -66,8 +61,8 @@
 	let gameData: any;
 	let login: string;
 	let hasInvited: boolean;
-
 	let state: GameState;
+// **************      ************** //
 
 	async function EnterGame() {
 		try {
@@ -229,7 +224,9 @@
 					wsClient.emit("cancelInvitation", datas);
 				}
 			}
-		} catch (e) {}
+		} catch (e) {
+			console.error("Failed to connect to the game server:", e);
+		}
 	}
 
 	async function registerScoreHistory(data: any) {
@@ -254,7 +251,6 @@
 	}
 
 	async function initializeGame() {
-		//const client = new Client("ws://localhost:3001");
 		try {
 			iAmInvited.subscribe((a) => {
 				invited = a;
@@ -262,11 +258,6 @@
 			dataGame.subscribe((a) => {
 				gameData = a;
 			});
-
-			// paddleSize.subscribe((a)=>{
-			// paddleSizeChoice = a;
-			// console.log("Game schema [paddleSizeChoice] :",  paddleSizeChoice);
-			// })
 
 			backgroundColor.subscribe((a) => {
 				backgroundColorChoice = a;
@@ -291,7 +282,6 @@
 			console.log(" [ initiationGame ] gameData: ", gameData);
 			console.log(" [ initiationGame ] invited: ", invited);
 			if (invited === false) {
-				//123
 				room = await client.create("privateRoom", roomOptions);
 			} else {
 				room = await client.joinById(gameData.roomId, roomOptions);
@@ -310,7 +300,6 @@
 					rightPlayerUsername.set(data.loginToInvite);
 					leftPlayerUsername.set(data.login);
 					winnerScore.set(data.scoreToWin);
-					// backgroundColor.set(data.backgroundColor);
 					console.log(
 						"[ room.onMessage(Invitation) winnerScore.set(data.scoreToWin ] ",
 						winnerScore.set(data.scoreToWin)
@@ -346,16 +335,13 @@
 			});
 
 			room.onMessage("gameFinished", (message: any) => {
-				// alert(message.winner);
 				if (message.winnerLogin) {
 					alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
 				}
 				LeaveGame();
 			});
 			handleDisconnection();
-		} catch (e) {
-			// console.error("Failed to connect to the game server:", e);
-		}
+		} catch (e) {}
 	}
 
 	function handleDisconnection() {

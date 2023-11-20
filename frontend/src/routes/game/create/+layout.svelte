@@ -1,7 +1,4 @@
 <script lang=ts>
-    // import { onMount } from "svelte";
-    // import type { GameState } from "../../../../../backend/src/game/game.schema";
-    // export let state: GameState;
     import { userLogin, InvitedUserLogin, winnerScore, leftPlayerUsername, rightPlayerUsername} from "$lib/store/store";
 
     let login: string = "";
@@ -25,20 +22,14 @@
   </script>
   <div class="game-header">
     <div class="left-player">
-      <!-- <span>Left Player: {state.leftPlayerName}</span> -->
-      <!-- <span>Left Player: ${leftUsername} </span> -->
       <span>Left Player: '{login}'</span>
     </div>
     <div class="right-player">
-      <!-- <span>Right Player: {state.rightPlayerName}</span> -->
-      <!-- <span>Right Player: ${rightUsername}</span> -->
       <span>Right Player: '{invited}' </span>
     </div>
   </div>
 
   <div class="scoreToWin">
-    <!-- <span>Right Player: {state.rightPlayerName}</span> -->
-    <!-- <span>Right Player: ${rightUsername}</span> -->
     <span>Score To Win: '{socreToWin}' </span>
   </div>
   

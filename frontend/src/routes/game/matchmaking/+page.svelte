@@ -9,7 +9,6 @@
 	} from "$lib/store/store";
 	import { closeModal } from "$lib/store/ModalValues";
 	import { gameRender } from "$lib/game/gameRender";
-	// import { PaddleDirection } from "../../../../../backend/src/game/game.physics";
 	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 	import {
 		actualUsername,
@@ -36,14 +35,13 @@
 	let loginName: string;
 	let id: number;
 	let client: any;
-	// **************      **************      ************** //
 
 	// Writable userInfos
 	let username: string = "john";
-
 	let wsClient: any;
-
 	let refresh: boolean;
+
+	// **************      **************      ************** //
 
 	onMount(() => {
 		isItARefreshement.subscribe((a: boolean) => {
@@ -51,17 +49,13 @@
 		});
 		if (refresh === true) {
 			console.log(" [ Matchmaking ] ! ***[ Refresh ]*** !");
-			// localStorage.removeItem("jwt");
-			// localStorage.clear();
 			goto("/");
 		} else {
 			console.log(" [ Matchmaking ] *{ Not a Refresh ! }* ");
 		}
-		// [ MatchMaking ] // // // // // // // // // // // // // // // // // // // // // //
+
 		winnerScore.set(3);
 		ballSpeed.set(3);
-		// // // // // // // // // // // // // // // // // // // // // // // // // // // //
-
 		client = new Colyseus.Client("ws://localhost:3001");
 		clientColyseus.set(client);
 
@@ -69,11 +63,11 @@
 		launchedGame.set(true);
 		EnterGame();
 
-		// **************      ************** //
+
 		clientColyseus.subscribe((dataClient) => {
 			client = dataClient;
 		});
-		// **************      ************** //
+
 		actualUsername.subscribe((a) => {
 			username = a;
 		});
@@ -167,9 +161,6 @@
 
 			if (response.ok) {
 				console.log("-[ Enter Game Button ]- ");
-				// session.subscribe((a: any) => {
-				// 	wsClient = a;
-				// });
 				wsClient.emit("inGameUpdate", { myId: id });
 			}
 		} catch (e) {}
@@ -225,7 +216,6 @@
 				loginName: loginName,
 				id: id,
 				username: username,
-				//isReady:isReady
 			};
 
 			inGame.set(true);
@@ -254,16 +244,11 @@
 			});
 
 			room.onMessage("gameFinished", (message: any) => {
-				// alert(message.winner);
 				if (message.winnerLogin) {
 					alert("Winner is '" + message.winnerLogin + "'"); // Display the winnerLogin if it exists
 				}
 				LeaveGame();
 			});
-			// room.onMessage('interupted', () => {
-			// 	// client.disconnection();
-			// 	room.leave();
-			// })
 		} catch (e) {
 			console.error("Failed to connect to the game server:", e);
 		}

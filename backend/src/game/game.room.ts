@@ -15,7 +15,6 @@ export interface UserInfos {
 	id: number,
 	clientId: string,
 	client: Client,
-	// roomId: string,
 }
 
 @Injectable({ scope: Scope.DEFAULT })
@@ -26,8 +25,6 @@ export class PongRoom extends Room<GameState> {
 
 	private client1: Client;
 	private client2: Client;
-
-	//private playerInfo: Map<Client, { loginName: string} > = new Map();
 	private physics!: Physics;
 	public lpId!: any; // <<<=== Left player ID
 	public rpId!: any; // <<<=== Right player ID
@@ -85,10 +82,6 @@ export class PongRoom extends Room<GameState> {
 				if (this.state.scoreboard.left > this.state.scoreboard.right) // [* Left Player Won *]
 				{
 					console.log('[ tentative - Increment Rank Left Won ]...')
-					// this.broadcast('updateWinningScore', { winningScore: this.winningScore });
-					// this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
-					// this.broadcast('gameFinished', { message: winnerMessage }, { except: [this.client2] });
-					// this.broadcast('gameFinished', { message: looserMessage }, { except: [this.client1] });
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
@@ -97,10 +90,6 @@ export class PongRoom extends Room<GameState> {
 				else //  [ *Right Player Won* ]
 				{
 					console.log('[ tentative - Increment Rank Right Won ]...')
-					// this.broadcast('updateWinningScore', { winningScore: this.winningScore });
-					// this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
-					// this.broadcast('gameFinished', { message: winnerMessage }, { except: [this.client1] });
-					// this.broadcast('gameFinished', { message: looserMessage }, { except: [this.client2] });
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
@@ -129,7 +118,6 @@ export class PongRoom extends Room<GameState> {
 			}
 		
 		if (this.clients.length === 1 && options.loginName !== undefined) {
-			// if (options.loginName !== undefined) {
 
 				console.log(' -[ onJoin() ]- Player [1]');
 				this.client1 = client;
@@ -151,19 +139,11 @@ export class PongRoom extends Room<GameState> {
 
 			//}
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
-			// if (options.loginName !== undefined) {
-				// const userinfos = PongRoom.roomPlayerInfosMap.get(1);
-				// if (userinfos.login !== options.loginName) {
-
 					console.log(' -[ onJoin ]- Player [2]');
 					this.client2 = client;
 					this.rpId = client.id;
 					this.rpUserName = options.username;
 					this.rpUserId = options.id;
-
-					// this.roomLocked = true;
-					// this.lock();
-
 					const userInfos: UserInfos = {
 						roomId: this.roomId,
 						username: options.username,
@@ -188,17 +168,6 @@ export class PongRoom extends Room<GameState> {
 				}
 		}
 		this.handlePlayerDisconnection();
-		// this.onMessage('player_disconnected', (client, message) => {
-		// 	console.log('-[ onJoin() - onMessage\'PlayerDisconected\' )]- message: ', message);
-		// 	console.log(' -- Before -- appel onLeave()');
-		// 	this.onLeave(client);
-		// 	console.log(' -- After -- appel onLeave()');
-		// 	this.onDispose();
-		// 	PongRoom.roomPlayerInfosMap.clear();
-		// 	const mapSize = PongRoom.roomPlayerInfosMap.size;
-		// 	console.log(" -[ OnMessage -disconect- ]- mapSize (end): { ", mapSize, ' }')
-		// 	client.leave();
-		// });
 	}
 
 	private lockRoomAndStartGame(loginName: string) {
@@ -262,5 +231,4 @@ export class PongRoom extends Room<GameState> {
 	onDispose() {
 		console.log("-[ onDispose() ]- ");
 	}
-
 }

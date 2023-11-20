@@ -25,11 +25,6 @@ export interface UserInfos {
 @Injectable()
 export class privateRoom extends Room<GameState> {
 
-	//  ********     ************ //
-	// constructor(private romInfos: RoomInfos) {
-	// 	super();
-	// }
-	//  ********     ************ //
 	private static roomPlayerInfosMap = new Map<number, UserInfos>();
 	maxClients = 2;
 
@@ -61,24 +56,14 @@ export class privateRoom extends Room<GameState> {
 	}
 
 	async onJoin(client: Client, options: any) {
-		// let mapSize = privateRoom.roomPlayerInfosMap.size;
 		// console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
 		if (this.clients.length === 1 && options.loginName !== undefined) {
-			// if (options.loginName !== undefined) {
 
 				console.log(' -[ (Private) - onJoin() ]- Player [1]');
 				this.client1 = client;
 				this.lpId = client.id;
 				this.lpUserName = options.username;
 				this.lpUserId = options.id;
-
-				// // [ Debug ] // // // // // // // // // // // // // // // // // // // // // //
-				// console.log("onJoin ===> [1] OPTIONS: [* ");
-				// console.log(options, " *]")
-				// console.log("onJoin ===> [1] lpId: [", this.lpId, "]");
-				// console.log("onJoin ===> [1] lpUserName: [", this.lpUserName, "]");
-				// console.log("onJoin ===> [1] lpUserId: [", this.lpUserId, "]");
-				// // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 				const userInfos: UserInfos = {
 					roomId: this.roomId,
@@ -98,24 +83,11 @@ export class privateRoom extends Room<GameState> {
 				UserService.inGameUsersSet.add(this.lpUserId);
 				privateRoom.roomPlayerInfosMap.set(1, userInfos);
 
-				// // [ Debug ] // // // // // // // // // // // // //
-				// mapSize = PongRoom.roomPlayerInfosMap.size;
-				// console.log(" -[ OnJoin ]- mapSize: ", mapSize)
-				// PongRoom.roomPlayerInfosMap.forEach((infos) => {
-				// 	console.log("Map Infos: -> ", infos)
-				// });
-				// // // // // // // // // // // // // // // // // //
-
 				// // [ Send Invitation to Other player ] // // // // 
 				console.log(' -[ (Private) - onJoin() ]- Player [1] -> Broadcast Send...');
 				this.broadcast('invitation', userInfos);
 
-				// // // // // // // // // // // // // // // // // // 
-				// }
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
-			// if (options.loginName !== undefined) {
-				// const userinfos = privateRoom.roomPlayerInfosMap.get(1);
-				// if (userinfos.login !== options.loginName) {
 
 					console.log(' -[ (Private) - onJoin ]- Player [2]');
 					this.client2 = client;
@@ -143,8 +115,6 @@ export class privateRoom extends Room<GameState> {
 					privateRoom.roomPlayerInfosMap.clear();
 					this.state.gameStatus = GameStatus.PLAYING;
 					this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
-				//}
-			//}
 		}
 
 		this.onMessage('player_disconnected', (client, message) => {
@@ -154,8 +124,6 @@ export class privateRoom extends Room<GameState> {
 			// console.log(' -- After -- appel onLeave()');
 			this.onDispose();
 			privateRoom.roomPlayerInfosMap.clear();
-			// const mapSize = privateRoom.roomPlayerInfosMap.size;
-			// console.log(" -[ OnMessage -disconect- ]- mapSize (end): { ", mapSize, ' }')
 			client.leave();
 		});
 	}
@@ -202,10 +170,9 @@ export class privateRoom extends Room<GameState> {
 					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
 					this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.lpUserName }, { except: [this.client1] });
-					//this.broadcast('winnerLogin', {winnerLogin : this.lpUserName});
 
-					console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
-					console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
+					// console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.lpUserName });
+					// console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.lpUserName });
 				}
 				else //  [ *Right Player Won* ]
 				{
@@ -214,13 +181,11 @@ export class privateRoom extends Room<GameState> {
 					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
 					this.broadcast('gameFinished', { message: looserMessage, winnerLogin: this.rpUserName }, { except: [this.client2] });
-					// this.broadcast('winnerLogin', {winnerLogin : this.rpUserName})
 
-					console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
-					console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
+					// console.log(' - Game Finished:', { message: winnerMessage, winnerLogin: this.rpUserName });
+					// console.log(' - Game Finished:', { message: looserMessage, winnerLogin: this.rpUserName });
 				}
 			}
-
 			this.physics.update(deltaTime);
 		}
 		this.onMessage('paddleMove', (client, message) => {
@@ -274,7 +239,6 @@ export class privateRoom extends Room<GameState> {
 
 	onDispose() {
 		console.log("-[ (Private) - onDispose() ]- ");
-		// console.info('Disposing privateRoom');
 	}
 
 }

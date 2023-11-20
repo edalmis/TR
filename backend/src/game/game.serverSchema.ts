@@ -1,5 +1,4 @@
 import { Schema, type } from '@colyseus/schema';
-import { privateRoom } from './game.privateroom';
 
 // Dimensions of the game area
 export const GameDimensions = {

@@ -68,9 +68,6 @@
 	function closeGameRuleModal() {
 		showModal.set(false);
 	}
-	// function redirectToMatchmaking() {
-	// 	goto("/game/matchmaking");
-	// }
 
 	const onSubmit = () => {
 		const winnerScoreMap: Record<string, number> = {
@@ -95,14 +92,10 @@
 
 <main class="game-background">
 	<div class="button-container">
-		<!-- <button style="margin-top: 2px"
-		on:click={redirectToMatchmaking} class="create-privateRoom-button" > MatchMaking 
-		</button> -->
 		<button
 			style="margin-top: 2px"
 			on:click={openModal}
 			class="create-privateRoom-button">
-			<!-- Create PrivateGame with '{invitedUsername}' -->
 			Create PrivateGame
 		</button>
 		<button
@@ -114,7 +107,7 @@
 		</button>
 	</div>
 </main>
-<!-- <h1>[Create Game] with 🎋 * {invited} * 🏓</h1> -->
+
 
 {#if $showModal}
 	<div class="modal">
@@ -153,9 +146,6 @@
 					<option value="orange">Fanta</option>
 				</select>
 			</label>
-
-			<!-- <label for="basic-range">Range Label</label>
-		<Range on:change={(e ) => speed = e.detail.speed} id="basic-silder" /> -->
 
 			<label for="speed-range" class="label">
 				Speed :
@@ -201,13 +191,11 @@
 	.onSubmitPrivateRoom-container {
 		width: 100%; /* Set width as needed */
 		height: 100%; /* Set height as needed */
-		/* border: 15px solid black; */
 		border: 35px solid var(--border-color);
 		padding: 18px;
 		margin: 0 auto;
 		box-sizing: border-box;
 		background-image: url("/images/playRoom.jpg");
-		/* background-image: url("/images/homeRoom.jpeg"); */
 		background-position: center;
 		background-size: cover;
 	}
@@ -222,7 +210,6 @@
 		border-radius: 5px; /* Rounded corners */
 		cursor: pointer;
 		transition: background-color 0.3s ease; /* Smooth background color transition on hover */
-		/* Center the button horizontally */
 		display: block;
 		margin: 0 auto;
 	}
@@ -232,13 +219,11 @@
 	}
 
 	label {
-		/* display: block; */
+		
 		display: flex;
-		/* flex-direction: column; */
 		align-items: center; /* text aligns with the column.*/
 		margin-bottom: 10px;
 		color: rgb(29, 41, 131);
-		/* margin: px; */
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -254,17 +239,18 @@
 		border-radius: 10px; /* Rounded corners */
 		padding: 1px;
 		margin: 2px 0;
-		-webkit-appearance: none; /* Remove default appearance */
+		/* -webkit-appearance: none; Remove default appearance */
+		appearance: none;
 	}
 
 	.range::-webkit-slider-thumb {
-		-webkit-appearance: none; /* Remove default appearance for thumb */
-		width: 20px; /* Set thumb width */
-		height: 20px; /* Set thumb height */
-		background: #00cc99; /* Thumb color */
-		border: 2px solid #d5dfe9; /* Thumb border */
-		border-radius: 66%; /* Rounded thumb */
-		cursor: pointer; /* Show pointer cursor on hover */
+		/*-webkit-appearance: none; /* Remove default appearance for thumb */
+		appearance: none;
+		width: 20px; 
+		height: 20px;
+		background: #00cc99; 
+		border: 2px solid #d5dfe9;
+		cursor: pointer;
 	}
 
 	input,
@@ -281,8 +267,8 @@
 
 	button {
 		cursor: pointer;
-		color: white; /* Change text color to white */
-		background: #007bff; /* A cool blue color */
+		color: white;
+		background: #007bff; 
 		border-radius: 3px;
 		padding: 10px 20px;
 		font-size: 18px;
@@ -292,6 +278,6 @@
 	}
 
 	button:hover {
-		background: #245a1a; /* Darker blue on hover */
+		background: #245a1a; 
 	}
 </style>

@@ -27,12 +27,12 @@ paddleSize.subscribe((a)=>{
 
 export class Paddle extends Schema {
 	// Constants for the paddle dimensions and offsets
-	// public static readonly offset = 50;
 	public static offset: number;
 	public static width :number; //default width
 	public static height :number // default height;
 	public static widthFactor : number;
 	public static heightFactor : number;
+
 	// x and y coordinates of the paddle
 	@type('int32')
 	public x: number;
@@ -40,62 +40,20 @@ export class Paddle extends Schema {
 	@type('int32')
 	public y = center.y;
 
-	// setSize(){
-	// 	if(paddleSizeChoice === 'small')
-	// 	{
-	// 		Paddle.width = 15;
-	// 		Paddle.height = 100;
-	// 		Paddle.offset = 20;
-	// 		console.log(" class Paddle:this.size === PaddleSize.Small: Paddle.offset ", Paddle.offset);
-	// 		} else {
-	// 		Paddle.offset = 40;
-	// 		Paddle.width  = 40;
-	// 		Paddle.height = 200;
-	// 		console.log(" class Paddle:this.size === PaddleSize.Normal : Paddle.offset ", Paddle.offset);
-	// 	}}
-		
 	constructor(private side: PaddleSide, private paddleSize: string) {
 		super();
-		//this.setSize();
 		this.paddleSize = paddleSizeChoice;
 		this.initialize();
-		//console.log("initialize: paddleSizeChoice, Paddle.width, Paddle.widthFactor, Paddle.offset :",paddleSizeChoice, Paddle.width, Paddle.widthFactor, Paddle.offset );
 	}
 
 	// Reset method
 	public reset() {
-		//this.setSize();
 		this.initialize();
 	}
 
 	public initialize() {
 
-		// if(paddleSizeChoice === 'small')
-		// {
-		// 	// Paddle.width = 15;
-		// 	// Paddle.height = 100;
-		// 	Paddle.offset = 20;
-		// 	console.log(" class Paddle:this.size === PaddleSize.Small: Paddle.offset ", Paddle.offset);
-		// 	} else {
-		// 		Paddle.offset = 40;
-		// 	// Paddle.width  = 40;
-		// 	// Paddle.height = 200;
-		// 	console.log(" class Paddle:this.size === PaddleSize.Normal : Paddle.offset ", Paddle.offset);
-		// }
-		//const actualOffset = Paddle.width / 2 + Paddle.offset;
-
-		// if (this.paddleSize === 'small')
-		// {
-		// 	Paddle.widthFactor = 10;
-		// 	Paddle.offset = 20;
-		// }
-		// else {
-		// 	Paddle.widthFactor = 2;
-		// 	Paddle.offset = 50;
-		// }
 		const actualOffset = Paddle.width / 2 + Paddle.offset;
-		//console.log("initialize: paddleSizeChoice, Paddle.width, Paddle.widthFactor, Paddle.offset :",paddleSizeChoice, Paddle.width, Paddle.widthFactor, Paddle.offset );
-
 		switch (this.side) {
 			case PaddleSide.LEFT:
 				this.x = actualOffset;
@@ -144,7 +102,7 @@ export enum GameStatus {
 	WAITING = 0,
     PLAYING,
     FINISHED,
-    INTERRUPTED, // a player has left the match
+    INTERRUPTED,
     STOPSOLO,
 }
 
@@ -157,11 +115,9 @@ export class GameState extends Schema {
 
 	@type(Paddle)
 	public leftPaddle = new Paddle(PaddleSide.LEFT);
-	//public leftPaddle = new Paddle(PaddleSide.LEFT, PaddleSize.Normal);
 
 	@type(Paddle)
 	 public rightPaddle = new Paddle(PaddleSide.RIGHT);
-	//public rightPaddle = new Paddle(PaddleSide.RIGHT, PaddleSize.Normal);
 
 	@type(Ball)
 	public ball = new Ball();

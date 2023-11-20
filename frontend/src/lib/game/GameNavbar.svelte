@@ -1,14 +1,9 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
-	// import { navbar } from "$lib/store/store";
     import { onMount } from "svelte";
 
 	let isModalOpen = false;
 
-	// Function to toggle the modal
-	// function toggleModal() {
-	// isModalOpen = !isModalOpen;
-	// }
 	export function handleBackHomeModal() {
 		isModalOpen = true;
 	}
@@ -31,10 +26,9 @@
   });
 </script>
 
-<!-- <nav class="w-full flex gap-10 p-2 justify-center items-center h-full"> -->
+
 <nav class="w-full flex gap-10 p-2 justify-center items-center h-full text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto">
 	<button on:click={handleBackHomeModal}>Back to Business</button>
-	<!-- <button id="showModalButton">Back to Business</button> -->
 </nav>
 
 {#if isModalOpen}

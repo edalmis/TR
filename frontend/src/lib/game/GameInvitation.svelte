@@ -35,7 +35,6 @@
 			isInvitOn = a;
 		});
 		if (isInvitOn) {
-			// InvitedUserLogin.set(gameData.login);
 			winnerScore.set(gameData.scoreToWin);
 			rightPlayerUsername.set(gameData.loginToInvite);
 			leftPlayerUsername.set(gameData.login);
@@ -91,30 +90,12 @@
 </div>
 
 <style>
-	/* .accept {
-		color: blue;
-		border-width: 1px;
-		border-radius: 25%;
-		border-color: blue;
-		margin-left: 2px;
-		margin-right: 2px;
-	}
-	.refuse {
-		color: rgb(159, 11, 11);
-		border-width: 1px;
-		border-radius: 25%;
-		border-color: blue;
-		margin-left: 2px;
-		margin-right: 2px;
-	} */
-
 	button {
 		cursor: pointer;
 		color: white; /* Change text color to white */
 		border-width: 1px;
 		border-radius: 20%;
 		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
-		/* border-radius: 3px; */
 		padding: 5px 5px;
 		font-size: 8px;
 		border: 2px solid #eff1f4;

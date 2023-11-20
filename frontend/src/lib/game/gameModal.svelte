@@ -4,10 +4,7 @@
 
 	const dispatch = createEventDispatcher();
 
-	// Props from parent
 	export let isOpen = false;
-
-
 	const closeModal = () => {
 		dispatch("close");
 	};
@@ -24,6 +21,3 @@
 	</div>
 {/if}
 
-  <style>
-	/* Add your modal styles here */
-  </style>
