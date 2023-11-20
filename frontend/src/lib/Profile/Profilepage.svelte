@@ -36,6 +36,8 @@
 	let title: string;
 	let win: number;
 	let loose: number;
+	let myId: number;
+	let games: any = [];
 
 	let newUserName: string = "";
 	// $: newImg = "";
@@ -94,6 +96,7 @@
 					title = user.title;
 					win = user.wonGameNbr;
 					loose = user.lostGameNbr;
+					myId = user.id;
 
 					googleAuth.set(user.fa2);
 					console.log("2fa Value from user: [ ", user.fa2, " ]");
@@ -102,7 +105,27 @@
 					authentificated.set(false);
 					goto("/");
 				}
-				//let user = await response();
+				// const url_History = `http://localhost:3000/user/getMatchHistory`;
+				// const response_history = await fetch(url_History, {
+				// 	method: "GET",
+				// 	headers: {
+				// 		Authorization: `Bearer ${jwt}`,
+				// 		"Content-Type": "application/json",
+				// 	},
+				// });
+				// if (response_history.ok) {
+				// 	games = await response_history.json();
+				// 	console.log("-[ Game History ]- Response: [Games]", games);
+				// }
+
+				// Get Match History
+				session.subscribe((a: any) => {
+					wsClient = a;
+				});
+				wsClient.emit("getOtherGameHistory", { otherId: myId });
+				wsClient.on("otherGameHistory", (data: any) => {
+					games = data;
+				});
 			}
 		} catch (e) {}
 		googleAuth.subscribe((a) => {
@@ -484,6 +507,29 @@
 					</span>
 				{/if}
 			</div> -->
+		</div>
+		<div>
+			<h1>Game History</h1>
+			{#if games.length > 0}
+				<ul>
+					{#each games as game, i}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+						<!-- <li
+							class:selected={selectedGame === game}
+							on:click={() => selectGame(game)}
+						> -->
+						<div>
+							{game.player1}
+							{game.scorePlayer1} vs {game.scorePlayer2}
+							{game.player2}
+						</div>
+						<!-- </li> -->
+					{/each}
+				</ul>
+			{:else}
+				<p>Aucune partie trouvée.</p>
+			{/if}
 		</div>
 	</div>
 {/if}
