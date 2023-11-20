@@ -54,6 +54,9 @@
 	let myId: number = 0;
 	let onlineUsersDatas: any[] = [];
 	let onlineUserDatasEmptyArray: boolean = true;
+	let chatMessages: { [key: string]: string[] } = {}; // Define the type explicitly
+	let isTextAreaOpen = false;
+	let activeUserId: any;
 
 	// [ Friends List ]
 	let friendsListDatas: any[] = [];
@@ -496,12 +499,16 @@
 	}
 
 	// /// /// /// /// // [ D M ] // /// /// /// /// //
-	function resetMessagedUsers() {
-		sessionStorage.removeItem("messagedUsers");
-		alert("Messaged users reset successfully!");
-	}
+	// function resetMessagedUsers() {
+	// 	sessionStorage.removeItem("messagedUsers");
+	// 	alert("Messaged users reset successfully!");
+	// }
 
-	function handleButtonClick(use: string) {
+	function handleButtonClick(id2:number, use: string) {
+		if (chatMessages[use] && chatMessages[use].length === 0) {
+     		 alert("Please write some message!");
+      		return;
+    	}
 		// console.log('use-----------', use)
 		const isBlockedByMe = usersIBlockedList.some(
 			(user) => user.username === use
@@ -514,28 +521,46 @@
 			alert("Sending direct message blocked!");
 			return; // Exit the function since the user is blocked
 		}
-
-		if (!messagedUsers.has(use)) {
+		if (!chatMessages[use]) {
+			alert("Please write some message!");
+			return;
+    }
+		// if (!messagedUsers.has(use)) {
 			// Only send the default message if we haven't messaged this user before
-			$session.emit("sendMessageN", {
-				message: "Hello!",
+			$session.emit("sendMessage", {
+				message: chatMessages[use],
 				sendBy: id,
-				sendTo: use,
+				sendTo: id2,
 			});
-
+			chatMessages[use] = [];
+			closeTextArea();
+			
 			// Mark this user as messaged
 			// messagedUsers.add(use);
-			messagedUsers.add(use);
+			// messagedUsers.add(use);
 
 			// Save to sessionStorage
-			sessionStorage.setItem(
-				"messagedUsers",
-				JSON.stringify([...messagedUsers])
-			);
-		}
+			// sessionStorage.setItem(
+			// 	"messagedUsers",
+			// 	JSON.stringify([...messagedUsers])
+			// );
+		// }
 
+		// Call this regardless of whether it's the first message or not,
+		// as it appears to be your intention from the original code
+		// handleDM(use);
 		goto("/DM");
 	}
+
+	function openTextArea(id:number) {
+    isTextAreaOpen = true;
+    activeUserId = id;
+  }
+
+  function closeTextArea() {
+    isTextAreaOpen = false;
+    activeUserId = null;
+  }
 </script>
 
 <ul role="list" class="divide-y divide-gray-100">
@@ -631,19 +656,29 @@
 											>See Profile
 										</button>
 									</p>
-									<p
+									<!-- <p
 										class="mt-1 truncate text-xs leading-5 text-gray-500"
 									>
 										<button on:click={resetMessagedUsers}
 											>Reset DM</button
 										>
-									</p>
+									</p> -->
 								</div>
+								{#if isTextAreaOpen && activeUserId === id}
+								<textarea class="w-10% h-10%" bind:value={chatMessages[username]} />    				
+							{/if}
+
 								<button
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
-									on:click={() => handleButtonClick(username)}
+									on:click={() => {
+										if (activeUserId === id) {
+										handleButtonClick(id, username);
+						} else {
+							openTextArea(id);
+						}
+      							  }}
 								>
-									Send DM</button
+								{activeUserId === id ? "Send" : "Send DM"}</button
 								>
 							</div>
 
@@ -707,20 +742,30 @@
 										>See Profile
 									</button>
 								</p>
-								<p
+								<!-- <p
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 								>
 									<button on:click={resetMessagedUsers}
 										>Reset DM</button
 									>
-								</p>
+								</p> -->
 							</div>
-							<button
-								class="mt-1 truncate text-xs leading-5 text-gray-500"
-								on:click={() => handleButtonClick(username)}
-							>
-								Send DM</button
-							>
+							{#if isTextAreaOpen && activeUserId === id}
+								<textarea class="w-10% h-10%" bind:value={chatMessages[username]} />    				
+							{/if}
+
+								<button
+									class="mt-1 truncate text-xs leading-5 text-gray-500"
+									on:click={() => {
+										if (activeUserId === id) {
+										handleButtonClick(id, username);
+						} else {
+							openTextArea(id);
+						}
+      							  }}
+								>
+								{activeUserId === id ? "Send" : "Send DM"}</button
+								>
 						</div>
 
 						<div class="mt-1 flex items-center gap-x-1.5">
