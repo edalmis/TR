@@ -603,7 +603,7 @@
 								src={avatar}
 								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
 							/>
-							<div class="min-w-0 flex-auto">
+							<!-- <div class="min-w-0 flex-auto">
 								<p
 									class="text-sm font-semibold leading-6 text-gray-900"
 								>
@@ -619,13 +619,12 @@
 										>See Profile
 									</button>
 								</p>
+							</div> -->
+							<div>
+								<p>Games Won: {wonGames}</p>
 							</div>
 						</div>
 					</li>
-
-					<div>
-						<p>Games Won: {wonGames}</p>
-					</div>
 				{/each}
 			{:else}
 				<li class="flex justify-between gap-x-6 py-5">
