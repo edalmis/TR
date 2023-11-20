@@ -19,7 +19,6 @@
 	import Enable2Fa from "./Enable2Fa.svelte";
 	import Disable2Fa from "./Disable2Fa.svelte";
 
-
 	let show_Modal: boolean;
 	showModal.subscribe((a: boolean) => {
 		show_Modal = a;
@@ -110,7 +109,9 @@
 			Google2fa = a;
 		});
 		$session.on("newMessagedm", (data: any) => {
-			alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
+			alert(
+				"You have new direct message from " + data.messages.senderLogin
+			); //--------------------3
 			dmNotif.set(true); //---------------4
 		});
 	});
@@ -147,16 +148,16 @@
 
 	async function handleRestAvatar() {
 		// console.log("-[ handleRestAvatar ]-Reset Img bien Set")
-		
+
 		session.subscribe((a: any) => {
-			wsClient =a;
-		})
-		wsClient.emit('resetAvatar', {login: login});
+			wsClient = a;
+		});
+		wsClient.emit("resetAvatar", { login: login });
 
 		wsClient.on("updateAvatar", (datas: any) => {
 			pictureLink = datas.avatar;
 			// console.log(" -[ updateAvatar ]- : ", datas.avatar);
-		});	
+		});
 	}
 
 	let people = [
@@ -315,6 +316,8 @@
 							indication_username = "Cannot be empty";
 						} else if (newUserName.length > 20) {
 							indication_username = "20 char Max";
+						} else if (/\s/.test(newUserName)) {
+							indication_username = "No whitespace allowed";
 						} else {
 							handleOpenModal();
 						}
@@ -425,6 +428,8 @@
 							indication_avatar = "Cannot be empty";
 						} else if (newImg.length > 200) {
 							indication_avatar = "200 char Max";
+						} else if (/\s/.test(newImg)) {
+							indication_avatar = "No whitespace allowed";
 						} else {
 							// handleOpenModal()
 							openModal("Try Avatar");
