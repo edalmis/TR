@@ -556,21 +556,24 @@
 			<h3>Leaderboard</h3>
 
 			{#if topPlayers.length !== 0}
-				{#each topPlayers as { id, login, username, avatar, wonGames }}
-					<li class="flex justify-between gap-x-6 py-5">
-						<div class="flex min-w-0 gap-x-4">
-							<img
-								class="h-12 w-12 flex-none rounded-full bg-gray-50"
-								style="margin-left: 20px;"
-								src={avatar}
-								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
-							/>
-							<div>
-								<p>Games Won: {wonGames}</p>
+				<div class="flex">
+					{#each topPlayers as { id, login, username, avatar, wonGames }}
+						<li class="flex justify-between gap-x-6 py-5">
+							<div class="flex min-w-0 gap-x-4">
+								<img
+									class="h-12 w-12 flex-none rounded-full bg-gray-50"
+									style="margin-left: 20px;"
+									src={avatar}
+									alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
+								/>
+								<div>
+									<p>Games Won: {wonGames}</p>
+									<p>{username}</p>
+								</div>
 							</div>
-						</div>
-					</li>
-				{/each}
+						</li>
+					{/each}
+				</div>
 			{:else}
 				<li class="flex justify-between gap-x-6 py-5">
 					<div
