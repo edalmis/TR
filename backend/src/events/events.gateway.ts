@@ -163,6 +163,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		client.emit('friendListUpdate', myNewFriendList);
 	}
 
+	@SubscribeMessage('getOtherGameHistory')
+    async getOtherGameHstory(client: Socket, data: any) {
+        const user = await this.userService.find_user_by_id(data.otherId);
+        const gameHistoryData = await this.userService.getMatchHistory(user);
+        client.emit('otherGameHistory', gameHistoryData)
+    }
 
 	@SubscribeMessage('getOnlineUsersDatas')
 	async sendOnlineUsersDatas(client: Socket) {

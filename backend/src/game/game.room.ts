@@ -128,8 +128,8 @@ export class PongRoom extends Room<GameState> {
 			  return;
 			}
 		
-		if (this.clients.length === 1) {
-			if (options.loginName !== undefined) {
+		if (this.clients.length === 1 && options.loginName !== undefined) {
+			// if (options.loginName !== undefined) {
 
 				console.log(' -[ onJoin() ]- Player [1]');
 				this.client1 = client;
@@ -149,11 +149,11 @@ export class PongRoom extends Room<GameState> {
 				UserService.inGameUsersSet.add(this.lpUserId);
 				PongRoom.roomPlayerInfosMap.set(1, userInfos);
 
-			}
+			//}
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
 			// if (options.loginName !== undefined) {
-				const userinfos = PongRoom.roomPlayerInfosMap.get(1);
-				if (userinfos.login !== options.loginName) {
+				// const userinfos = PongRoom.roomPlayerInfosMap.get(1);
+				// if (userinfos.login !== options.loginName) {
 
 					console.log(' -[ onJoin ]- Player [2]');
 					this.client2 = client;
@@ -181,7 +181,7 @@ export class PongRoom extends Room<GameState> {
 					// this.state.gameStatus = GameStatus.PLAYING;
 					// this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
 			// }
-			}
+			//}
 		}
 		this.handlePlayerDisconnection();
 		// this.onMessage('player_disconnected', (client, message) => {

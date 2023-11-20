@@ -114,8 +114,8 @@ export class privateRoom extends Room<GameState> {
 				// }
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
 			// if (options.loginName !== undefined) {
-				const userinfos = privateRoom.roomPlayerInfosMap.get(1);
-				if (userinfos.login !== options.loginName) {
+				// const userinfos = privateRoom.roomPlayerInfosMap.get(1);
+				// if (userinfos.login !== options.loginName) {
 
 					console.log(' -[ (Private) - onJoin ]- Player [2]');
 					this.client2 = client;
@@ -144,7 +144,7 @@ export class privateRoom extends Room<GameState> {
 					this.state.gameStatus = GameStatus.PLAYING;
 					this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
 				//}
-			}
+			//}
 		}
 
 		this.onMessage('player_disconnected', (client, message) => {
