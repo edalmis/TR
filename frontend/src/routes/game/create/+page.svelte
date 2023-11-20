@@ -354,7 +354,7 @@
 			});
 			handleDisconnection();
 		} catch (e) {
-			console.error("Failed to connect to the game server:", e);
+			// console.error("Failed to connect to the game server:", e);
 		}
 	}
 
