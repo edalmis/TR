@@ -391,7 +391,7 @@
 				});
 			}
 		} catch (e) {
-			console.log("Friend OnMount PB");
+			// console.log("Friend OnMount PB");
 		}
 	});
 
