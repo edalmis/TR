@@ -4,6 +4,11 @@
 	import { onMount } from "svelte";
 	import { goto } from "$app/navigation";
 	import { io } from "socket.io-client";
+	import Modal from "$lib/modals/Modal.svelte";
+	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
+	import LoginFortyTwo from "$lib/Login/LoginFortyTwo.svelte";
+	import GameInvitation from "$lib/game/GameInvitation.svelte";
+	import GameNavbar from "$lib/game/GameNavbar.svelte";
 	import {
 		dataGame,
 		inviteNotif,
@@ -15,23 +20,14 @@
 		isItARefreshement,
 		isInvitationStillOn,
 		iAmInvited,
-	} from "$lib/store/store";
-	import {
+		authentificated,
 		isGoogleAuthActivated,
 		qrGoogle,
 		userLogin,
 		userId,
 		actualUsername,
 	} from "$lib/store/store";
-	import { authentificated } from "$lib/store/store";
-	import Modal from "$lib/modals/Modal.svelte";
-	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
-	import LoginFortyTwo from "$lib/Login/LoginFortyTwo.svelte";
-	import GameInvitation from "$lib/game/GameInvitation.svelte";
-	import GameNavbar from "$lib/game/GameNavbar.svelte";
-	import { closeModal } from "$lib/store/ModalValues";
 
-	let login: any;
 	let auth: boolean = false;
 	authentificated.subscribe((a) => {
 		auth = a;
@@ -57,8 +53,12 @@
 		nav = a;
 	});
 
+	let login: any;
+
+	/// // // // // // // // // // // // // // ///
+	// // // // // [  Functions  ] // // // // //
 	function connectSocket(id: number) {
-		console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
+		// console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
 		const socket = io("http://localhost:3002", {
 			withCredentials: true,
 			extraHeaders: {
@@ -73,23 +73,17 @@
 		isItARefreshement.set(false);
 
 		socket.on("receivedGameInvitation", (data) => {
-			console.log(
-				"[ Layout socket.on(receivedGameInvitation) ] data: ",
-				data
-			);
+			// console.log("[ Layout socket.on(receivedGameInvitation) ] data: ",data);
 			launchedGame.set(true);
 			inviteNotif.set(true);
 			dataGame.set(data);
 			isInvitationStillOn.set(true);
-			// goto("/game/create");
 		});
 
 		socket.on("updateInvitation", () => {
 			inviteNotif.set(false);
 			isInvitationStillOn.set(false);
 			iAmInvited.set(false);
-			// closeModal();
-			// goto("/");
 		});
 	}
 
@@ -104,13 +98,12 @@
 			});
 			if (response.ok) {
 				const moi = await response.json(); // Convertit la réponse JSON en objet JavaScript
-				// $user = user;
 				user.set(moi);
 				userLogin.set(moi.login);
 				userId.set(moi.id);
 				actualUsername.set(moi.userName);
 
-				console.log("2fa Value from user: [ ", user.fa2, " ]");
+				// console.log("2fa Value from user: [ ", user.fa2, " ]");
 				return moi.id;
 			} else {
 				localStorage.clear();
@@ -118,7 +111,7 @@
 				return -1;
 			}
 		} catch (e) {
-			console.log("err");
+			// console.log("err");
 			return -1;
 		}
 	}
@@ -131,9 +124,6 @@
 			if (token) {
 				console.log("On a bien un JWT present dans le localStorage !");
 				try {
-					// TEST   ( debut )
-					// TEST   ( fin )
-
 					// [ 1 - 1 ] Verification validite du Jwt aupres du Backend
 					const jwt_verifier_url =
 						"http://localhost:3000/auth/verifier_jwt";
@@ -148,37 +138,33 @@
 
 					// [ 1 - 2 ] Authorisation Acces si reponse Positive du Back !
 					if (response.ok) {
-						console.log(
-							"reponse du Backend ***[ Ok ]*** pour le JWT"
-						);
+						// console.log("reponse du Backend ***[ Ok ]*** pour le JWT");
 						authentificated.set(true);
 
 						let id = await getUserInfo(token);
 						if (id == -1) {
-							console.log(" [ Layout ] GetUserInfos Failed");
+							// console.log(" [ Layout ] GetUserInfos Failed");
 							return;
 						}
 						// Créer une connexion websocket si auth est ok
 						connectSocket(id);
-
 						navbar.set(true);
 						goto("/");
 					}
+
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
 					else {
-						console.log(
-							"reponse du Backend ***[ BAD ]*** pour le JWT"
-						);
+						// console.log("reponse du Backend ***[ BAD ]*** pour le JWT");
 						authentificated.set(false);
 						localStorage.clear();
 						goto("/");
 					}
-				} catch (error) {}
+				} catch (e) {}
 			}
+
 			// [ 2 ] Si Aucun Jwt dans localStorage du Browser Verification si Jwt present Dans Url
 			else {
 				// console.log("Pas de Jwt dans le Local storage");
-
 				// [ 2 - 1 ] Recupere Parametre l'UrL
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
@@ -188,27 +174,25 @@
 				if (urlParams.has("jwt")) {
 					const jwtPromise = urlParams.get("jwt");
 					jwt = await jwtPromise;
-					console.log("JWT:", jwt);
+					// console.log("JWT:", jwt);
 
 					// [ 2 - 3 ] Si param 'JwT' Stockez le JWT dans le Local Storage et Donner Acces a Espace User
 					if (jwt) {
-						console.log("jwt: ", jwt);
+						// console.log("jwt: ", jwt);
 						localStorage.setItem("jwt", jwt);
 						authentificated.set(true);
 
 						let id = await getUserInfo(jwt);
 						if (id === -1) return;
 						// Connexion socket
-						console.log(
-							" -[ Layout - [2-3] ]-  else-> reception jwt Url -> websocket"
-						);
+						// console.log(" -[ Layout - [2-3] ]-  else-> reception jwt Url -> websocket");
 						connectSocket(id);
 						navbar.set(true);
 					}
+
 					// [ 2 - 4 ] Cas ou Jwt Non present dans l'Url
-					else {
-						console.log("Paramètre URL 'jwt' non trouvé.");
-					}
+					// else {console.log("Paramètre URL 'jwt' non trouvé.");}
+
 					// [ 2 - 5 ] Redirection Vers Le Home afin de relancer Verification
 					goto("/");
 				}
@@ -217,7 +201,7 @@
 					const loginPromise = urlParams.get("login");
 					login = await loginPromise;
 					userLogin.set(login);
-					console.log("-[ Verif QR Layout ]-   login: ", login);
+					// console.log("-[ Verif QR Layout ]-   login: ", login);
 					const response = await fetch(
 						`http://localhost:3000/auth/get_google_2fa/?login=${login}&qr=google`,
 						{
@@ -229,16 +213,14 @@
 					);
 
 					if (response.ok) {
-						console.log("-[ Layout Get QR ]- OK");
+						// console.log("-[ Layout Get QR ]- OK");
 						let res = await response.json();
 						//console.log("-[ Enable 2fa ]-Response: ", res);
 						isGoogleAuthActivated.set(true);
-						// displayQr = true;
 						qrGoogle.set(res.url);
 						//console.log("-[ Enable 2fa]- qrSource: ", QrSource);
-					} else {
-						console.log("-[ Layout Get QR ]-  PROBLEME pas OK");
 					}
+					// else {console.log("-[ Layout Get QR ]-  PROBLEME pas OK");}
 				}
 			}
 		});

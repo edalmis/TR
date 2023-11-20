@@ -1,7 +1,6 @@
-<script lang="ts", context='module'>
-	//     ********* [ Imports ] *********
+<script lang="ts" , context="module">
 	import Typewriter from "svelte-typewriter";
-	import Viewport from 'svelte-viewport-info';
+	import Viewport from "svelte-viewport-info";
 	import Modal from "$lib/modals/Modal.svelte";
 	import Chat from "$lib/chat/Chat.svelte";
 	import Game from "$lib/game/Game.svelte";
@@ -29,63 +28,72 @@
 	});
 </script>
 
-
 <main>
 	<div class="main">
-	<autoTyping>
-		<Typewriter loopRandom>
-			<p class="py-2 text-2xl text-white">In a realm of digital wizardry, a land of fascination.</p>
-			<p class="py-1 text-2xl text-white">Our Transcendence project, a tale of innovation.</p>
-			<p class="py-1 text-2xl text-white">Users are about to embark, an epic recreation, A cosmic Pong game, a matchmaking duel</p>
-			<!-- <p class="py-6 text-2xl text-white">A cosmic Pong game, a matchmaking duel.</p> -->
-			<p class="py-1 text-2xl text-white">Within this mystical Nestjs and sevlte, a grand foundation,An interface of elegance, a futuristic narration.</p>
-			<!-- <p class="py-5 text-2xl text-white">An interface of elegance, a futuristic narration.</p> -->
-			<p class="py-0 text-2xl text-white">Designed to traverse space, a cosmic exploration, Uniting players in time, a cosmic synchronization.</p>
-			<!-- <p class="py-3 text-2xl text-white">Uniting players in time, a cosmic synchronization.</p> -->
-			<p class="py-0 text-2xl text-white">A chat feature will serve, a global communication, Among interstellar gladiators, a cosmic federation.</p>
-			<!-- <p class="py-1 text-2xl text-white">Among interstellar gladiators, a cosmic federation.</p>			 -->
-		</Typewriter>
-	</autoTyping>
-	{#if show_Modal}
-		<Modal>
-			<!-- Display du Modal demande par le User -->
-			<!-- {#if selectedPage_Value === "profile"}
-				<Profilpage on:closeModal={closeModal} /> -->
-			{#if selectedPage_Value === "chat"}
-				<Chat on:closeModal={closeModal} />
-			{:else if selectedPage_Value === "game"}
-				<Game on:closeModal={closeModal} />
-				<!-- {:else if selectedPage_Value === "findFriends"}
-				<FindFriends on:closeModal={closeModal} /> -->
-			{:else if selectedPage_Value === "errorMsg"}
-				<ErrorModal msg={msgError} on:closeModal={closeModal} />
-			{/if}
-		</Modal>
-	{/if}	
-</div>
-
-	<!-- </div> -->
-  <!-- </div> -->
-<!-- <div>
-	<img src="/images/backgroundImg.jpg" alt="Ici DarK Cookie !" />
-</div> -->
+		<autoTyping>
+			<Typewriter loopRandom>
+				<p class="py-2 text-2xl text-white">
+					In a realm of digital wizardry, a land of fascination.
+				</p>
+				<p class="py-1 text-2xl text-white">
+					Our Transcendence project, a tale of innovation.
+				</p>
+				<p class="py-1 text-2xl text-white">
+					Users are about to embark, an epic recreation, A cosmic Pong
+					game, a matchmaking duel
+				</p>
+				<p class="py-1 text-2xl text-white">
+					Within this mystical Nestjs and sevlte, a grand
+					foundation,An interface of elegance, a futuristic narration.
+				</p>
+				<p class="py-0 text-2xl text-white">
+					Designed to traverse space, a cosmic exploration, Uniting
+					players in time, a cosmic synchronization.
+				</p>
+				<p class="py-0 text-2xl text-white">
+					A chat feature will serve, a global communication, Among
+					interstellar gladiators, a cosmic federation.
+				</p>
+				<!-- <p class="py-6 text-2xl text-white">A cosmic Pong game, a matchmaking duel.</p> -->
+				<!-- <p class="py-5 text-2xl text-white">An interface of elegance, a futuristic narration.</p> -->
+				<!-- <p class="py-3 text-2xl text-white">Uniting players in time, a cosmic synchronization.</p> -->
+				<!-- <p class="py-1 text-2xl text-white">Among interstellar gladiators, a cosmic federation.</p>			 -->
+			</Typewriter>
+		</autoTyping>
+		{#if show_Modal}
+			<Modal>
+				<!-- Display du Modal demande par le User -->
+				{#if selectedPage_Value === "chat"}
+					<Chat on:closeModal={closeModal} />
+				{:else if selectedPage_Value === "game"}
+					<Game on:closeModal={closeModal} />
+				{:else if selectedPage_Value === "errorMsg"}
+					<ErrorModal msg={msgError} on:closeModal={closeModal} />
+				{/if}
+			</Modal>
+		{/if}
+	</div>
 </main>
 
 <svelte:body
-on:viewportchanged={() => {
-  console.log('Viewport Size changed to: ',Viewport.Width+'x'+Viewport.Height)
-}}
-on:orientationchangeend={() => { console.log(
-  'Screen Orientation changed to: ', Viewport.Orientation + (
-	Viewport.detailledOrientation == null
-	? ''
-	: '(' + Viewport.detailledOrientation + ')'
-  )
-) }}
+	on:viewportchanged={() => {
+		console.log(
+			"Viewport Size changed to: ",
+			Viewport.Width + "x" + Viewport.Height
+		);
+	}}
+	on:orientationchangeend={() => {
+		console.log(
+			"Screen Orientation changed to: ",
+			Viewport.Orientation +
+				(Viewport.detailledOrientation == null
+					? ""
+					: "(" + Viewport.detailledOrientation + ")")
+		);
+	}}
 />
 
-<style lnag ="postcss">
-	/* 🔴  🚨  -[ A Faire ]-   N'affiche plus l'image de fond !!! ???   🚒  🔴 */
+<style lnag="postcss">
 	.main {
 		background-image: url("/images/backgroundImg.jpg");
 		background-repeat: no-repeat;
@@ -93,7 +101,7 @@ on:orientationchangeend={() => { console.log(
 		background-position: center;
 		z-index: 1;
 		content: "";
-		position:relative;
+		position: relative;
 		top: 0;
 		left: 0;
 		width: 100vw;
@@ -105,16 +113,17 @@ on:orientationchangeend={() => { console.log(
 		justify-content: center;
 	}
 
-	autoTyping{ 
+	autoTyping {
 		content: "";
 		margin-top: -420px;
 		font-size: 2rem;
 		text-align: center;
 		position: relative;
 	}
-	.py-2, .py-1, .py-0{
-		font-family: 'Courier New', Courier, monospace;
+	.py-2,
+	.py-1,
+	.py-0 {
+		font-family: "Courier New", Courier, monospace;
 		font-size: 1.1rem;
 	}
-
 </style>

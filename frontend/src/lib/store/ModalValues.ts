@@ -7,6 +7,8 @@ export let showModal = writable(false);
 // Page a afficher dans la fenetre (dans la 'Modal')
 export let selectedPage = writable("none");
 
+export let errorMsg = writable("");
+
 // Functions pour Ouvrir / Fermer la Modal
 export function openModal(page: string) {
 	showModal.set(true);
@@ -18,5 +20,4 @@ export function closeModal() {
 	selectedPage.set("none");
 }
 
-export let errorMsg = writable("");
 
