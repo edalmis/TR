@@ -382,16 +382,17 @@
 				socket.on("updateLeaderBoard", (data: any) => {
 					topPlayers = data;
 				});
+				socket.on("newMessagedm", (data: any) => {
+					alert(
+						"You have new direct message from " +
+							data.messages.senderLogin
+					); //--------------------3
+					dmNotif.set(true); //---------------4
+				});
 			}
 		} catch (e) {
 			console.log("Friend OnMount PB");
 		}
-		$session.on("newMessagedm", (data: any) => {
-			alert(
-				"You have new direct message from " + data.messages.senderLogin
-			); //--------------------3
-			dmNotif.set(true); //---------------4
-		});
 	});
 
 	onDestroy(() => {
@@ -400,7 +401,7 @@
 		socket.off("friendListUpdate");
 		socket.off("pendingListUpdate");
 		socket.off("sentRequestsListUpdate");
-		$session.off("newMessagedm");
+		socket.off("newMessagedm");
 		socket.off("updateLeaderBoard");
 		// socket.off('');
 	});
@@ -504,11 +505,11 @@
 	// 	alert("Messaged users reset successfully!");
 	// }
 
-	function handleButtonClick(id2:number, use: string) {
+	function handleButtonClick(id2: number, use: string) {
 		if (chatMessages[use] && chatMessages[use].length === 0) {
-     		 alert("Please write some message!");
-      		return;
-    	}
+			alert("Please write some message!");
+			return;
+		}
 		// console.log('use-----------', use)
 		const isBlockedByMe = usersIBlockedList.some(
 			(user) => user.username === use
@@ -524,26 +525,26 @@
 		if (!chatMessages[use]) {
 			alert("Please write some message!");
 			return;
-    }
+		}
 		// if (!messagedUsers.has(use)) {
-			// Only send the default message if we haven't messaged this user before
-			$session.emit("sendMessage", {
-				message: chatMessages[use],
-				sendBy: id,
-				sendTo: id2,
-			});
-			chatMessages[use] = [];
-			closeTextArea();
-			
-			// Mark this user as messaged
-			// messagedUsers.add(use);
-			// messagedUsers.add(use);
+		// Only send the default message if we haven't messaged this user before
+		$session.emit("sendMessage", {
+			message: chatMessages[use],
+			sendBy: id,
+			sendTo: id2,
+		});
+		chatMessages[use] = [];
+		closeTextArea();
 
-			// Save to sessionStorage
-			// sessionStorage.setItem(
-			// 	"messagedUsers",
-			// 	JSON.stringify([...messagedUsers])
-			// );
+		// Mark this user as messaged
+		// messagedUsers.add(use);
+		// messagedUsers.add(use);
+
+		// Save to sessionStorage
+		// sessionStorage.setItem(
+		// 	"messagedUsers",
+		// 	JSON.stringify([...messagedUsers])
+		// );
 		// }
 
 		// Call this regardless of whether it's the first message or not,
@@ -552,15 +553,15 @@
 		goto("/DM");
 	}
 
-	function openTextArea(id:number) {
-    isTextAreaOpen = true;
-    activeUserId = id;
-  }
+	function openTextArea(id: number) {
+		isTextAreaOpen = true;
+		activeUserId = id;
+	}
 
-  function closeTextArea() {
-    isTextAreaOpen = false;
-    activeUserId = null;
-  }
+	function closeTextArea() {
+		isTextAreaOpen = false;
+		activeUserId = null;
+	}
 </script>
 
 <ul role="list" class="divide-y divide-gray-100">
@@ -592,10 +593,13 @@
 									alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
 								/>
 								<div class="min-w-0 flex-auto">
-									<p>Games Won: 
+									<p>
+										Games Won:
 										{wonGames}
 									</p>
-									<p class="mt-1 truncate text-sm leading-5 text-gray-500" >
+									<p
+										class="mt-1 truncate text-sm leading-5 text-gray-500"
+									>
 										{username}
 									</p>
 								</div>
@@ -665,20 +669,25 @@
 									</p> -->
 								</div>
 								{#if isTextAreaOpen && activeUserId === id}
-								<textarea class="w-10% h-10%" bind:value={chatMessages[username]} />    				
-							{/if}
+									<textarea
+										class="w-10% h-10%"
+										bind:value={chatMessages[username]}
+									/>
+								{/if}
 
 								<button
 									class="mt-1 truncate text-xs leading-5 text-gray-500"
 									on:click={() => {
 										if (activeUserId === id) {
-										handleButtonClick(id, username);
-						} else {
-							openTextArea(id);
-						}
-      							  }}
+											handleButtonClick(id, username);
+										} else {
+											openTextArea(id);
+										}
+									}}
 								>
-								{activeUserId === id ? "Send" : "Send DM"}</button
+									{activeUserId === id
+										? "Send"
+										: "Send DM"}</button
 								>
 							</div>
 
@@ -751,21 +760,26 @@
 								</p> -->
 							</div>
 							{#if isTextAreaOpen && activeUserId === id}
-								<textarea class="w-10% h-10%" bind:value={chatMessages[username]} />    				
+								<textarea
+									class="w-10% h-10%"
+									bind:value={chatMessages[username]}
+								/>
 							{/if}
 
-								<button
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
-									on:click={() => {
-										if (activeUserId === id) {
+							<button
+								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								on:click={() => {
+									if (activeUserId === id) {
 										handleButtonClick(id, username);
-						} else {
-							openTextArea(id);
-						}
-      							  }}
-								>
-								{activeUserId === id ? "Send" : "Send DM"}</button
-								>
+									} else {
+										openTextArea(id);
+									}
+								}}
+							>
+								{activeUserId === id
+									? "Send"
+									: "Send DM"}</button
+							>
 						</div>
 
 						<div class="mt-1 flex items-center gap-x-1.5">

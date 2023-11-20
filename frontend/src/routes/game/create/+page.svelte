@@ -70,19 +70,24 @@
 	let state: GameState;
 
 	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/enterGame",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-			wsClient.emit("inGameUpdate", { myId: id });
-		}
+			if (response.ok) {
+				console.log("-[ Enter Game Button ]- ");
+				wsClient.emit("inGameUpdate", { myId: id });
+			}
+		} catch (e) {}
 	}
 	let refresh: boolean;
 	onMount(() => {
@@ -196,49 +201,56 @@
 	});
 
 	async function LeaveGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/leaveGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/leaveGame",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Leave Game ]- ");
-			wsClient.emit("inGameUpdate", { myId: id });
-			let datas: any;
-			dataToCancelInvitation.subscribe((a) => {
-				datas = a;
-			});
-			hasInvitedSomeone.subscribe((a) => {
-				hasInvited = a;
-			});
-			if (hasInvited === true) {
-				hasInvitedSomeone.set(false);
-				wsClient.emit("cancelInvitation", datas);
+			if (response.ok) {
+				console.log("-[ Leave Game ]- ");
+				wsClient.emit("inGameUpdate", { myId: id });
+				let datas: any;
+				dataToCancelInvitation.subscribe((a) => {
+					datas = a;
+				});
+				hasInvitedSomeone.subscribe((a) => {
+					hasInvited = a;
+				});
+				if (hasInvited === true) {
+					hasInvitedSomeone.set(false);
+					wsClient.emit("cancelInvitation", datas);
+				}
 			}
-		}
+		} catch (e) {}
 	}
 
 	async function registerScoreHistory(data: any) {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch(
-			"http://localhost:3000/user/matchHistory",
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
-			}
-		);
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/matchHistory",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ data }),
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Match History ]-  Set !");
-		}
+			if (response.ok) {
+				console.log("-[ Match History ]-  Set !");
+			}
+		} catch (e) {}
 	}
 
 	async function initializeGame() {
@@ -383,7 +395,6 @@
 		DOWN,
 		STOP,
 	}
-
 
 	function handleKeyup(e: KeyboardEvent) {
 		if (isGamePaused) {

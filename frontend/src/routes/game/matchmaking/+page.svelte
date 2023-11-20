@@ -152,57 +152,69 @@
 	});
 
 	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/enterGame",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-			session.subscribe((a: any) => {
-				wsClient = a;
-			});
-			wsClient.emit("inGameUpdate", { myId: id });
-		}
+			if (response.ok) {
+				console.log("-[ Enter Game Button ]- ");
+				// session.subscribe((a: any) => {
+				// 	wsClient = a;
+				// });
+				wsClient.emit("inGameUpdate", { myId: id });
+			}
+		} catch (e) {}
 	}
 
 	async function LeaveGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/leaveGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/leaveGame",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Leave Game ]- ");
-			wsClient.emit("inGameUpdate", { myId: id });
-		}
+			if (response.ok) {
+				console.log("-[ Leave Game ]- ");
+				wsClient.emit("inGameUpdate", { myId: id });
+			}
+		} catch (e) {}
 	}
 
 	async function registerScoreHistory(data: any) {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch(
-			"http://localhost:3000/user/matchHistory",
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
-			}
-		);
+		try {
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch(
+				"http://localhost:3000/user/matchHistory",
+				{
+					method: "POST",
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ data }),
+				}
+			);
 
-		if (response.ok) {
-			console.log("-[ Match History ]-  Set !");
-		}
+			if (response.ok) {
+				console.log("-[ Match History ]-  Set !");
+			}
+		} catch (e) {}
 	}
 
 	async function initializeGame() {
@@ -224,8 +236,7 @@
 			room.onMessage("state", (message: any) => {
 				console.log("New game state received:", message);
 			});
-			room.onMessage("startGame", (message: any) => {
-			});
+			room.onMessage("startGame", (message: any) => {});
 
 			room.onStateChange((newState) => {
 				state = newState;
