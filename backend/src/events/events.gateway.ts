@@ -14,7 +14,6 @@ import { ChatRoom } from 'src/chat/chat_room.entity';
 import { DirectMessageService } from 'src/direct_message/direct_message.service';
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
-// import * as bcrypt from 'bcrypt';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -164,11 +163,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	}
 
 	@SubscribeMessage('getOtherGameHistory')
-    async getOtherGameHstory(client: Socket, data: any) {
-        const user = await this.userService.find_user_by_id(data.otherId);
-        const gameHistoryData = await this.userService.getMatchHistory(user);
-        client.emit('otherGameHistory', gameHistoryData)
-    }
+	async getOtherGameHstory(client: Socket, data: any) {
+		const user = await this.userService.find_user_by_id(data.otherId);
+		const gameHistoryData = await this.userService.getMatchHistory(user);
+		client.emit('otherGameHistory', gameHistoryData)
+	}
 
 	@SubscribeMessage('getOnlineUsersDatas')
 	async sendOnlineUsersDatas(client: Socket) {

@@ -1,12 +1,10 @@
-import { BadRequestException, Injectable, Scope } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from './orm/user.entity';
 import { GameEntity } from './orm/game.entity';
 import * as otplib from 'otplib';
 import * as qrcode from 'qrcode';
-import { LeaderBoardEntity } from './orm/leaderBoard.entity';
-
 
 @Injectable()
 export class UserService {
@@ -15,9 +13,7 @@ export class UserService {
 		@InjectRepository(UserEntity)
 		private userRepository: Repository<UserEntity>,
 		@InjectRepository(GameEntity)
-		private gameRepository: Repository<GameEntity>,
-		@InjectRepository(LeaderBoardEntity)
-		private leaderBoardRepository: Repository<LeaderBoardEntity>,
+		private gameRepository: Repository<GameEntity>
 	) { }
 
 	async find_all_users(): Promise<UserEntity[]> {
@@ -418,12 +414,6 @@ export class UserService {
 		await this.userRepository.save(user);
 	}
 
-	// async incrementLost(id: number) {
-	// 	let user = await this.find_user_by_id(id);
-	// 	user.lostGameNbr += 1;
-	// 	await this.userRepository.save(user);
-	// }
-
 	async incrementLost(id: number) {
 		try {
 			const user = await this.find_user_by_id(id);
@@ -448,19 +438,6 @@ export class UserService {
 	async remove_inGameUser(id: number) {
 		UserService.inGameUsersSet.delete(id);
 	}
-
-	// async getInGameUsers() {
-	// 	const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
-	// 	// transforme id en userName
-	// 	let usernameInGameList: string[] = [];
-	// 	if (inGameIdList.length != 0)
-	// 		for (const id of inGameIdList) {
-	// 			const user = await this.find_user_by_id(id);
-	// 			const username: string = user.userName;
-	// 			usernameInGameList.push(username);
-	// 		}
-	// 	return usernameInGameList;
-	// }
 
 	async getInGameUsers() {
 		const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);

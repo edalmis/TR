@@ -15,7 +15,6 @@
 		userId,
 	} from "$lib/store/store";
 	import OtherProfile from "$lib/OtherProfile/OtherProfile.svelte";
-	// import ImgPreviewProfile from "$lib/Profile/ImgPreviewProfile.svelte";
 
 	let userLoginTime: any = new Date().getTime();
 
@@ -41,7 +40,6 @@
 		JSON.parse(sessionStorage.getItem("messagedUsers") || "[]")
 	);
 	let id: number;
-	// id = $user.id;
 	userId.subscribe((a: number) => {
 		id = a;
 	});
@@ -62,14 +60,8 @@
 	let friendsListDatasEmptyArray: boolean = false;
 
 	// [ Online Friends List ]
-	// let onlineUsers: string[] = [];
-	// let friendsList: string[] = [];
 	let onlineFriendsList: any[] = [];
 	let onlineFriendsEmptyArray: boolean = false;
-
-	// // [ Online Friends ]
-	// let onlineFriendsListDatas: any[] = [];
-	// let onlineFriendsListDatasEmptyArray: boolean = false;
 
 	// [ InGame Friends ]
 	let inGameUsersList: any[] = [];
@@ -91,10 +83,7 @@
 	let usersWhoBlockedMeList: any[] = [];
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 
-	//let users: string[] = ["Henry", "john", "boby"];
 	let userLoginToDisplay: string;
-	// let onlineUserEmptyArray: boolean = false;
-	// let friendsListEmptyArray: boolean = false;
 	let pictureLink: string;
 	let topPlayers: any[] = [];
 
@@ -147,9 +136,6 @@
 							(friend) => friend.id === user.id
 						);
 					});
-					// onlineFriendsList = friendsList.filter((friend) =>
-					// 	onlineUsers.includes(friend)
-					// );
 					console.log(onlineFriendsList);
 					if (onlineFriendsList.length === 0) {
 						onlineFriendsEmptyArray = true;
@@ -171,9 +157,6 @@
 							(friend) => friend.id === user.id
 						);
 					});
-					// onlineFriendsList = friendsList.filter((friend) =>
-					// 	onlineUsers.includes(friend)
-					// );
 					console.log(onlineFriendsList);
 					if (onlineFriendsList.length === 0) {
 						onlineFriendsEmptyArray = true;
@@ -374,18 +357,12 @@
 						(friend) => friend.id === user.id
 					);
 				});
-				// onlineFriendsList = friendsList.filter((friend) =>
-				// 	onlineUsers.includes(friend)
-				// );
 				console.log(onlineFriendsList);
 				if (onlineFriendsList.length === 0) {
 					onlineFriendsEmptyArray = true;
 				}
 
 				// [ InGame Friends ]
-				// inGameFriendsList = friendsList.filter((friend) =>
-				// 	inGameUsersList.includes(friend)
-				// );
 				inGameFriendsList = friendsListDatas.filter((friend) => {
 					return inGameUsersList.some(
 						(user) => friend.id === user.id
@@ -557,9 +534,6 @@
 			);
 		}
 
-		// Call this regardless of whether it's the first message or not,
-		// as it appears to be your intention from the original code
-		// handleDM(use);
 		goto("/DM");
 	}
 </script>
@@ -578,18 +552,6 @@
 			</Modal>
 		</div>
 	{:else}
-		<!-- <button
-								on:click={() => {
-									$session.emit("sendMessageN", {
-										message: chatMessage,
-										sendBy: id42,
-
-										sendTo: user,
-									});
-									chatMessage = "";
-									handleDM(user);
-								}}>Send Direct message</button
-							> -->
 		<div>
 			<h3>Leaderboard</h3>
 
@@ -603,23 +565,6 @@
 								src={avatar}
 								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
 							/>
-							<!-- <div class="min-w-0 flex-auto">
-								<p
-									class="text-sm font-semibold leading-6 text-gray-900"
-								>
-									{username} Won: {wonGames}
-								</p>
-								<p
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
-								>
-									<button
-										on:click={() => {
-											handleSeeProfil(login);
-										}}
-										>See Profile
-									</button>
-								</p>
-							</div> -->
 							<div>
 								<p>Games Won: {wonGames}</p>
 							</div>
