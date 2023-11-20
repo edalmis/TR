@@ -173,15 +173,19 @@ export class PongRoom extends Room<GameState> {
 						client: client,
 					};
 					
+					console.log('-[ onJoin() - ]- userInfos.id  ', userInfos.id );
+					console.log('-[ onJoin() - ]- this.lpUserId ', this.lpUserId);
+				if (userInfos.id != this.lpUserId) {
 					// Ajout a la liste des InGame Friends
 					UserService.inGameUsersSet.add(this.rpUserId);
 					PongRoom.roomPlayerInfosMap.set(2, userInfos);
 					PongRoom.roomPlayerInfosMap.clear();
 					this.lockRoomAndStartGame(options.loginName);
-					// this.state.gameStatus = GameStatus.PLAYING;
-					// this.setSimulationInterval(deltaTime => this.update(deltaTime, options.loginName));
-			// }
-			//}
+				}
+				else if (userInfos.id === this.lpUserId)
+				{
+					this.state.gameStatus = GameStatus.STOPSOLO;
+				}
 		}
 		this.handlePlayerDisconnection();
 		// this.onMessage('player_disconnected', (client, message) => {

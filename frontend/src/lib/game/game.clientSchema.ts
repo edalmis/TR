@@ -142,9 +142,10 @@ export class Scoreboard extends Schema {
 
 export enum GameStatus {
 	WAITING = 0,
-	PLAYING,
-	FINISHED,
-	INTERRUPTED, // a player has left the match
+    PLAYING,
+    FINISHED,
+    INTERRUPTED, // a player has left the match
+    STOPSOLO,
 }
 
 export class GameState extends Schema {
