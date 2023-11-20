@@ -6,10 +6,11 @@ import { UserEntity } from './orm/user.entity';
 import { GameEntity } from './orm/game.entity';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { JwtAuthService } from 'src/auth/jwt/jwt.service';
+import { LeaderBoardEntity } from './orm/leaderBoard.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity, GameEntity]),
+    TypeOrmModule.forFeature([UserEntity, GameEntity, LeaderBoardEntity]),
 
   ],
   providers: [

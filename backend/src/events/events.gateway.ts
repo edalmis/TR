@@ -15,7 +15,7 @@ import { DirectMessageService } from 'src/direct_message/direct_message.service'
 import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 // import * as bcrypt from 'bcrypt';
-import  * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 @WebSocketGateway(
@@ -109,10 +109,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('resetAvatar')
 	async resetAvatar(client: Socket, data: any) {
 		console.log('resetAvatar data:  ', data)
-		const user= await this.userService.find_user_by_login(data.login);
+		const user = await this.userService.find_user_by_login(data.login);
 		await this.userService.reset_avatar(user.id);
 		const userUpdate = await this.userService.find_user_by_login(data.login);
-		client.emit('updateAvatar', { avatar: userUpdate.avatar } );
+		client.emit('updateAvatar', { avatar: userUpdate.avatar });
 	}
 
 
@@ -180,6 +180,12 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	async enterGame(client: Socket, data: any) {
 		const inGameUsersList: any[] = await this.userService.getInGameUsers();
 		this.server.emit('inGameFriendUpdate', inGameUsersList)
+	}
+
+	@SubscribeMessage('getLeaderBoard')
+	async getLeaderBoard(client: Socket) {
+		const leaderBoard: any[] = await this.userService.getLeaderBoard();
+		this.server.emit('updateLeaderBoard', leaderBoard)
 	}
 
 	@SubscribeMessage('cancelInvitation')
@@ -481,22 +487,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
 			if (!isOwner) {
 				throw new BadRequestException('Only the room owner or admins can mute users');
-			}else {
-			const member = await this.chatService.findMemberInChatRoom(userToMute.id, roomId);
-			member.isMuted = true;
+			} else {
+				const member = await this.chatService.findMemberInChatRoom(userToMute.id, roomId);
+				member.isMuted = true;
 
-			// Store the time of kick to calculate the duration in the frontend.
-			member.mutedTime = new Date();
-			member.mutedDuration = duration;
+				// Store the time of kick to calculate the duration in the frontend.
+				member.mutedTime = new Date();
+				member.mutedDuration = duration;
 
-			await this.chatService.updateMember(member);    // userToKick we update in member entity
-			//-------------------------------------------------------------------------------
-			// Notify the user to be kicked with the duration
-			const userSocket = this.socketsByUserID.get(userToMute.id.toString());
-			if (userSocket) {
-				userSocket.emit('mutedFromRoom', { roomId, duration });
-				// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
-			}}
+				await this.chatService.updateMember(member);    // userToKick we update in member entity
+				//-------------------------------------------------------------------------------
+				// Notify the user to be kicked with the duration
+				const userSocket = this.socketsByUserID.get(userToMute.id.toString());
+				if (userSocket) {
+					userSocket.emit('mutedFromRoom', { roomId, duration });
+					// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
+				}
+			}
 
 		} catch (error) {
 			client.emit('muteError', { message: error.message });
@@ -521,22 +528,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (!isOwner) {
 				throw new BadRequestException('Only the room owner or admins can kick users');
 			}
-			else{
-			const member = await this.chatService.findMemberInChatRoom(userToKick.id, roomId);
-			member.isKicked = true;
+			else {
+				const member = await this.chatService.findMemberInChatRoom(userToKick.id, roomId);
+				member.isKicked = true;
 
-			// Store the time of kick to calculate the duration in the frontend.
-			member.kickedTime = new Date();
-			member.kickDuration = duration;
+				// Store the time of kick to calculate the duration in the frontend.
+				member.kickedTime = new Date();
+				member.kickDuration = duration;
 
-			await this.chatService.updateMember(member);    // userToKick we update in member entity
-			//-------------------------------------------------------------------------------
-			// Notify the user to be kicked with the duration
-			const userSocket = this.socketsByUserID.get(userToKick.id.toString());
-			if (userSocket) {
-				userSocket.emit('kickedFromRoom', { roomId, duration });
-				// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
-			}}
+				await this.chatService.updateMember(member);    // userToKick we update in member entity
+				//-------------------------------------------------------------------------------
+				// Notify the user to be kicked with the duration
+				const userSocket = this.socketsByUserID.get(userToKick.id.toString());
+				if (userSocket) {
+					userSocket.emit('kickedFromRoom', { roomId, duration });
+					// userSocket.leave(roomId); // Optional: if you want to force them out of the Socket.IO room.
+				}
+			}
 
 		} catch (error) {
 			client.emit('kickError', { message: error.message });
@@ -700,20 +708,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (!isOwner) {
 				throw new BadRequestException('Only the room owner or admins can Adminning users');
 			}
-			else{
-			// Add Admin logic here. This could be saving the Admin to a database, or an in-memory list.
-			// For simplicity, let's say you have a AdminService (you'd need to create this) which can add Admins:
+			else {
+				// Add Admin logic here. This could be saving the Admin to a database, or an in-memory list.
+				// For simplicity, let's say you have a AdminService (you'd need to create this) which can add Admins:
 
-			//------------------------------------------------OFFLINE ADDING
-			const member = await this.chatService.findMemberInChatRoom(userIdToAd, roomId);
-			member.role = 'Admin'
-			await this.chatService.updateMember(member);
-			// Notify the Adminned user
-			const userSocket = this.socketsByUserID.get(userIdToAd.toString());
-			if (userSocket) {
-				userSocket.emit('AdminnedFromRoom', { roomId });
+				//------------------------------------------------OFFLINE ADDING
+				const member = await this.chatService.findMemberInChatRoom(userIdToAd, roomId);
+				member.role = 'Admin'
+				await this.chatService.updateMember(member);
+				// Notify the Adminned user
+				const userSocket = this.socketsByUserID.get(userIdToAd.toString());
+				if (userSocket) {
+					userSocket.emit('AdminnedFromRoom', { roomId });
+				}
 			}
-		}}
+		}
 		catch (error) {
 			client.emit('AdminningError', { message: error.message });
 		}

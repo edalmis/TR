@@ -96,6 +96,7 @@
 	// let onlineUserEmptyArray: boolean = false;
 	// let friendsListEmptyArray: boolean = false;
 	let pictureLink: string;
+	let topPlayers: any[] = [];
 
 	let refresh: boolean;
 	onMount(async () => {
@@ -395,12 +396,20 @@
 				} else {
 					inGameFriendsEmptyArray = false;
 				}
+
+				// // //  [ LeaderBoard ]  // // //
+				socket.emit("getLeaderBoard");
+				socket.on("updateLeaderBoard", (data: any) => {
+					topPlayers = data;
+				});
 			}
 		} catch (e) {
 			console.log("Friend OnMount PB");
 		}
 		$session.on("newMessagedm", (data: any) => {
-			alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
+			alert(
+				"You have new direct message from " + data.messages.senderLogin
+			); //--------------------3
 			dmNotif.set(true); //---------------4
 		});
 	});
@@ -412,6 +421,7 @@
 		socket.off("pendingListUpdate");
 		socket.off("sentRequestsListUpdate");
 		$session.off("newMessagedm");
+		socket.off("updateLeaderBoard");
 		// socket.off('');
 	});
 
@@ -581,6 +591,54 @@
 								}}>Send Direct message</button
 							> -->
 		<div>
+			<h3>Leaderboard</h3>
+
+			{#if topPlayers.length !== 0}
+				{#each topPlayers as { id, login, username, avatar, wonGames }}
+					<li class="flex justify-between gap-x-6 py-5">
+						<div class="flex min-w-0 gap-x-4">
+							<img
+								class="h-12 w-12 flex-none rounded-full bg-gray-50"
+								style="margin-left: 20px;"
+								src={avatar}
+								alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
+							/>
+							<div class="min-w-0 flex-auto">
+								<p
+									class="text-sm font-semibold leading-6 text-gray-900"
+								>
+									{username} Won: {wonGames}
+								</p>
+								<p
+									class="mt-1 truncate text-xs leading-5 text-gray-500"
+								>
+									<button
+										on:click={() => {
+											handleSeeProfil(login);
+										}}
+										>See Profile
+									</button>
+								</p>
+							</div>
+						</div>
+					</li>
+
+					<div>
+						<p>Games Won: {wonGames}</p>
+					</div>
+				{/each}
+			{:else}
+				<li class="flex justify-between gap-x-6 py-5">
+					<div
+						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
+					>
+						<p class="text-xs leading-5 text-gray-500">
+							Empty Leaderboard !
+						</p>
+					</div>
+				</li>
+			{/if}
+
 			<h3>Online Users</h3>
 			<li class="flex justify-between" />
 			{#if onlineUserDatasEmptyArray === true}

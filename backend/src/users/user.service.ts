@@ -5,6 +5,7 @@ import { UserEntity } from './orm/user.entity';
 import { GameEntity } from './orm/game.entity';
 import * as otplib from 'otplib';
 import * as qrcode from 'qrcode';
+import { LeaderBoardEntity } from './orm/leaderBoard.entity';
 
 
 @Injectable()
@@ -15,6 +16,8 @@ export class UserService {
 		private userRepository: Repository<UserEntity>,
 		@InjectRepository(GameEntity)
 		private gameRepository: Repository<GameEntity>,
+		@InjectRepository(LeaderBoardEntity)
+		private leaderBoardRepository: Repository<LeaderBoardEntity>,
 	) { }
 
 	async find_all_users(): Promise<UserEntity[]> {
@@ -422,20 +425,21 @@ export class UserService {
 	// }
 
 	async incrementLost(id: number) {
-	 try {
-        const user = await this.find_user_by_id(id);
-        if (user) {
-            user.lostGameNbr += 1;
-            await this.userRepository.save(user);
-        } else {
-            console.error('User not found');
-            // Handle user not found scenario
-        }
-    } catch (error) {
-        console.error('Error incrementing lostGameNbr:', error);
-        // Handle other errors or throw them further
-        throw error;
-    }}
+		try {
+			const user = await this.find_user_by_id(id);
+			if (user) {
+				user.lostGameNbr += 1;
+				await this.userRepository.save(user);
+			} else {
+				console.error('User not found');
+				// Handle user not found scenario
+			}
+		} catch (error) {
+			console.error('Error incrementing lostGameNbr:', error);
+			// Handle other errors or throw them further
+			throw error;
+		}
+	}
 
 	async add_inGameUser(id: number) {
 		UserService.inGameUsersSet.add(id);
@@ -523,6 +527,56 @@ export class UserService {
 
 		return matchHistory;
 	}
+
+	async getLeaderBoard() {
+		// Récupérez tous les utilisateurs triés par wonGameNbr de manière décroissante
+		const users = await this.userRepository.find({ order: { wonGameNbr: 'DESC' } });
+		const leaderTab: any[] = users
+			.slice(0, 3) // seul les 3 meilleurs !
+			.map(user => ({
+				id: user.id,
+				login: user.login,
+				username: user.userName,
+				avatar: user.avatar,
+				wonGames: user.wonGameNbr,
+			}));
+		console.log(' -[ getLeaderBoard ]- leaderTab: ', leaderTab);
+		return leaderTab;
+
+	}
+	// async updateLeaderboard(user: UserEntity): Promise<void> {
+	// 	let leaderboard = await this.leaderBoardRepository.findOne({ where: { user: { id: user.id } } });
+
+	// 	if (!leaderboard) {
+	// 		leaderboard = this.leaderBoardRepository.create();
+	// 		leaderboard.user = user;
+	// 	}
+
+	// 	// Ajoutez la logique pour incrémenter le nombre de parties gagnées, si nécessaire
+	// 	leaderboard.wonGames++;
+
+	// 	await this.leaderBoardRepository.save(leaderboard);
+	// }
+
+	// async getLeaderBoard() {
+	// 	let leaders = await this.leaderBoardRepository
+	// 		.createQueryBuilder("leaderboard")
+	// 		.leftJoinAndSelect("leaderboard.user", "user")
+	// 		.orderBy("leaderboard.wonGames", "DESC")
+	// 		.take(3)  // Limite les résultats aux 3 premières entrées
+	// 		.getMany();
+
+	// 	if (leaders.length === 0) {
+	// 		return [];
+	// 	}
+	// 	let leadersList: any[] = []
+	// 	if (leaders.length != 0) {
+	// 		for (const lead of leaders) {
+	// 			const user = await this.find_user_by_id(lead.user.id);
+	// 			leadersList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar, wonGames: user.wonGameNbr })
+	// 		}
+	// 	}
+	// }
 }
 ///////////////////////////////////////////////////////////////////////////
 //																		//
