@@ -227,12 +227,12 @@ export class PongRoom extends Room<GameState> {
 			if (this.state.gameStatus !== GameStatus.FINISHED) {
 				this.state.gameStatus = GameStatus.FINISHED;
 				if (!this.lpId) {
-					this.state.scoreboard.left = 0;
-					this.state.scoreboard.right = 7;
+					this.state.scoreboard.left = -1;
+					this.state.scoreboard.right = 3;
 				}
 				else {
-					this.state.scoreboard.left = 7;
-					this.state.scoreboard.right = 0;
+					this.state.scoreboard.left = 3;
+					this.state.scoreboard.right = -1;
 				}
 				const gameResults = {
 					lpUserId: this.lpUserId,
