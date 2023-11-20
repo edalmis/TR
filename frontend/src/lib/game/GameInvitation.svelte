@@ -72,21 +72,26 @@
 	});
 </script>
 
-<button
-	class="accept"
-	on:click={() => {
-		handleAccept();
-	}}>Accept</button
->
-<button
-	class="refuse"
-	on:click={() => {
-		handleRefuse();
-	}}>Refuse</button
->
+<div>
+	<p>You have been invited by {gameData.username}</p>
+	<div>
+		<button
+			class="accept"
+			on:click={() => {
+				handleAccept();
+			}}>Accept</button
+		>
+		<button
+			class="refuse"
+			on:click={() => {
+				handleRefuse();
+			}}>Refuse</button
+		>
+	</div>
+</div>
 
 <style>
-	.accept {
+	/* .accept {
 		color: blue;
 		border-width: 1px;
 		border-radius: 25%;
@@ -101,5 +106,26 @@
 		border-color: blue;
 		margin-left: 2px;
 		margin-right: 2px;
+	} */
+
+	button {
+		cursor: pointer;
+		color: white; /* Change text color to white */
+		border-width: 1px;
+		border-radius: 20%;
+		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
+		/* border-radius: 3px; */
+		padding: 5px 5px;
+		font-size: 8px;
+		border: 2px solid #eff1f4;
+		transition: background 0.3s ease, color 0.3s ease;
+		margin-left: 0;
+		margin-right: 0;
 	}
+
+	button:hover {
+		background: rgb(67, 90, 26);
+	}
+
+	
 </style>

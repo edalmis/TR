@@ -566,9 +566,13 @@
 									src={avatar}
 									alt=": 🤖 👨🏻‍🌾 Error  🍪 🤣 :"
 								/>
-								<div>
-									<p>Games Won: {wonGames}</p>
-									<p>{username}</p>
+								<div class="min-w-0 flex-auto">
+									<p>Games Won: 
+										{wonGames}
+									</p>
+									<p class="mt-1 truncate text-sm leading-5 text-gray-500" >
+										{username}
+									</p>
 								</div>
 							</div>
 						</li>
