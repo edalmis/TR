@@ -1,5 +1,4 @@
 import { NestFactory } from '@nestjs/core';
-// import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { config } from 'dotenv';
 import * as express from 'express';
@@ -8,6 +7,7 @@ import { Server } from 'colyseus';
 import { PongRoom } from './game/game.room';
 import { privateRoom } from './game/game.privateroom';
 // import { IoAdapter } from '@nestjs/platform-socket.io';
+// import { NestFactory, HttpAdapterHost } from '@nestjs/core';
 
 
 async function gameServer() {
@@ -20,9 +20,7 @@ async function gameServer() {
 
 
 async function bootstrap() {
-  // Creation server [ Port - 3000 ] 
   const app = await NestFactory.create(AppModule);
-  // const { httpAdapter } = app.get(HttpAdapterHost);
   app.use(express.json());
   app.enableCors({
     origin: 'http://localhost:5173',
@@ -31,7 +29,6 @@ async function bootstrap() {
     credentials: true,
     allowedHeaders: 'Content-Type, Authorization, Accept',
   });
-  // app.useWebSocketAdapter(new IoAdapter(app));
   await app.listen(3000);
 
 

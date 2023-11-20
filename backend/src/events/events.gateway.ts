@@ -57,10 +57,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		this.userIdFindHelper.set(client.id, client.handshake.query.id);
 		const id: number = parseInt(client.handshake.query.id[0], 10);
 		this.idByClientIdMap.set(client.id, id);
-		console.log(' -[ EventsGateway ]- client connected :  { ', client.id, ' }');
+		// console.log(' -[ EventsGateway ]- client connected :  { ', client.id, ' }');
 
-		// { add User to connectedUsersMap }
-		// console.log(' -[ Events - HandleConnection ]- id:', id)
 		if (!this.onlineUsersMap.has(id)) {
 			const user = await this.userService.find_user_by_id(id)
 			this.onlineUsersMap.set(id, user);
@@ -71,7 +69,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 				usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
 			}
 			this.server.emit('onlineUsersUpdate', usersDatas);
-			console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
+			// console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
 		}
 	}
 
@@ -79,94 +77,17 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
 		this.userIdFindHelper.delete(client.id);
 
-		// { delete User to connectedUsersMap }
 		const id: number = this.idByClientIdMap.get(client.id);
 		this.idByClientIdMap.delete(client.id);
-		// const id: number = this.userIdFindHelper.get(client.id);
-		// console.log(' -[ Events - HandleDisconnect ]- id:', id)
 		this.onlineUsersMap.delete(id);
-		console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
+		// console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
 		const usersDatas: any[] = [];
 		for (const [id, user] of this.onlineUsersMap) {
 			const usr = await this.userService.find_user_by_id(user.id);
 			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
 		}
 		this.server.emit('onlineUsersUpdate', usersDatas);
-		console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
-	}
-
-	@SubscribeMessage('changeUsername')
-	async changeUsername(client: Socket) {
-		const usersDatas: any[] = [];
-		for (const [id, user] of this.onlineUsersMap) {
-			const usr = await this.userService.find_user_by_id(user.id);
-			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
-		}
-		this.server.emit('onlineUsersUpdate', usersDatas);
-	}
-
-	@SubscribeMessage('resetAvatar')
-	async resetAvatar(client: Socket, data: any) {
-		console.log('resetAvatar data:  ', data)
-		const user = await this.userService.find_user_by_login(data.login);
-		await this.userService.reset_avatar(user.id);
-		const userUpdate = await this.userService.find_user_by_login(data.login);
-		client.emit('updateAvatar', { avatar: userUpdate.avatar });
-	}
-
-
-	@SubscribeMessage('acceptOrRefuseFriendRequest')
-	async acceptFriendRequest(client: Socket, data: any) {
-		console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
-		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
-		client.emit('pendingListUpdate', mynewPendingList)
-
-		const friend = await this.userService.find_user_by_id(data.idToAccept);
-		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
-		let friendClient = this.socketsByUserID.get(friend.id.toString());
-		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
-	}
-
-	@SubscribeMessage('SendFriendRequest')
-	async sendFriendRequest(client: Socket, data: any) {
-		const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
-		await this.userService.sendFriendRequest(moi.login, data.otherLogin);
-
-		console.log('-[ *Events* Send friend request]- datas : ', data);
-		const friend: UserEntity = await this.userService.find_user_by_login(data.otherLogin);
-		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
-		let friendClient = this.socketsByUserID.get(friend.id.toString());
-		console.log('-[ *Events* Send friend request]- ', data.otherLogin, '  newPendingList : ', friendnewPendingList);
-		friendClient.emit('pendingListUpdate', friendnewPendingList);
-
-		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
-		console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
-		client.emit('sentRequestsListUpdate', myNewRequestedList);
-	}
-
-	// @SubscribeMessage('updateFriend')
-	// async updateFriend(client: Socket, data: any) {
-	// 	const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
-	// 	client.emit('friendListUpdate', myNewFriendList);
-	// }
-
-	@SubscribeMessage('updateFriendList')
-	async updateFriendList(client: Socket, data: any) {
-		console.log(' -[ EventsGateway ]- acceptFriend');
-		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
-		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
-		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
-		friendClient.emit('friendListUpdate', friendnewFriendList);
-
-		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
-		client.emit('friendListUpdate', myNewFriendList);
-	}
-
-	@SubscribeMessage('getOtherGameHistory')
-	async getOtherGameHstory(client: Socket, data: any) {
-		const user = await this.userService.find_user_by_id(data.otherId);
-		const gameHistoryData = await this.userService.getMatchHistory(user);
-		client.emit('otherGameHistory', gameHistoryData)
+		// console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
 	}
 
 	@SubscribeMessage('getOnlineUsersDatas')
@@ -181,52 +102,127 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		client.emit('onlineUsersDatas', usersDatas);
 	}
 
-	@SubscribeMessage('inGameUpdate')
-	async enterGame(client: Socket, data: any) {
-		const inGameUsersList: any[] = await this.userService.getInGameUsers();
-		this.server.emit('inGameFriendUpdate', inGameUsersList)
+	// // // // // // // // // // // // // // // // // // // // // // 
+	// // // // // // // [  Profile  ] // // // // // // // // // // 
+	@SubscribeMessage('changeUsername')
+	async changeUsername(client: Socket) {
+		const usersDatas: any[] = [];
+		for (const [id, user] of this.onlineUsersMap) {
+			const usr = await this.userService.find_user_by_id(user.id);
+			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+		}
+		this.server.emit('onlineUsersUpdate', usersDatas);
 	}
 
+	@SubscribeMessage('resetAvatar')
+	async resetAvatar(client: Socket, data: any) {
+		// console.log('-[ EventsGt ]- resetAvatar data:  ', data)
+		const user = await this.userService.find_user_by_login(data.login);
+		await this.userService.reset_avatar(user.id);
+		const userUpdate = await this.userService.find_user_by_login(data.login);
+		client.emit('updateAvatar', { avatar: userUpdate.avatar });
+	}
+
+	// // // // // // // // // // // // // // // // // // // // // // //
+	// // // // // // //  [   Friends  ]  // // // // // // // // // // 
+	@SubscribeMessage('SendFriendRequest')
+	async sendFriendRequest(client: Socket, data: any) {
+		const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
+		await this.userService.sendFriendRequest(moi.login, data.otherLogin);
+
+		// console.log('-[ *Events* Send friend request]- datas : ', data);
+		const friend: UserEntity = await this.userService.find_user_by_login(data.otherLogin);
+		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		// console.log('-[ *Events* Send friend request]- ', data.otherLogin, '  newPendingList : ', friendnewPendingList);
+		friendClient.emit('pendingListUpdate', friendnewPendingList);
+
+		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
+		// console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
+		client.emit('sentRequestsListUpdate', myNewRequestedList);
+	}
+
+	@SubscribeMessage('acceptOrRefuseFriendRequest')
+	async acceptFriendRequest(client: Socket, data: any) {
+		// console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
+		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
+		client.emit('pendingListUpdate', mynewPendingList)
+
+		const friend = await this.userService.find_user_by_id(data.idToAccept);
+		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
+		let friendClient = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
+	}
+
+	@SubscribeMessage('updateFriendList')
+	async updateFriendList(client: Socket, data: any) {
+		console.log(' -[ EventsGateway ]- acceptFriend');
+		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
+		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
+		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
+		friendClient.emit('friendListUpdate', friendnewFriendList);
+
+		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
+		client.emit('friendListUpdate', myNewFriendList);
+	}
+	// // // // // // // // // // // // // // // // // // // // // // //
+	// // // // // // //  [   Game Stats  ]  // // // // // // // // //
 	@SubscribeMessage('getLeaderBoard')
 	async getLeaderBoard(client: Socket) {
 		const leaderBoard: any[] = await this.userService.getLeaderBoard();
 		this.server.emit('updateLeaderBoard', leaderBoard)
 	}
 
-	@SubscribeMessage('cancelInvitation')
-	invitationUpdate(client: Socket, data: any) {
-		console.log(' -[ Events cancelInvitation ]- data: ', data);
-		let friendClient: any = this.socketsByUserID.get(data.idToInvite.toString());
-		friendClient.emit('updateInvitation');
-
+	@SubscribeMessage('getOtherGameHistory')
+	async getOtherGameHstory(client: Socket, data: any) {
+		const user = await this.userService.find_user_by_id(data.otherId);
+		const gameHistoryData = await this.userService.getMatchHistory(user);
+		client.emit('otherGameHistory', gameHistoryData)
 	}
 
-	// [ Game Invitation ] // // // // // // // // // //
+	@SubscribeMessage('inGameUpdate')
+	async enterGame(client: Socket, data: any) {
+		const inGameUsersList: any[] = await this.userService.getInGameUsers();
+		this.server.emit('inGameFriendUpdate', inGameUsersList)
+	}
+
+	// // // // // // // // // // // // // // // // // // // // // // //
+	// // // // // // //  [  Game Invitation  ] // // // // // // // //
 	@SubscribeMessage('sendGameInvitation')
 	async sendGameInvitation(client: Socket, data: any) {
-		console.log(' -[ EventsGateway ]- *sendGameInvitation* data: ', data)
-		// Find le wsServerId du client pour lui emit l'invitation
-		let wsClient: any = this.socketsByUserID.get(data.idToInvite.toString());
+		// console.log(' -[ EventsGateway ]- *sendGameInvitation* data: ', data)
+		let wsClient: any = this.socketsByUserID.get(data.idToInvite.toString()); // Find le wsServerId du client pour lui emit l'invitation
 		// console.log(' -[ EventsGateway ]- *wsClient* : ', wsClient)
 
-		// Envoi l'invitation au second client
 		wsClient.emit('receivedGameInvitation', data);
 	}
 
 	@SubscribeMessage('refuseGameInvitation')
 	async refuseGameInvitation(client: Socket, data: any) {
-		console.log(' -[ EventsGateway ]- *refuse Invitation* data: ', data)
-		//console.log(' -[ EventsGateway ]- data.id.toString(): ', data.id.toString())
-		// Find le wsServerId du [ client 1 ] pour lui emit le refus et le faire quitter la room !
-		let wsClient: any = this.socketsByUserID.get(data.id.toString());
+		// console.log(' -[ EventsGateway ]- *refuse Invitation* data: ', data)
+		// console.log(' -[ EventsGateway ]- data.id.toString(): ', data.id.toString())
+		let wsClient: any = this.socketsByUserID.get(data.id.toString()); // Find le wsServerId du [ client 1 ] pour lui emit le refus et le faire quitter la room !
 		// console.log(' -[ EventsGateway ]- wsClient: ', wsClient)
 		wsClient.emit("refuseCloseGame", data);
 
 	}
-	// // // // // // // // // // // // // // // // // // 
+
+	@SubscribeMessage('cancelInvitation')
+	invitationUpdate(client: Socket, data: any) {
+		// console.log(' -[ Events cancelInvitation ]- data: ', data);
+		let friendClient: any = this.socketsByUserID.get(data.idToInvite.toString());
+		friendClient.emit('updateInvitation');
+
+	}
+	// // // // // // // // // // // // // // // // // // // // // // //
 
 
-	////////------------------------------------------------------------DM------------------
+	// // // // // // // // // // // // // // // // // // // // // // //
+	// // // // // // //  [  C H A T  -  D M  ] // // // // // // // //
+	// // // // // // // // // // // //  // // // // // // // // // //
+
+	// // // // // // // // // // // // // // // // // // // // // // //
+	// // // // // // // //  [  D  M  ]   // // // // // // // // // //	
 	@SubscribeMessage('getDmRooms')
 	async getDmRooms(client: Socket) {
 		let str = this.userIdFindHelper.get(client.id);

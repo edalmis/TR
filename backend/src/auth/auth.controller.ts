@@ -46,13 +46,13 @@ export class AuthController {
             //console.log("le jwtdecoded :", jwtdecoded);
             const user = await this.userService.find_user_by_login(jwtdecoded.login);
             if (user.fa2 === true) {
-                console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { True }");
+                // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { True }");
                 const login: string = user.login;
                 const frontUrl = `http://localhost:5173/?login=${login}`;
                 res.redirect(frontUrl);
             }
             else {
-                console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { False }");
+                // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { False }");
                 // redirection vers le front avec le Jwt en Url
                 const frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
                 res.redirect(frontendUrl);
@@ -78,7 +78,7 @@ export class AuthController {
     // @UseGuards(AuthGuard) //
     @Get('verify_2fa')
     async verify_2fa(@Request() req, @Response() res) {
-        console.log("-[ verify_2fa ]-");
+        // console.log("-[ verify_2fa ]-");
         const tokenJwt = await this.authService.verify_2fa(req);
         res.json({ jwt: tokenJwt });
     }
@@ -92,7 +92,7 @@ export class AuthController {
         // Vérifiez si le paramètre "code" est présent dans l'URL
         if (url.searchParams.has('login')) {
             const login = url.searchParams.get('login');
-            console.log("-[ get_google-2fa ]- login: ", login);
+            // console.log("-[ get_google-2fa ]- login: ", login);
             if (!login) {
                 //console.log("Pb retour de \'Code\' ");
                 throw new UnauthorizedException();
@@ -120,7 +120,7 @@ export class AuthController {
 
             if (decoded && decoded.login) {
                 login = decoded.login;
-                console.log('-[Enable 2Fa ]- Jwt login', login);
+                // console.log('-[Enable 2Fa ]- Jwt login', login);
             }
             //return le bon Url a afficher 
             const QrImg = await this.userService.enable_2fa(login);
@@ -134,9 +134,9 @@ export class AuthController {
     // @UseGuards(AuthGuard) //
     @Post('enable_2fa')
     async enable_2fa(@Request() req, @Response() res) {
-        console.log("-[ 2fa ]- Enable ");
+        // console.log("-[ 2fa ]- Enable ");
         const login = req.body.data.login;
-        console.log("-[ 2fa ]- login Value:  ", login);
+        // console.log("-[ 2fa ]- login Value:  ", login);
         const QrUrl = await this.userService.enable_2fa(login);
         const data = { urlcode: QrUrl };
         res.json(data);
@@ -147,9 +147,9 @@ export class AuthController {
     // @UseGuards(AuthGuard) //
     @Post('disable_2fa')
     async disable_2fa(@Request() req) {
-        console.log("-[ 2fa ]- Disable ");
+        // console.log("-[ 2fa ]- Disable ");
         const login = req.body.data.login;
-        console.log("-[ 2fa ]- login Value:  ", login);
+        // console.log("-[ 2fa ]- login Value:  ", login);
         await this.userService.remove_2fa(login);
     }
 
@@ -158,10 +158,13 @@ export class AuthController {
     @UseGuards(AuthGuard) //
     @Post('changeName')
     async changeUserName(@Request() req, @Response() res) {
-        console.log(" -[ ChangeName Controller ]- ");
+        // console.log(" -[ ChangeName Controller ]- ");
         const data = req.body.data;
-        console.log("-[ ChangeName Controller ]- data: ", data);
-        if (!data) { console.log("[ error ] -[ ChangeName ]- data inexistantes"); throw new UnauthorizedException() }
+        // console.log("-[ ChangeName Controller ]- data: ", data);
+        if (!data) {
+            // console.log("[ error ] -[ ChangeName ]- data inexistantes");
+            throw new UnauthorizedException()
+        }
         let login: string = data.login;
         let newUsername: string = data.newUsername;
         if (!newUsername.length || newUsername.length > 20) {
@@ -195,13 +198,13 @@ export class AuthController {
         }
         const login = req.body.data.login;
         const user = await this.userService.find_user_by_login(login);
-        console.log("-[ Img ]-  old Avatar: ", user.avatar);
+        // console.log("-[ Img ]-  old Avatar: ", user.avatar);
         if (!user || !img || img === "" || img.length < 5 || img.length > 500) {
-            console.log("-[ IMG change ]- { ERROR }");
+            // console.log("-[ IMG change ]- { ERROR }");
             throw new UnauthorizedException();
         }
         const updatedUser = await this.userService.change_avatar(login, img);
-        console.log("-[ Img ]-  new Avatar: ", updatedUser.avatar);
+        // console.log("-[ Img ]-  new Avatar: ", updatedUser.avatar);
         res.redirect(frontUrl);
     }
 
@@ -219,7 +222,7 @@ export class AuthController {
 
             if (decoded && decoded.login) {
                 const login = decoded.login;
-                console.log('-[ Logout ]- AuthController: login', login);
+                // console.log('-[ Logout ]- AuthController: login', login);
 
                 this.authService.logout(login, jwt);
                 //console.log('-[ Logout ]- Updated Logout User: ', await this.userService.find_user_by_login(login))
@@ -227,52 +230,5 @@ export class AuthController {
             res.redirect('http://localhost:5173');
         }
     }
-    // /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    // @HttpCode(HttpStatus.OK)
-    // @UseGuards(AuthGuard)
-    // @Get('onlineUsers')
-    // async getOnlineUsers(@Request() req, @Response() res) {
-    //     console.log(" -[ Online Users (Auth-Ctrl) ]- ");
-    //     const headers = req.headers;
-    //     const Token = req.headers.authorization;
-    //     const [, jwtToken] = Token.split(' '); // Divise la chaîne en fonction de l'espace et ignore la première partie (Bearer)
-    //     const jwt = this.jwtService.decode(jwtToken) as { [key: string]: any };
-
-    //     let onlineUserlist: string[];
-    //     onlineUserlist = await this.authService.get_Online_Usernames(jwt.id);
-    //     console.log("OnlineUser list Sent: ", onlineUserlist);
-    //     res.json(onlineUserlist);
-    // }
 }
-
-
-
-
-
-// // /////////////////////////////////   [ L o c a l   A u t h ]      //////////////////////////////////
-// // // --> [  ** Register **  'Local' new user - Non 42 User -  ] <--
-
-// // (@Req() request: Request) => Notation exacte used NestJsDocs
-// @HttpCode(HttpStatus.OK)
-// @Post('register')
-// async register(@Body() bodyRequest, @Response() res) {
-//     const jwt = await this.authService.registerNewUser(bodyRequest);
-//     let frontendUrl = `http://localhost:5173`;
-//     if (jwt !== null) {
-//         const frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
-//     }
-//     res.redirect(frontendUrl);
-// }
-
-// @HttpCode(HttpStatus.OK)
-// @Post('login')
-// async login(@Body() bodyRequest, @Response() res) {
-//     let frontendUrl: string = `http://localhost:5173`;
-//     const jwt = await this.authService.login(bodyRequest);
-//     if (jwt !== null) {
-//         frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
-//     }
-//     res.redirect(frontendUrl);
-// }
-// // /////////////////////////////////////////////////////////////////////////////////////////////////////

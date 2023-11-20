@@ -7,7 +7,6 @@ import { AppController } from './app.controller';
 import { UserModule } from './users/user.module';
 import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
-// import { WebsocketModule } from './websocket/websocket.module';
 import { DirectMessageModule } from './direct_message/direct_message.module';
 import { EventsModule } from './events/events.module';
 import { UserService } from './users/user.service';
@@ -31,10 +30,7 @@ import { GameEntity } from './users/orm/game.entity';
       synchronize: true,
     }),
 
-    //
     TypeOrmModule.forFeature([UserEntity, GameEntity]),
-    //
-
     UserModule,
     AuthModule,
     GameModule,

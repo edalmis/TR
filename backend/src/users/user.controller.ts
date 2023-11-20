@@ -16,7 +16,6 @@ export class UserController {
 	@Get('profile')
 	async profile(@Request() req, @Response() res) {
 		try {
-			// console.log(" -[ Profile UserCtrl ]- ");
 			const headers = req.headers;
 			const Token = req.headers.authorization;
 			const [, jwtToken] = Token.split(' '); // Divise la chaîne en fonction de l'espace et ignore la première partie (Bearer)
@@ -29,7 +28,7 @@ export class UserController {
 			res.json(user);
 		}
 		catch (e) {
-			console.log("-->  -{ Catch }-  -  [ Profile UserCtrl ] (e): ", e);
+			// console.log("-->  -{ Catch }-  -  [ Profile UserCtrl ] (e): ", e);
 			throw new UnauthorizedException;
 		}
 	}
@@ -38,7 +37,7 @@ export class UserController {
 	@UseGuards(AuthGuard)
 	@Get('profileOther')
 	async profileOther(@Query('username') username: string, @Request() req, @Response() res) {
-		console.log(" -[ ProfileOther User.Ctrl ]- QueryParam: ", username);
+		// console.log(" -[ ProfileOther User.Ctrl ]- QueryParam: ", username);
 		const token = req.headers.authorization;
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
@@ -66,7 +65,7 @@ export class UserController {
 				res.json(user);
 			}
 			catch (e) {
-				console.log("-->  -{ Catch }-  -  [ Profile UserCtrl ] (e): ", e);
+				// console.log("-->  -{ Catch }-  -  [ Profile UserCtrl ] (e): ", e);
 				throw new UnauthorizedException;
 			}
 		}
@@ -84,9 +83,6 @@ export class UserController {
 			const friendUsername: string = req.body.data.username;
 
 			await this.userService.sendFriendRequest(decoded.login, friendUsername);
-			//	const user2login = await this.userService.find_user_by_userName(friendUsername);
-			//	const user1username = await this.userService.find_user_by_login(decoded.login);
-			//	this.userService.sendFriendRequest(user2login.login, user1username.userName);
 		}
 	}
 
@@ -122,7 +118,7 @@ export class UserController {
 
 			// const friendUsername: string = req.body.data.username;
 			const friendId: number = req.body.data.idToAccept;
-			console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
+			// console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
 
 
 			//console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
@@ -259,7 +255,6 @@ export class UserController {
 	@Get('inGameUsers')
 	async getInGameUsersList(@Request() req, @Response() res) {
 		// console.log(" -[ get InGameList  / UsrCtrl ]- ");
-		// const inGameList: string[] = await this.userService.getInGameUsers();
 		const inGameList: any[] = await this.userService.getInGameUsers();
 		res.json(inGameList);
 	}

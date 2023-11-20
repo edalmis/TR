@@ -21,12 +21,10 @@ export class AuthGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 		const token = this.extractTokenFromHeader(request);
 		if (!token) {
-			console.log("[ AuthGuard ] - Pas de token avec la request");
+			// console.log("[ AuthGuard ] - Pas de token avec la request");
 			throw new UnauthorizedException();
 		}
 		try {
-			// console.log("[ AuthGuard ] - Token present avec la request");
-			// console.log("[ AuthGuard ] - Token: ", token);
 			const res = this.jwtService.decode(token) as { [key: string]: any };
 			// console.log("[ AuthGuard ] - res.username: ", res.username);
 			if (!res.id) {
@@ -39,10 +37,11 @@ export class AuthGuard implements CanActivate {
 				// console.log("[ AuthGuard ] - User is in Db: { ", is_user_in_db.userName, " }");
 			}
 			else {
-				console.log("[ AuthGuard ] - User **NOT** in Db: { ", res.username, " }");
+				// console.log("[ AuthGuard ] - User **NOT** in Db: { ", res.username, " }");
 				throw new UnauthorizedException();
 			}
 
+			// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //  
 			// // Verif supplementaire:  si le User est Online
 			// if (this.authService.isUserOnline(is_user_in_db.login)) {
 			// 	console.log("[ AuthGuard ] - User { ", is_user_in_db.userName, " } is ONLINE");
@@ -51,6 +50,7 @@ export class AuthGuard implements CanActivate {
 			// 	console.log("[ AuthGuard ] - User { ", is_user_in_db.userName, " } is OFFLINE --[REFUSE]--");
 			// 	throw new UnauthorizedException();
 			// }
+			// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //  
 
 			// Verif Validity du Jwt
 			try {
@@ -58,7 +58,7 @@ export class AuthGuard implements CanActivate {
 				const payload = await this.jwtAuthService.verifyToken(token);
 				// console.log('[ AuthGuard ] - { Valid } JwT ');
 			} catch (error) {
-				console.log('[ AuthGuard ] - X { INVALID } X JwT :', error.message);
+				// console.log('[ AuthGuard ] - X { INVALID } X JwT :', error.message);
 				throw new UnauthorizedException();
 			}
 			return true;

@@ -23,9 +23,11 @@ export class UserService {
 	async find_user_by_id(id: number): Promise<UserEntity> {
 		return await this.userRepository.findOne({ where: { id: id } })
 	}
+
 	async find_user_by_login(login: string): Promise<UserEntity> {
 		return await this.userRepository.findOne({ where: { login: login } })
 	}
+
 	async find_user_by_userName(userName: string): Promise<UserEntity> {
 		return await this.userRepository.findOne({ where: { userName: userName } })
 	}
@@ -65,30 +67,22 @@ export class UserService {
 		}
 		await this.userRepository.save(user);
 		const bob = await this.find_user_by_userName(user.userName);
-		console.log(" -[ User Service ]- {new_user_added_in DB} :  ", bob.userName);
+		// console.log(" -[ User Service ]- {new_user_added_in DB} :  ", bob.userName);
 	}
 
 	async change_username(login: string, newUserName: string) {
-		// const user = await this.find_user_by_login(login);
-		// await this.userRepository.update({ login }, { resetAvatar: user.avatar });
-
 		await this.userRepository.update({ login }, { userName: newUserName });
 		return await this.find_user_by_userName(newUserName);
-
 	}
 
 	async change_avatar(login: string, newAvatar: string) {
-		// const user = await this.find_user_by_login(login);
-		// await this.userRepository.update({ login }, { resetAvatar: user.avatar });
-
 		await this.userRepository.update({ login }, { avatar: newAvatar });
 		return await this.find_user_by_login(login);
 	}
 
 	async reset_avatar(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log('resetAvatar', user.resetAvatar);
-		// const orignalImage: string = user.resetAvatar;
+		// console.log('resetAvatar', user.resetAvatar);
 		return await this.userRepository.update({ id }, { avatar: user.resetAvatar });
 	}
 
@@ -130,18 +124,12 @@ export class UserService {
 		await this.userRepository.update({ login }, { fa2Secret: null });
 		await this.userRepository.update({ login }, { fa2QRCode: null });
 	}
-	// delete_user(id: number): Observable<any> {
-	// 	return from(this.userRepository.delete(id));
-	// }
-
 
 	//////////////////////////////////////////////////
 	//		 ********************				   //
 	// 		*** [ Friendship ] ***				  //
 	//		 ********************				 //
 	//////////////////////////////////////////////
-
-
 	async sendFriendRequest(login: string, friendLogin: string) {
 		let requester = await this.find_user_by_login(login);
 		let receiver = await this.find_user_by_login(friendLogin);
@@ -151,13 +139,13 @@ export class UserService {
 
 		if (!requester.friendRequestsSent.includes(receiver.login)) {
 			requester.friendRequestsSent.push(receiver.login);
-			console.log("4  -[ RequestFriend ]- Ajout de [", receiver.login, "] a la friendRequestSent list de [", requester.login, "]");
+			// console.log("4  -[ RequestFriend ]- Ajout de [", receiver.login, "] a la friendRequestSent list de [", requester.login, "]");
 			await this.userRepository.save(requester);
 		}
 
 		if (!receiver.pendindFriendRequests.includes(requester.login)) {
 			receiver.pendindFriendRequests.push(requester.login);
-			console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
+			// console.log("4  -[ RequestFriend ]- Ajout de [", requester.login, "] a la pending list de [", receiver.login, "]");
 			await this.userRepository.save(receiver);
 		}
 
@@ -189,7 +177,6 @@ export class UserService {
 				.set({ friends: user1.friends }) // Met à jour le champ friends avec la nouvelle liste d'amis
 				.where("id = :id", { id: user1.id })
 				.execute();
-			//await this.userRepository.save(user1);
 		}
 
 		user1 = await this.find_user_by_login(login);
@@ -202,9 +189,7 @@ export class UserService {
 				.set({ friends: user2.friends }) // Met à jour le champ friends avec la nouvelle liste d'amis
 				.where("id = :id", { id: user2.id })
 				.execute();
-			//await this.userRepository.save(user2);
 		}
-
 
 		//////// console.log / Debug
 		// const user1test = await this.find_user_by_login(user1.login);
@@ -213,6 +198,7 @@ export class UserService {
 		// console.log("8  -[ addFriends ]- ", user2test.login, "  friendList: ", user2test.friends);
 		/////////////////////
 	}
+
 
 	async clearUpdatePendingAndRequestList(receiver: string, sender: string) {
 		let accepter = await this.find_user_by_userName(receiver);
@@ -226,7 +212,7 @@ export class UserService {
 		const pendingFriendIndex = accepter.pendindFriendRequests.indexOf(requester.login);
 		if (pendingFriendIndex !== -1) {
 			accepter.pendindFriendRequests.splice(pendingFriendIndex, 1);
-			console.log("2  -[ clear Friend ]- *accepter* PendingList: ", accepter.pendindFriendRequests)
+			// console.log("2  -[ clear Friend ]- *accepter* PendingList: ", accepter.pendindFriendRequests)
 			await this.userRepository.save(accepter);
 		}
 
@@ -234,7 +220,7 @@ export class UserService {
 		const senderFriendIndex = requester.friendRequestsSent.indexOf(accepter.login);
 		if (senderFriendIndex !== -1) {
 			requester.friendRequestsSent.splice(senderFriendIndex, 1);
-			console.log("2  -[ clear Friend ]- *requester* SentRequestsList: ", requester.friendRequestsSent)
+			// console.log("2  -[ clear Friend ]- *requester* SentRequestsList: ", requester.friendRequestsSent)
 			await this.userRepository.save(requester);
 		}
 
@@ -259,7 +245,7 @@ export class UserService {
 			await this.userRepository.save(user1);
 		}
 
-		// Debug :
+		// debug
 		// const user1test = await this.find_user_by_login(user1.login);
 		// console.log("7  -[ removeFriends ]- ", user1test.login, "  friendList: ", user1test.friends);
 		/////////////////////
@@ -268,7 +254,7 @@ export class UserService {
 
 	async getPendingList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ UsrServ - Get Pending ]- le user: [", user.userName, "] -> sa PendingList: ", user.pendindFriendRequests);
+		// console.log(" -[ UsrServ - Get Pending ]- le user: [", user.userName, "] -> sa PendingList: ", user.pendindFriendRequests);
 		const loginPendingList: string[] = user.pendindFriendRequests;
 		// tranformation des login en user Obj
 		let usersPendingList: any[] = [];
@@ -294,7 +280,7 @@ export class UserService {
 
 	async getSentRequestsList(id: number) {
 		const user = await this.find_user_by_id(id);
-		console.log(" -[ UsrServ - Get SendRequests ]- Le user: [", user.userName, "] -> sa RequestsList: ", user.friendRequestsSent);
+		// console.log(" -[ UsrServ - Get SendRequests ]- Le user: [", user.userName, "] -> sa RequestsList: ", user.friendRequestsSent);
 		const loginSentRequestsList: string[] = user.friendRequestsSent;
 		// tranformation des login en user Obj
 		let usersSentRequestsList: any[] = [];
@@ -340,7 +326,6 @@ export class UserService {
 		if (!requester || !receiver) {
 			throw new BadRequestException('User not found');
 		}
-
 
 		const friendIndex = requester.blockedUser.indexOf(receiver.login);
 		if (friendIndex !== -1) {
@@ -393,12 +378,10 @@ export class UserService {
 	// 		***    [ GAME ]    ***				  //
 	//		 ********************				 //
 	//////////////////////////////////////////////
-
-
 	async incrementRankAndTitle(id: number) {
 		let rank: number;
 		let user = await this.find_user_by_id(id);
-		console.log(" -[ Game Ranking ]- user: [", user.userName, "] -> formerRank: (", user.rank, ") -> Title: { ", user.title, " }");
+		// console.log(" -[ Game Ranking ]- user: [", user.userName, "] -> formerRank: (", user.rank, ") -> Title: { ", user.title, " }");
 		rank = user.rank;
 		user.wonGameNbr += 1;
 		if (rank < 100) {
@@ -420,15 +403,8 @@ export class UserService {
 			if (user) {
 				user.lostGameNbr += 1;
 				await this.userRepository.save(user);
-			} else {
-				console.error('User not found');
-				// Handle user not found scenario
 			}
-		} catch (error) {
-			console.error('Error incrementing lostGameNbr:', error);
-			// Handle other errors or throw them further
-			throw error;
-		}
+		} catch (error) { }
 	}
 
 	async add_inGameUser(id: number) {
@@ -443,18 +419,18 @@ export class UserService {
 		const inGameIdList: number[] = Array.from(UserService.inGameUsersSet);
 		// transforme id en objet user 
 		let usersInGameDatas: any[] = [];
-		console.log(' [ getInGameUsers ] inGameIdList.length: ', inGameIdList.length);
-		console.log(' [ getInGameUsers ] inGameIdList[]: ', inGameIdList);
+		// console.log(' [ getInGameUsers ] inGameIdList.length: ', inGameIdList.length);
+		// console.log(' [ getInGameUsers ] inGameIdList[]: ', inGameIdList);
 		const idListLength: number = inGameIdList.length;
 		if (idListLength != 0)
 			for (const idUser of inGameIdList) {
-				console.log('test [ ID ] : ', idUser)
+				// console.log('test [ ID ] : ', idUser)
 				if (idUser != 0) {
 					const user = await this.find_user_by_id(idUser);
 					usersInGameDatas.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
 				}
 			}
-		console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
+		// console.log(' -[ UserService - getInGameUsers ]-  UsersList : ', usersInGameDatas);
 		return usersInGameDatas;
 	}
 
@@ -479,8 +455,7 @@ export class UserService {
 		game.player2 = player2;
 		game.player1Score = player1Score;
 		game.player2Score = player2Score;
-
-		console.log(' -[ Register MatchHistory ]- ');
+		// console.log(' -[ Register MatchHistory ]- ');
 		await this.gameRepository.save(game);
 	}
 
@@ -517,45 +492,8 @@ export class UserService {
 				avatar: user.avatar,
 				wonGames: user.wonGameNbr,
 			}));
-		console.log(' -[ getLeaderBoard ]- leaderTab: ', leaderTab);
+		// console.log(' -[ getLeaderBoard ]- leaderTab: ', leaderTab);
 		return leaderTab;
-
 	}
-	// async updateLeaderboard(user: UserEntity): Promise<void> {
-	// 	let leaderboard = await this.leaderBoardRepository.findOne({ where: { user: { id: user.id } } });
 
-	// 	if (!leaderboard) {
-	// 		leaderboard = this.leaderBoardRepository.create();
-	// 		leaderboard.user = user;
-	// 	}
-
-	// 	// Ajoutez la logique pour incrémenter le nombre de parties gagnées, si nécessaire
-	// 	leaderboard.wonGames++;
-
-	// 	await this.leaderBoardRepository.save(leaderboard);
-	// }
-
-	// async getLeaderBoard() {
-	// 	let leaders = await this.leaderBoardRepository
-	// 		.createQueryBuilder("leaderboard")
-	// 		.leftJoinAndSelect("leaderboard.user", "user")
-	// 		.orderBy("leaderboard.wonGames", "DESC")
-	// 		.take(3)  // Limite les résultats aux 3 premières entrées
-	// 		.getMany();
-
-	// 	if (leaders.length === 0) {
-	// 		return [];
-	// 	}
-	// 	let leadersList: any[] = []
-	// 	if (leaders.length != 0) {
-	// 		for (const lead of leaders) {
-	// 			const user = await this.find_user_by_id(lead.user.id);
-	// 			leadersList.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar, wonGames: user.wonGameNbr })
-	// 		}
-	// 	}
-	// }
 }
-///////////////////////////////////////////////////////////////////////////
-//																		//
-//																	   //
-////////////////////////////////////////////////////////////////////////
