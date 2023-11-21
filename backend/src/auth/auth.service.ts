@@ -100,10 +100,12 @@ export class AuthService {
 
   // * - -[  GOOGLE  AUTHentificator  ]- - *
   isTwoFactorAuthenticationCodeValid(twoFactorAuthenticationCode: string, fa2Secret: string) {
-    return otplib.authenticator.verify({
-      token: twoFactorAuthenticationCode,
-      secret: fa2Secret,
-    });
+    try {
+      return otplib.authenticator.verify({
+        token: twoFactorAuthenticationCode,
+        secret: fa2Secret,
+      });
+    } catch (e) { }
   }
   async generateQrCodeDataURL(otpAuthUrl: string) {
     return toDataURL(otpAuthUrl);
@@ -111,88 +113,91 @@ export class AuthService {
 
   //  -[ VERIFY  2 FA - Google Auth ]-
   async verify_2fa(req: Request) {
-    let login: string;
-    let code: string;
-    const url = new URL(req.url, 'http://localhost:5173');
+    try {
+      let login: string;
+      let code: string;
+      const url = new URL(req.url, 'http://localhost:5173');
 
-    if (url.searchParams.has('code')) {
-      code = url.searchParams.get('code');
-      // console.log("-[ Verify_2Fa ]-Code: ", code);
-      if (!code) {
-        // console.log("-[ Verify_2Fa ]- no (code) in Url ");
-        throw new UnauthorizedException();
-      }
-    } else {
-      // console.log("-[ Verify_2Fa ]-no code in Param URL");
-    }
-
-    if (url.searchParams.has('login')) {
-      login = url.searchParams.get('login');
-      // console.log("-[ Verify_2Fa ]-login: ", login);
-      if (!login) {
-        // console.log("-[ Verify_2Fa ]- no (login) in URL");
-        throw new UnauthorizedException();
-      }
-    } else {
-      // console.log("-[ Verify_2Fa ]-no login in Param URL");
-    }
-    if (code && login) {
-      // console.log("-[ Verify_2Fa ]-login & code bien Presents");
-      const newAuthUser = await this.userService.find_user_by_login(login);
-      const secret = newAuthUser.fa2Secret;
-      if (this.isTwoFactorAuthenticationCodeValid(code, secret)) {
-        await this.userService.turn_2fa_on(login);
-        // console.log("-[ Verify_2Fa ]- Code Valide");
-
-        // Create and return Jwt
-        let jwt_payload = {
-          "id": newAuthUser.id,
-          "login": newAuthUser.login,
-          "username": newAuthUser.userName,
+      if (url.searchParams.has('code')) {
+        code = url.searchParams.get('code');
+        // console.log("-[ Verify_2Fa ]-Code: ", code);
+        if (!code) {
+          // console.log("-[ Verify_2Fa ]- no (code) in Url ");
+          throw new UnauthorizedException();
         }
-        // console.log("Creation du Token avec payload ... payload: ", jwt_payload);
-        const jwt = await this.jwtAuthService.createToken(jwt_payload);
-        return jwt;
+      } else {
+        // console.log("-[ Verify_2Fa ]-no code in Param URL");
       }
-    }
-    // console.log("-[ Verify_2Fa ]- Code INVALIDE");
-    return null;
+
+      if (url.searchParams.has('login')) {
+        login = url.searchParams.get('login');
+        // console.log("-[ Verify_2Fa ]-login: ", login);
+        if (!login) {
+          // console.log("-[ Verify_2Fa ]- no (login) in URL");
+          throw new UnauthorizedException();
+        }
+      } else {
+        // console.log("-[ Verify_2Fa ]-no login in Param URL");
+      }
+      if (code && login) {
+        // console.log("-[ Verify_2Fa ]-login & code bien Presents");
+        const newAuthUser = await this.userService.find_user_by_login(login);
+        const secret = newAuthUser.fa2Secret;
+        if (this.isTwoFactorAuthenticationCodeValid(code, secret)) {
+          await this.userService.turn_2fa_on(login);
+          // console.log("-[ Verify_2Fa ]- Code Valide");
+
+          // Create and return Jwt
+          let jwt_payload = {
+            "id": newAuthUser.id,
+            "login": newAuthUser.login,
+            "username": newAuthUser.userName,
+          }
+          // console.log("Creation du Token avec payload ... payload: ", jwt_payload);
+          const jwt = await this.jwtAuthService.createToken(jwt_payload);
+          return jwt;
+        }
+      }
+      // console.log("-[ Verify_2Fa ]- Code INVALIDE");
+      return null;
+    } catch (e) { }
   }
   /////////////////////////////////////////////////////////////////////////////////////////////
 
 
   // * - - - [  Change UserName  ] - - - *
   async change_userName(login: string, newUsername: string) {
-    // console.log('-[ Change_UserName ]- login: ', login, ' .  newUsername: ', newUsername);
-    if (newUsername === '') {
-      // console.log('empty username');
-      return null;
-    }
-    // check if user exists
-    const user = await this.userService.find_user_by_login(login);
-    if (!user) {
-      // console.log('User does not exist in db -> ', login);
-      throw new BadRequestException('User does not exist');;
-    }
-    //check if new userName already in use
-    // console.log("-[AuthService]- {Change Name} -- ");
-    const userNameCheck = await this.userService.find_user_by_userName(newUsername);
-    // console.log("userbyUsername: ", userNameCheck);
-    const userLoginCheck = await this.userService.find_user_by_login(newUsername);
-    // console.log("userbyLogin: ", userLoginCheck);
-    if (login === newUsername) {
-      if (userNameCheck) {
-        // console.log('UserName already in use');
+    try {
+      // console.log('-[ Change_UserName ]- login: ', login, ' .  newUsername: ', newUsername);
+      if (newUsername === '') {
+        // console.log('empty username');
+        return null;
+      }
+      // check if user exists
+      const user = await this.userService.find_user_by_login(login);
+      if (!user) {
+        // console.log('User does not exist in db -> ', login);
+        throw new BadRequestException('User does not exist');;
+      }
+      //check if new userName already in use
+      // console.log("-[AuthService]- {Change Name} -- ");
+      const userNameCheck = await this.userService.find_user_by_userName(newUsername);
+      // console.log("userbyUsername: ", userNameCheck);
+      const userLoginCheck = await this.userService.find_user_by_login(newUsername);
+      // console.log("userbyLogin: ", userLoginCheck);
+      if (login === newUsername) {
+        if (userNameCheck) {
+          // console.log('UserName already in use');
+          throw new BadRequestException('UserName already in use');
+        }
+      }
+      else if (userNameCheck || userLoginCheck) {
+        // console.log('New UserName already in use');
         throw new BadRequestException('UserName already in use');
       }
-    }
-    else if (userNameCheck || userLoginCheck) {
-      // console.log('New UserName already in use');
-      throw new BadRequestException('UserName already in use');
-    }
 
-    return await this.userService.change_username(login, newUsername);
+      return await this.userService.change_username(login, newUsername);
+    } catch (e) { }
   }
-  async logout(login: string, jwt: string) { }
 
 }

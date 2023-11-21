@@ -1,4 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
+import { Socket, Server } from 'socket.io';
+import { DirectMessageService } from 'src/direct_message/direct_message.service';
+import { ChatService } from 'src/chat/chat.service';
+import { UserService } from 'src/users/user.service';
+import { UserEntity } from 'src/users/orm/user.entity';
+import { ChatRoom } from 'src/chat/chat_room.entity';
+import * as bcrypt from 'bcryptjs';
 import {
 	SubscribeMessage,
 	WebSocketGateway,
@@ -8,13 +15,6 @@ import {
 	OnGatewayDisconnect,
 	WsException,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
-import { ChatService } from 'src/chat/chat.service';
-import { ChatRoom } from 'src/chat/chat_room.entity';
-import { DirectMessageService } from 'src/direct_message/direct_message.service';
-import { UserEntity } from 'src/users/orm/user.entity';
-import { UserService } from 'src/users/user.service';
-import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 @WebSocketGateway(
@@ -93,125 +93,149 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	@SubscribeMessage('getOnlineUsersDatas')
 	async sendOnlineUsersDatas(client: Socket) {
 		// console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
-		const usersDatas: any[] = [];
-		for (const [id, user] of this.onlineUsersMap) {
-			const usr = await this.userService.find_user_by_id(user.id);
-			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
-			// usersDatas.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
-		}
-		client.emit('onlineUsersDatas', usersDatas);
+		try {
+			const usersDatas: any[] = [];
+			for (const [id, user] of this.onlineUsersMap) {
+				const usr = await this.userService.find_user_by_id(user.id);
+				usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+				// usersDatas.push({ id: user.id, login: user.login, username: user.userName, avatar: user.avatar });
+			}
+			client.emit('onlineUsersDatas', usersDatas);
+		} catch (e) { }
 	}
 
 	// // // // // // // // // // // // // // // // // // // // // // 
 	// // // // // // // [  Profile  ] // // // // // // // // // // 
 	@SubscribeMessage('changeUsername')
 	async changeUsername(client: Socket) {
-		const usersDatas: any[] = [];
-		for (const [id, user] of this.onlineUsersMap) {
-			const usr = await this.userService.find_user_by_id(user.id);
-			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
-		}
-		this.server.emit('onlineUsersUpdate', usersDatas);
+		try {
+			const usersDatas: any[] = [];
+			for (const [id, user] of this.onlineUsersMap) {
+				const usr = await this.userService.find_user_by_id(user.id);
+				usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+			}
+			this.server.emit('onlineUsersUpdate', usersDatas);
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('resetAvatar')
 	async resetAvatar(client: Socket, data: any) {
-		// console.log('-[ EventsGt ]- resetAvatar data:  ', data)
-		const user = await this.userService.find_user_by_login(data.login);
-		await this.userService.reset_avatar(user.id);
-		const userUpdate = await this.userService.find_user_by_login(data.login);
-		client.emit('updateAvatar', { avatar: userUpdate.avatar });
+		try {
+			// console.log('-[ EventsGt ]- resetAvatar data:  ', data)
+			const user = await this.userService.find_user_by_login(data.login);
+			await this.userService.reset_avatar(user.id);
+			const userUpdate = await this.userService.find_user_by_login(data.login);
+			client.emit('updateAvatar', { avatar: userUpdate.avatar });
+		} catch (e) { }
 	}
 
 	// // // // // // // // // // // // // // // // // // // // // // //
 	// // // // // // //  [   Friends  ]  // // // // // // // // // // 
 	@SubscribeMessage('SendFriendRequest')
 	async sendFriendRequest(client: Socket, data: any) {
-		const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
-		await this.userService.sendFriendRequest(moi.login, data.otherLogin);
+		try {
+			const moi: UserEntity = await this.userService.find_user_by_id(data.myId)
+			await this.userService.sendFriendRequest(moi.login, data.otherLogin);
 
-		// console.log('-[ *Events* Send friend request]- datas : ', data);
-		const friend: UserEntity = await this.userService.find_user_by_login(data.otherLogin);
-		const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
-		let friendClient = this.socketsByUserID.get(friend.id.toString());
-		// console.log('-[ *Events* Send friend request]- ', data.otherLogin, '  newPendingList : ', friendnewPendingList);
-		friendClient.emit('pendingListUpdate', friendnewPendingList);
+			// console.log('-[ *Events* Send friend request]- datas : ', data);
+			const friend: UserEntity = await this.userService.find_user_by_login(data.otherLogin);
+			const friendnewPendingList: any[] = await this.userService.getPendingList(friend.id);
+			let friendClient = this.socketsByUserID.get(friend.id.toString());
+			// console.log('-[ *Events* Send friend request]- ', data.otherLogin, '  newPendingList : ', friendnewPendingList);
+			friendClient.emit('pendingListUpdate', friendnewPendingList);
 
-		const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
-		// console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
-		client.emit('sentRequestsListUpdate', myNewRequestedList);
+			const myNewRequestedList: any[] = await this.userService.getSentRequestsList(data.myId)
+			// console.log('-[ *Events* Send friend request]- MyRequestList : ', myNewRequestedList);
+			client.emit('sentRequestsListUpdate', myNewRequestedList);
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('acceptOrRefuseFriendRequest')
 	async acceptFriendRequest(client: Socket, data: any) {
-		// console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
-		const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
-		client.emit('pendingListUpdate', mynewPendingList)
+		try {
+			// console.log(' -[ EventsGateway ]- acceptRefuseFriend - data : ', data);
+			const mynewPendingList: any[] = await this.userService.getPendingList(data.myId)
+			client.emit('pendingListUpdate', mynewPendingList)
 
-		const friend = await this.userService.find_user_by_id(data.idToAccept);
-		const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
-		let friendClient = this.socketsByUserID.get(friend.id.toString());
-		friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
+			const friend = await this.userService.find_user_by_id(data.idToAccept);
+			const friendNewRequestList: any[] = await this.userService.getSentRequestsList(friend.id);
+			let friendClient = this.socketsByUserID.get(friend.id.toString());
+			friendClient.emit('sentRequestsListUpdate', friendNewRequestList);
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('updateFriendList')
 	async updateFriendList(client: Socket, data: any) {
-		// console.log(' -[ EventsGateway ]- acceptFriend');
-		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
-		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
-		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
-		friendClient.emit('friendListUpdate', friendnewFriendList);
+		try {
+			// console.log(' -[ EventsGateway ]- acceptFriend');
+			const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
+			const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
+			let friendClient: any = this.socketsByUserID.get(friend.id.toString());
+			friendClient.emit('friendListUpdate', friendnewFriendList);
 
-		const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
-		client.emit('friendListUpdate', myNewFriendList);
+			const myNewFriendList: any[] = await this.userService.getFriendsList(data.myId);
+			client.emit('friendListUpdate', myNewFriendList);
+		} catch (e) { }
 	}
 	// // // // // // // // // // // // // // // // // // // // // // //
 	// // // // // // //  [   Game Stats  ]  // // // // // // // // //
 	@SubscribeMessage('getLeaderBoard')
 	async getLeaderBoard(client: Socket) {
-		const leaderBoard: any[] = await this.userService.getLeaderBoard();
-		this.server.emit('updateLeaderBoard', leaderBoard)
+		try {
+			const leaderBoard: any[] = await this.userService.getLeaderBoard();
+			this.server.emit('updateLeaderBoard', leaderBoard)
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('getOtherGameHistory')
 	async getOtherGameHstory(client: Socket, data: any) {
-		const user = await this.userService.find_user_by_id(data.otherId);
-		const gameHistoryData = await this.userService.getMatchHistory(user);
-		client.emit('otherGameHistory', gameHistoryData)
+		try {
+			const user = await this.userService.find_user_by_id(data.otherId);
+			const gameHistoryData = await this.userService.getMatchHistory(user);
+			client.emit('otherGameHistory', gameHistoryData)
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('inGameUpdate')
 	async enterGame(client: Socket, data: any) {
-		const inGameUsersList: any[] = await this.userService.getInGameUsers();
-		this.server.emit('inGameFriendUpdate', inGameUsersList)
+		try {
+			const inGameUsersList: any[] = await this.userService.getInGameUsers();
+			this.server.emit('inGameFriendUpdate', inGameUsersList)
+		} catch (e) { }
 	}
 
 	// // // // // // // // // // // // // // // // // // // // // // //
 	// // // // // // //  [  Game Invitation  ] // // // // // // // //
 	@SubscribeMessage('sendGameInvitation')
 	async sendGameInvitation(client: Socket, data: any) {
-		// console.log(' -[ EventsGateway ]- *sendGameInvitation* data: ', data)
-		let wsClient: any = this.socketsByUserID.get(data.idToInvite.toString()); // Find le wsServerId du client pour lui emit l'invitation
-		// console.log(' -[ EventsGateway ]- *wsClient* : ', wsClient)
+		try {
+			// console.log(' -[ EventsGateway ]- *sendGameInvitation* data: ', data)
+			let wsClient: any = this.socketsByUserID.get(data.idToInvite.toString()); // Find le wsServerId du client pour lui emit l'invitation
+			// console.log(' -[ EventsGateway ]- *wsClient* : ', wsClient)
 
-		wsClient.emit('receivedGameInvitation', data);
+			wsClient.emit('receivedGameInvitation', data);
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('refuseGameInvitation')
 	async refuseGameInvitation(client: Socket, data: any) {
-		// console.log(' -[ EventsGateway ]- *refuse Invitation* data: ', data)
-		// console.log(' -[ EventsGateway ]- data.id.toString(): ', data.id.toString())
-		let wsClient: any = this.socketsByUserID.get(data.id.toString()); // Find le wsServerId du [ client 1 ] pour lui emit le refus et le faire quitter la room !
-		// console.log(' -[ EventsGateway ]- wsClient: ', wsClient)
-		wsClient.emit("refuseCloseGame", data);
+		try {
+			// console.log(' -[ EventsGateway ]- *refuse Invitation* data: ', data)
+			// console.log(' -[ EventsGateway ]- data.id.toString(): ', data.id.toString())
+			let wsClient: any = this.socketsByUserID.get(data.id.toString()); // Find le wsServerId du [ client 1 ] pour lui emit le refus et le faire quitter la room !
+			// console.log(' -[ EventsGateway ]- wsClient: ', wsClient)
+			wsClient.emit("refuseCloseGame", data);
+		} catch (e) { }
 
 	}
 
 	@SubscribeMessage('cancelInvitation')
 	invitationUpdate(client: Socket, data: any) {
-		// console.log(' -[ Events cancelInvitation ]- data: ', data);
-		let friendClient: any = this.socketsByUserID.get(data.idToInvite.toString());
-		friendClient.emit('updateInvitation');
+		try {
+			// console.log(' -[ Events cancelInvitation ]- data: ', data);
+			let friendClient: any = this.socketsByUserID.get(data.idToInvite.toString());
+			friendClient.emit('updateInvitation');
+		} catch (e) { }
 
 	}
 	// // // // // // // // // // // // // // // // // // // // // // //
@@ -225,132 +249,143 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	// // // // // // // //  [  D  M  ]   // // // // // // // // // //	
 	@SubscribeMessage('getDmRooms')
 	async getDmRooms(client: Socket) {
-		let str = this.userIdFindHelper.get(client.id);
-		let num = +str;
-		let a = await this.directMessageService.findAllRoomsForUser(num)
-		// console.log(a)
-		client.emit('repDmRooms', {
-			rooms: a
-		})
+		try {
+			let str = this.userIdFindHelper.get(client.id);
+			let num = +str;
+			let a = await this.directMessageService.findAllRoomsForUser(num)
+			// console.log(a)
+			client.emit('repDmRooms', {
+				rooms: a
+			})
+		} catch (e) { }
 	}
 
 
 	@SubscribeMessage('getMessagesInDmRoom')
 	async getDmRoomMessages(client: Socket, roomId: any) {
-		let a = await this.directMessageService.findAllMessagesForRoom(roomId)
-		// console.log('AAAAAAAAAAAAAAA', a)
-		client.emit('repMessagesInDmRooms', {
-			messages: a
-		})
+		try {
+			let a = await this.directMessageService.findAllMessagesForRoom(roomId)
+			// console.log('AAAAAAAAAAAAAAA', a)
+			client.emit('repMessagesInDmRooms', {
+				messages: a
+			})
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('sendMessage')
 	async sendMessage(client: Socket, data: any) {
-		// Check if data is present and has the required properties
-		if (!data || typeof data.sendBy === 'undefined' || typeof data.sendTo === 'undefined') {
-			console.error('Missing data in sendMessage:', data);
-			return;
-		}
+		try {
+			// Check if data is present and has the required properties
+			if (!data || typeof data.sendBy === 'undefined' || typeof data.sendTo === 'undefined') {
+				console.error('Missing data in sendMessage:', data);
+				return;
+			}
 
-		// Log the received data for debugging
-		// console.log('Data received in sendMessage:', data);
+			// Log the received data for debugging
+			// console.log('Data received in sendMessage:', data);
 
 
-		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
-		// console.log('a', a)
-		const userOne = this.socketsByUserID.get(data.sendBy.toString());
-		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
-		if (userOne) {
-			userOne.emit('newMessagedm', {
-				messages: a
-			})
-		}
-		if (userTwo) {
-			userTwo.emit('newMessagedm', {
-				messages: a
-			})
-		}
+			let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
+			// console.log('a', a)
+			const userOne = this.socketsByUserID.get(data.sendBy.toString());
+			const userTwo = this.socketsByUserID.get(data.sendTo.toString());
+			if (userOne) {
+				userOne.emit('newMessagedm', {
+					messages: a
+				})
+			}
+			if (userTwo) {
+				userTwo.emit('newMessagedm', {
+					messages: a
+				})
+			}
+		} catch (e) { }
 	}
 
 
 
 	@SubscribeMessage('sendMessageN')
 	async sendMessageN(client: Socket, data: any) {
-		//console.log("----------here------------------")
+		try {
+			//console.log("----------here------------------")
 
-		//console.log("------------data-------------", data.sendTo)
-		const sendTo = await this.userService.find_user_by_login(data.sendTo);
+			//console.log("------------data-------------", data.sendTo)
+			const sendTo = await this.userService.find_user_by_login(data.sendTo);
 
-		data.sendTo = sendTo.id;
-		let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
-		//console.log('a', a)
-		const userOne = this.socketsByUserID.get(data.sendBy.toString());
-		const userTwo = this.socketsByUserID.get(data.sendTo.toString());
-		if (userOne) {
-			userOne.emit('newMessagedm', {
-				messages: a
-			})
-		}
-		if (userTwo) {
-			userTwo.emit('newMessagedm', {
-				messages: a
-			})
-		}
+			data.sendTo = sendTo.id;
+			let a = await this.directMessageService.sendMessage(data.sendBy, data.sendTo, data.message)
+			//console.log('a', a)
+			const userOne = this.socketsByUserID.get(data.sendBy.toString());
+			const userTwo = this.socketsByUserID.get(data.sendTo.toString());
+			if (userOne) {
+				userOne.emit('newMessagedm', {
+					messages: a
+				})
+			}
+			if (userTwo) {
+				userTwo.emit('newMessagedm', {
+					messages: a
+				})
+			}
+		} catch (e) { }
 	}
 	//----------------------------------------------------------------------------------
 	//----------------------------------------------------------------------------------------
 	//--------------------CHAT---------------------------------------------------------------
 	@SubscribeMessage('getChatRooms')
 	async getChatRooms(client: Socket) {
-		//console.log('test', client.id, this.userIdFindHelper.get(client.id))
-		let str = this.userIdFindHelper.get(client.id);
-		let num = +str;
-		let a = await this.chatService.listAllRooms()
-		client.join('1')
-		//console.log('a------------------', a[0])
-		this.server.to('1').emit('repChatRooms', {
-			rooms: a
-		})
+		try {
+			//console.log('test', client.id, this.userIdFindHelper.get(client.id))
+			let str = this.userIdFindHelper.get(client.id);
+			let num = +str;
+			let a = await this.chatService.listAllRooms()
+			client.join('1')
+			//console.log('a------------------', a[0])
+			this.server.to('1').emit('repChatRooms', {
+				rooms: a
+			})
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('sendChatRooms')
 	async sendChatRooms(client: Socket, data: any) {
+		try {
+			const tittle = data.title;
+			const user = data.usere;
+			const title = data.title;
+			const isPrivate = data.isPrivate;
+			let password = data.password; // Moved outside of destructuring to handle encryption            const userId = data.userId;
+			const userId = data.IdduUser;
+			let hashedPassword; // To store the hashed password
+			// console.log("USERRRRR", data)
+			// console.log("TiTLE", tittle)
 
-		const tittle = data.title;
-		const user = data.usere;
-		const title = data.title;
-		const isPrivate = data.isPrivate;
-		let password = data.password; // Moved outside of destructuring to handle encryption            const userId = data.userId;
-		const userId = data.IdduUser;
-		let hashedPassword; // To store the hashed password
-		// console.log("USERRRRR", data)
-		// console.log("TiTLE", tittle)
+			// Check if room with the given name exists
+			const roomExists = await this.chatService.doesRoomExist(tittle);
 
-		// Check if room with the given name exists
-		const roomExists = await this.chatService.doesRoomExist(tittle);
+			if (roomExists) {
+				client.emit("roomCreationError", { error: "Room with this name already exists" });
+				return;
+			}
+			const userOne = this.socketsByUserID.get(this.userIdFindHelper.get(client.id));
+			// Encrypt the password if the room is private
+			if (isPrivate && password) {
+				const saltRounds = 10; // or another number of rounds
+				hashedPassword = await bcrypt.hash(password, saltRounds);
+			}
 
-		if (roomExists) {
-			client.emit("roomCreationError", { error: "Room with this name already exists" });
-			return;
-		}
-		const userOne = this.socketsByUserID.get(this.userIdFindHelper.get(client.id));
-		// Encrypt the password if the room is private
-		if (isPrivate && password) {
-			const saltRounds = 10; // or another number of rounds
-			hashedPassword = await bcrypt.hash(password, saltRounds);
-		}
+			const channel = await this.chatService.createChatRoom({
+				title,
+				isPrivate,
+				// password,
+				hashedPassword,
+				userId,
+				user
+			});
 
-		const channel = await this.chatService.createChatRoom({
-			title,
-			isPrivate,
-			// password,
-			hashedPassword,
-			userId,
-			user
-		});
-
-		client.join(channel.id);
-		this.server.to('1').emit("chatRoomCreated", { success: true, channel });
+			client.join(channel.id);
+			this.server.to('1').emit("chatRoomCreated", { success: true, channel });
+		} catch (e) { }
 	}
 
 

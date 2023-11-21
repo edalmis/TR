@@ -1,5 +1,5 @@
 
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Redirect, Request, Response, UnauthorizedException, UseGuards, Put } from "@nestjs/common";
+import { Controller, Get, HttpCode, HttpStatus, Post, Request, Response, UnauthorizedException, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthGuard } from './guards/auth.guard';
 import { UserService } from "src/users/user.service";
@@ -28,9 +28,11 @@ export class AuthController {
     @Get('42')
     @HttpCode(302)
     redirect(@Response() res) {
-        const api_uid: string = this.configService.get<string>('UID');
-        const url_42: string = `https://api.intra.42.fr/oauth/authorize?client_id=${api_uid}&redirect_uri=${redirect_uri}&response_type=code`;
-        res.redirect(url_42);
+        try {
+            const api_uid: string = this.configService.get<string>('UID');
+            const url_42: string = `https://api.intra.42.fr/oauth/authorize?client_id=${api_uid}&redirect_uri=${redirect_uri}&response_type=code`;
+            res.redirect(url_42);
+        } catch (e) { }
     }
 
     //--> [ ** Etape 2 **  -> Get le retour de 42Api pour extraire le 'code', verif Auth make requests a 42Api ] <--
@@ -63,7 +65,7 @@ export class AuthController {
         }
     }
 
-    //--> [ ** Etape 3 **  -> Verifie si le Jwt est valide  ] <--
+    //--> [ ** Etape 3 **  -> Verifie si le Jwt est valide  (everything via AuthGuard :) ! )] <--
     @UseGuards(AuthGuard)
     @Post('verifier_jwt')
     checkJwt() {
@@ -78,56 +80,61 @@ export class AuthController {
     // @UseGuards(AuthGuard) //
     @Get('verify_2fa')
     async verify_2fa(@Request() req, @Response() res) {
-        // console.log("-[ verify_2fa ]-");
-        const tokenJwt = await this.authService.verify_2fa(req);
-        res.json({ jwt: tokenJwt });
+        try {
+            // console.log("-[ verify_2fa ]-");
+            const tokenJwt = await this.authService.verify_2fa(req);
+            res.json({ jwt: tokenJwt });
+        } catch (e) { }
     }
 
     @HttpCode(HttpStatus.OK)
     // @UseGuards(AuthGuard) //
     @Get('get_google_2fa')
     async get_google_2fa(@Request() req, @Response() res) {
-        const url = new URL(req.url, 'http://localhost:5173');
-
-        // Vérifiez si le paramètre "code" est présent dans l'URL
-        if (url.searchParams.has('login')) {
-            const login = url.searchParams.get('login');
-            // console.log("-[ get_google-2fa ]- login: ", login);
-            if (!login) {
-                //console.log("Pb retour de \'Code\' ");
+        try {
+            const url = new URL(req.url, 'http://localhost:5173');
+            // Vérifiez si le paramètre "code" est présent dans l'URL
+            if (url.searchParams.has('login')) {
+                const login = url.searchParams.get('login');
+                // console.log("-[ get_google-2fa ]- login: ", login);
+                if (!login) {
+                    //console.log("Pb retour de \'Code\' ");
+                    throw new UnauthorizedException();
+                }
+                const QrImg = await this.userService.get_QRCode(login);
+                //    console.log("QrImg Envoye au front:  ", QrImg)
+                res.json({ url: QrImg });
+            }
+            else {
                 throw new UnauthorizedException();
             }
-            const QrImg = await this.userService.get_QRCode(login);
-            //    console.log("QrImg Envoye au front:  ", QrImg)
-            res.json({ url: QrImg });
-        }
-        else {
-            throw new UnauthorizedException();
-        }
+        } catch (e) { }
     }
 
     @HttpCode(HttpStatus.OK)
     // @UseGuards(AuthGuard) //
     @Get('enable_2fa')
     async preview2fa(@Request() req, @Response() res) {
-        let login: string;
-        const token = req.headers.authorization;
-        if (token) {
-            const jwt = token.replace('Bearer', '').trim();
-            const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-            //  console.log('-[Enable 2Fa ]- Jwt decoded from Header (Get): ', decoded);
+        try {
+            let login: string;
+            const token = req.headers.authorization;
+            if (token) {
+                const jwt = token.replace('Bearer', '').trim();
+                const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
+                //  console.log('-[Enable 2Fa ]- Jwt decoded from Header (Get): ', decoded);
 
 
-            if (decoded && decoded.login) {
-                login = decoded.login;
-                // console.log('-[Enable 2Fa ]- Jwt login', login);
+                if (decoded && decoded.login) {
+                    login = decoded.login;
+                    // console.log('-[Enable 2Fa ]- Jwt login', login);
+                }
+                //return le bon Url a afficher 
+                const QrImg = await this.userService.enable_2fa(login);
+                //console.log("QrImg Envoye au front:  ", QrImg)
+                res.json({ url: QrImg });
+
             }
-            //return le bon Url a afficher 
-            const QrImg = await this.userService.enable_2fa(login);
-            //console.log("QrImg Envoye au front:  ", QrImg)
-            res.json({ url: QrImg });
-
-        }
+        } catch (e) { }
     }
 
     @HttpCode(HttpStatus.OK)
@@ -135,11 +142,13 @@ export class AuthController {
     @Post('enable_2fa')
     async enable_2fa(@Request() req, @Response() res) {
         // console.log("-[ 2fa ]- Enable ");
-        const login = req.body.data.login;
-        // console.log("-[ 2fa ]- login Value:  ", login);
-        const QrUrl = await this.userService.enable_2fa(login);
-        const data = { urlcode: QrUrl };
-        res.json(data);
+        try {
+            const login = req.body.data.login;
+            // console.log("-[ 2fa ]- login Value:  ", login);
+            const QrUrl = await this.userService.enable_2fa(login);
+            const data = { urlcode: QrUrl };
+            res.json(data);
+        } catch (e) { }
     }
 
 
@@ -147,10 +156,12 @@ export class AuthController {
     // @UseGuards(AuthGuard) //
     @Post('disable_2fa')
     async disable_2fa(@Request() req) {
-        // console.log("-[ 2fa ]- Disable ");
-        const login = req.body.data.login;
-        // console.log("-[ 2fa ]- login Value:  ", login);
-        await this.userService.remove_2fa(login);
+        try {
+            // console.log("-[ 2fa ]- Disable ");
+            const login = req.body.data.login;
+            // console.log("-[ 2fa ]- login Value:  ", login);
+            await this.userService.remove_2fa(login);
+        } catch (e) { }
     }
 
     //@UseGuards(AuthGuard) // BUGGG Compilation ou Import Module a FIX
@@ -158,77 +169,58 @@ export class AuthController {
     @UseGuards(AuthGuard) //
     @Post('changeName')
     async changeUserName(@Request() req, @Response() res) {
-        // console.log(" -[ ChangeName Controller ]- ");
-        const data = req.body.data;
-        // console.log("-[ ChangeName Controller ]- data: ", data);
-        if (!data) {
-            // console.log("[ error ] -[ ChangeName ]- data inexistantes");
-            throw new UnauthorizedException()
-        }
-        let login: string = data.login;
-        let newUsername: string = data.newUsername;
-        if (!newUsername.length || newUsername.length > 20) {
-            throw new UnauthorizedException();
-        }
-
-        const newUser = await this.authService.change_userName(login, newUsername);
-        // si Changement bien effectue, issue a new Jwt avec new Payload
-        if (newUser) {
-            const payload = {
-                "id": newUser.id,
-                "login": newUser.login,
-                "username": newUser.userName
+        try {
+            // console.log(" -[ ChangeName Controller ]- ");
+            const data = req.body.data;
+            // console.log("-[ ChangeName Controller ]- data: ", data);
+            if (!data) {
+                // console.log("[ error ] -[ ChangeName ]- data inexistantes");
+                throw new UnauthorizedException()
             }
-            //const newJwt = await this.authService.asign_jtw_token(payload);;
-            const newJwt = await this.jwtAuthService.createToken(payload);
-            res.header('Authorization', `Bearer ${newJwt}`);
-            const frontendUrl = `http://localhost:5173/?jwt=${newJwt}`;
-            res.redirect(frontendUrl);
+            let login: string = data.login;
+            let newUsername: string = data.newUsername;
+            if (!newUsername.length || newUsername.length > 20) {
+                throw new UnauthorizedException();
+            }
 
-        }
+            const newUser = await this.authService.change_userName(login, newUsername);
+            // si Changement bien effectue, issue a new Jwt avec new Payload
+            if (newUser) {
+                const payload = {
+                    "id": newUser.id,
+                    "login": newUser.login,
+                    "username": newUser.userName
+                }
+                //const newJwt = await this.authService.asign_jtw_token(payload);;
+                const newJwt = await this.jwtAuthService.createToken(payload);
+                res.header('Authorization', `Bearer ${newJwt}`);
+                const frontendUrl = `http://localhost:5173/?jwt=${newJwt}`;
+                res.redirect(frontendUrl);
+
+            }
+        } catch (e) { }
     }
 
     @HttpCode(HttpStatus.OK)
     @UseGuards(AuthGuard) //
     @Post('changeImage')
     async changeImage(@Request() req, @Response() res) {
-        const img: string = req.body.data.img;
-        if (!img.length || img.length > 200) {
-            throw new UnauthorizedException();
-        }
-        const login = req.body.data.login;
-        const user = await this.userService.find_user_by_login(login);
-        // console.log("-[ Img ]-  old Avatar: ", user.avatar);
-        if (!user || !img || img === "" || img.length < 5 || img.length > 500) {
-            // console.log("-[ IMG change ]- { ERROR }");
-            throw new UnauthorizedException();
-        }
-        const updatedUser = await this.userService.change_avatar(login, img);
-        // console.log("-[ Img ]-  new Avatar: ", updatedUser.avatar);
-        res.redirect(frontUrl);
-    }
-
-    @HttpCode(HttpStatus.OK)
-    @UseGuards(AuthGuard)
-    @Post('logout')
-    async logout(@Request() req, @Response() res) {
-        // const login = req.body.data.login;
-        const token = req.headers.authorization;
-        if (token) {
-            const jwt = token.replace('Bearer', '').trim();
-            const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
-            //  console.log('New Jwt encode: ', decoded);
-
-
-            if (decoded && decoded.login) {
-                const login = decoded.login;
-                // console.log('-[ Logout ]- AuthController: login', login);
-
-                this.authService.logout(login, jwt);
-                //console.log('-[ Logout ]- Updated Logout User: ', await this.userService.find_user_by_login(login))
+        try {
+            const img: string = req.body.data.img;
+            if (!img.length || img.length > 200) {
+                throw new UnauthorizedException();
             }
-            res.redirect('http://localhost:5173');
-        }
+            const login = req.body.data.login;
+            const user = await this.userService.find_user_by_login(login);
+            // console.log("-[ Img ]-  old Avatar: ", user.avatar);
+            if (!user || !img || img === "" || img.length < 5 || img.length > 500) {
+                // console.log("-[ IMG change ]- { ERROR }");
+                throw new UnauthorizedException();
+            }
+            const updatedUser = await this.userService.change_avatar(login, img);
+            // console.log("-[ Img ]-  new Avatar: ", updatedUser.avatar);
+            res.redirect(frontUrl);
+        } catch (e) { }
     }
 
 }

@@ -6,7 +6,11 @@ export class JwtAuthService {
 	constructor(private jwtService: JwtService) { }
 
 	async createToken(payload: any): Promise<string> {
-		return this.jwtService.signAsync(payload);
+		try {
+			return this.jwtService.signAsync(payload);
+		} catch (e) {
+			throw new UnauthorizedException();
+		}
 	}
 
 	async verifyToken(token: string) {

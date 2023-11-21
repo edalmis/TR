@@ -56,18 +56,6 @@
 	}
 
 	async function handleLoggout() {
-		const token = localStorage.getItem("jwt");
-		if (token) {
-			const logout_url = "http://localhost:3000/auth/logout";
-			const response = await fetch(logout_url, {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({}),
-			});
-		}
 		localStorage.clear();
 		isGoogleAuthEnabled.set(false);
 		authentificated.set(false);
