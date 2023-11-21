@@ -29,7 +29,9 @@
 	}
 
 	function scrollToBottom() {
-		messageListContainer.scrollTop = messageListContainer.scrollHeight;
+		try {
+			messageListContainer.scrollTop = messageListContainer.scrollHeight;
+		} catch (e) {}
 	}
 
 	let refresh: boolean;
