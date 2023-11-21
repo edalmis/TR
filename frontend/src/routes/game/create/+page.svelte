@@ -5,10 +5,7 @@
 	import { closeModal } from "$lib/store/ModalValues";
 	import { goto } from "$app/navigation";
 	import { gameRender } from "$lib/game/gameRender";
-	import {
-		GameState,
-		GameDimensions,
-	} from "$lib/game/game.clientSchema";
+	import { GameState, GameDimensions } from "$lib/game/game.clientSchema";
 
 	import {
 		clientColyseus,
@@ -34,7 +31,6 @@
 		dataToCancelInvitation,
 		hasInvitedSomeone,
 	} from "$lib/store/store";
-
 
 	let room: Room<GameState>;
 	let canvas: HTMLCanvasElement;
@@ -62,7 +58,7 @@
 	let login: string;
 	let hasInvited: boolean;
 	let state: GameState;
-// **************      ************** //
+	// **************      ************** //
 
 	async function EnterGame() {
 		try {
@@ -79,7 +75,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Enter Game Button ]- ");
+				// console.log("-[ Enter Game Button ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
 			}
 		} catch (e) {}
@@ -90,10 +86,10 @@
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ CreateGame ] ! ***[ Refresh ]*** !");
+			// console.log(" [ CreateGame ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ CreateGame ] *{ Not a Refresh ! }* ");
+			// console.log(" [ CreateGame ] *{ Not a Refresh ! }* ");
 		}
 
 		console.log("Connection Ws Colyseus [ 3001 ]");
@@ -210,7 +206,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Leave Game ]- ");
+				// console.log("-[ Leave Game ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
 				let datas: any;
 				dataToCancelInvitation.subscribe((a) => {
@@ -225,7 +221,7 @@
 				}
 			}
 		} catch (e) {
-			console.error("Failed to connect to the game server:", e);
+			// console.error("Failed to connect to the game server:", e);
 		}
 	}
 
@@ -245,7 +241,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Match History ]-  Set !");
+				// console.log("-[ Match History ]-  Set !");
 			}
 		} catch (e) {}
 	}
@@ -279,8 +275,8 @@
 			iAmInvited.subscribe((a) => {
 				invited = a;
 			});
-			console.log(" [ initiationGame ] gameData: ", gameData);
-			console.log(" [ initiationGame ] invited: ", invited);
+			// console.log(" [ initiationGame ] gameData: ", gameData);
+			// console.log(" [ initiationGame ] invited: ", invited);
 			if (invited === false) {
 				room = await client.create("privateRoom", roomOptions);
 			} else {
@@ -296,14 +292,11 @@
 					login = a;
 				});
 				if (login === data.login) {
-					console.log(" [ room.onMessage(Invitation) ] data: ", data);
+					// console.log(" [ room.onMessage(Invitation) ] data: ", data);
 					rightPlayerUsername.set(data.loginToInvite);
 					leftPlayerUsername.set(data.login);
 					winnerScore.set(data.scoreToWin);
-					console.log(
-						"[ room.onMessage(Invitation) winnerScore.set(data.scoreToWin ] ",
-						winnerScore.set(data.scoreToWin)
-					);
+					// console.log("[ room.onMessage(Invitation) winnerScore.set(data.scoreToWin ] ",winnerScore.set(data.scoreToWin));
 					let wsServer: any;
 					session.subscribe((a: any) => {
 						wsServer = a;
@@ -315,7 +308,7 @@
 			// // // // // // // // // // // // // // // // // // // //
 
 			room.onMessage("state", (message: any) => {
-				console.log("New game state received:", message);
+				// console.log("New game state received:", message);
 			});
 			room.onMessage("startGame", (message: any) => {});
 			room.onStateChange((newState) => {

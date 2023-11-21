@@ -12,12 +12,11 @@
     import UserProfileModal from "./../../components/UserProfileModal.svelte";
     import EmojiPicker from "../../components/EmojiPicker.svelte";
     import { goto } from "$app/navigation";
-    import { writable } from 'svelte/store'; // Import the store function
+    import { writable } from "svelte/store"; // Import the store function
 
-    
     type Notification = {
-    message: string;
-    timestamp: number;
+        message: string;
+        timestamp: number;
     };
     let notifications = writable<Notification[]>([]);
     const latestNotification = writable<Notification | null>(null);
@@ -47,7 +46,7 @@
     let enteredPassword: string | null;
     enteredPassword = "";
     let kickDuration: any;
-        kickDuration=1; 
+    kickDuration = 1;
     interface Message {
         // your message properties here, e.g.,
         content: string;
@@ -66,24 +65,26 @@
     let isProfileModalOpen = false;
     let userToDisplay: any = null;
     let isModalVisible = false;
-    const sessionStore = writable(null);   
+    const sessionStore = writable(null);
 
     function showNotification(message: string) {
-    const notification: Notification = {
-      message,
-      timestamp: Date.now(),
-    };
-    notifications.update(prev => [...prev, notification]);
+        const notification: Notification = {
+            message,
+            timestamp: Date.now(),
+        };
+        notifications.update((prev) => [...prev, notification]);
 
-    // Update the latestNotification store
-    latestNotification.set(notification);
+        // Update the latestNotification store
+        latestNotification.set(notification);
 
-    // Optionally, you can add a timeout to remove the notification after a certain period
-    setTimeout(() => {
-      notifications.update(prev => prev.filter(n => n !== notification));
-      latestNotification.set(null);
-    }, 5000); // Remove the notification after 5 seconds
-  }
+        // Optionally, you can add a timeout to remove the notification after a certain period
+        setTimeout(() => {
+            notifications.update((prev) =>
+                prev.filter((n) => n !== notification)
+            );
+            latestNotification.set(null);
+        }, 5000); // Remove the notification after 5 seconds
+    }
 
     function promptPasswordAndEnter(room: any) {
         enteredPassword = prompt("Enter password for room:");
@@ -128,208 +129,218 @@
 
     let refresh: boolean;
     onMount(() => {
-          // Ensure sessionStore is initialized
-    const currentSession = $session;
-    if (!currentSession) {
-      // Redirect to the home page when sessionStore is null
-      goto('/');
-    } else {
-      // Set the initial value of sessionStore to the current value of $session
-      sessionStore.set(currentSession);
-      // Update sessionStore with the current value of $session
-        isItARefreshement.subscribe((a: boolean) => {
-            refresh = a;
-        });
-        if (refresh === true) {
-            console.log(" [ Chat ] ! ***[ Refresh ]*** !");
+        // Ensure sessionStore is initialized
+        const currentSession = $session;
+        if (!currentSession) {
+            // Redirect to the home page when sessionStore is null
             goto("/");
         } else {
-            console.log(" [ Chat ] *{ Not a Refresh ! }* ");
-        }
+            // Set the initial value of sessionStore to the current value of $session
+            sessionStore.set(currentSession);
+            // Update sessionStore with the current value of $session
+            isItARefreshement.subscribe((a: boolean) => {
+                refresh = a;
+            });
+            if (refresh === true) {
+                // console.log(" [ Chat ] ! ***[ Refresh ]*** !");
+                goto("/");
+            } else {
+                // console.log(" [ Chat ] *{ Not a Refresh ! }* ");
+            }
 
-        user.subscribe((a: any) => {
-            usere = a;
-        });
-        userId.subscribe((a:any) => {
-            IdduUser = a;
-        });
-        $session.emit("getChatRooms");
+            user.subscribe((a: any) => {
+                usere = a;
+            });
+            userId.subscribe((a: any) => {
+                IdduUser = a;
+            });
+            $session.emit("getChatRooms");
 
-        // General event listener for debugging
-        $session.onAny((event: any, ...args: any) => {
-            // console.log(`Received event: ${event}`, args);
-        });
+            // General event listener for debugging
+            $session.onAny((event: any, ...args: any) => {
+                // console.log(`Received event: ${event}`, args);
+            });
 
-        $session.on("repChatRooms", (data: ISocketValue) => {
-            chatRooms = [...data.rooms];
-        });
+            $session.on("repChatRooms", (data: ISocketValue) => {
+                chatRooms = [...data.rooms];
+            });
 
-        $session.on("repMessagesInChatRoom", (data: any) => {
-            // Iterate through the messages and check if any sender login is in the blockedMembers or blockedByMembers list
-            const filteredMessages = data.messages.filter((message: any) => {
-                const senderLogin = message.senderLogin;
+            $session.on("repMessagesInChatRoom", (data: any) => {
+                // Iterate through the messages and check if any sender login is in the blockedMembers or blockedByMembers list
+                const filteredMessages = data.messages.filter(
+                    (message: any) => {
+                        const senderLogin = message.senderLogin;
+                        if (
+                            data.blockedMembers &&
+                            data.blockedMembers.includes(senderLogin)
+                        ) {
+                            return false; // Don't process the message as this user should not see it
+                        }
+                        if (
+                            data.blockedByMembers &&
+                            data.blockedByMembers.includes(senderLogin)
+                        ) {
+                            return false; // Don't process the message as this user should not see it
+                        }
+                        return true; // Process the message
+                    }
+                );
+                chatMessagesPerRoom[selectedChatRoomid] = filteredMessages;
+                scrollToBottom();
+            });
+
+            $session.on("joinedChatRoom", ({ room, user, role }: any) => {
+                const notificationMessage = `${user.login} joined room "${room.title}" as ${role}`;
+                showNotification(notificationMessage);
+                // console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
+            });
+
+            $session.on("newMessage", (data: any) => {
+                // console.log('Received new message:', data);
+
+                // Check if data.savedMessage exists before accessing it
+                if (!data || !data.savedMessage) {
+                    console.error(
+                        "Error: received message without savedMessage property:",
+                        data
+                    );
+                    return;
+                }
+
+                // Check if the logged-in user's login is in the blockedMembers list
                 if (
                     data.blockedMembers &&
-                    data.blockedMembers.includes(senderLogin)
+                    data.blockedMembers.includes(usere.login)
                 ) {
-                    return false; // Don't process the message as this user should not see it
+                    // Don't process the message as this user should not see it
+                    return;
                 }
+
                 if (
                     data.blockedByMembers &&
-                    data.blockedByMembers.includes(senderLogin)
+                    data.blockedByMembers.includes(usere.login)
                 ) {
-                    return false; // Don't process the message as this user should not see it
+                    // Don't process the message as this user should not see it
+                    return;
                 }
-                return true; // Process the message
+
+                if (
+                    selectedChatRoom &&
+                    data.savedMessage.roomId === selectedChatRoom.id
+                ) {
+                    if (!chatMessagesPerRoom[selectedChatRoomid]) {
+                        chatMessagesPerRoom[selectedChatRoomid] = [];
+                    }
+                    chatMessagesPerRoom[selectedChatRoomid].push(
+                        data.savedMessage
+                    );
+                    chatMessagesPerRoom = { ...chatMessagesPerRoom }; // Trigger Svelte's reactivity
+                    scrollToBottom();
+                }
             });
-            chatMessagesPerRoom[selectedChatRoomid] = filteredMessages;
-            scrollToBottom();
-        });
 
-        $session.on("joinedChatRoom", ({ room, user, role }: any) => {
-            const notificationMessage = `${user.login} joined room "${room.title}" as ${role}`;
-            showNotification(notificationMessage);
-            // console.log(`${user.login} is trying to join room ${room.title} as ${role}`);
-        });
+            $session.on("chatRoomCreated", (data: any) => {
+                const { channel } = data;
+                //  console.log("newRoom", channel)
+                chatRooms = [...chatRooms, channel];
+                const notificationMessage = `${channel.title} created as a room`;
+                showNotification(notificationMessage);
+            });
+            $session.on("chatRoomDeleted", (data: any) => {
+                const { room } = data;
+                //  console.log("deletedRoom", room)
+                chatRooms = chatRooms.filter((item) => item.id !== room.id);
+                const notificationMessage = `room ${room.title} deleted`;
+                showNotification(notificationMessage);
+            });
 
-        $session.on("newMessage", (data: any) => {
-            // console.log('Received new message:', data);
+            $session.on("membersList", (data: any) => {
+                usersInRoom = data.members;
+                // console.log('users in room', usersInRoom);
+            });
 
-            // Check if data.savedMessage exists before accessing it
-            if (!data || !data.savedMessage) {
-                console.error(
-                    "Error: received message without savedMessage property:",
-                    data
-                );
-                return;
-            }
-
-            // Check if the logged-in user's login is in the blockedMembers list
-            if (
-                data.blockedMembers &&
-                data.blockedMembers.includes(usere.login)
-            ) {
-                // Don't process the message as this user should not see it
-                return;
-            }
-
-            if (
-                data.blockedByMembers &&
-                data.blockedByMembers.includes(usere.login)
-            ) {
-                // Don't process the message as this user should not see it
-                return;
-            }
-
-            if (
-                selectedChatRoom &&
-                data.savedMessage.roomId === selectedChatRoom.id
-            ) {
-                if (!chatMessagesPerRoom[selectedChatRoomid]) {
-                    chatMessagesPerRoom[selectedChatRoomid] = [];
+            $session.on("kickedFromRoom", ({ roomId, duration }: any) => {
+                const newEndTime = new Date().getTime() + duration * 60 * 1000;
+                kickEndTimes[roomId] = newEndTime;
+                const notificationMessage = `${usere.userName} kicked from room ${selectedChatRoom.title} for ${duration} minutes`;
+                showNotification(notificationMessage);
+                if (roomId === selectedChatRoomid) {
+                    // Calculate the time at which the kicked duration will end.
+                    showChatHistory = false;
+                    showSendMessage = false;
+                    const timer = setTimeout(() => {
+                        if (
+                            new Date().getTime() > (kickEndTimes[roomId] || 0)
+                        ) {
+                            showChatHistory = true;
+                            showSendMessage = true;
+                        }
+                    }, duration * 60 * 1000); // The duration until chat history will be closed
+                    clearTimeout(timer);
                 }
-                chatMessagesPerRoom[selectedChatRoomid].push(data.savedMessage);
-                chatMessagesPerRoom = { ...chatMessagesPerRoom }; // Trigger Svelte's reactivity
-                scrollToBottom();
-            }
-        });
+            });
 
-        $session.on("chatRoomCreated", (data: any) => {
-            const { channel } = data;
-            //  console.log("newRoom", channel)
-            chatRooms = [...chatRooms, channel];
-            const notificationMessage = `${channel.title} created as a room`;
-            showNotification(notificationMessage);
-        });
-        $session.on("chatRoomDeleted", (data: any) => {
-            const { room } = data;
-            //  console.log("deletedRoom", room)
-            chatRooms = chatRooms.filter((item) => item.id !== room.id);
-            const notificationMessage = `room ${room.title} deleted`;
-            showNotification(notificationMessage);
-        });
+            $session.on("mutedFromRoom", ({ roomId, duration }: any) => {
+                const newEndTime = new Date().getTime() + duration * 60 * 1000;
+                muteEndTimes[roomId] = newEndTime;
+                const notificationMessage = `${usere.userName} muted from room ${selectedChatRoom.title} for ${duration} minutes`;
+                showNotification(notificationMessage);
+                if (roomId === selectedChatRoomid) {
+                    showSendMessage = false;
+                    const timer = setTimeout(() => {
+                        if (
+                            new Date().getTime() > (muteEndTimes[roomId] || 0)
+                        ) {
+                            showSendMessage = true;
+                        }
+                    }, duration * 60 * 1000); // The duration until chat history will be closed
+                    clearTimeout(timer);
+                }
+            });
 
-        $session.on("membersList", (data: any) => {
-            usersInRoom = data.members;
-            // console.log('users in room', usersInRoom);
-        });
+            $session.on("bannedFromRoom", ({ roomId }: any) => {
+                if (roomId === selectedChatRoomid) {
+                    showChatHistory = false;
+                    showSendMessage = false;
+                    const notificationMessage = `${usere.userName} banned from room ${selectedChatRoom.title} entering this room is forbiden!`;
+                    showNotification(notificationMessage);
+                }
+            });
 
-        $session.on("kickedFromRoom", ({ roomId, duration }: any) => {
-            const newEndTime = new Date().getTime() + duration * 60 * 1000;
-            kickEndTimes[roomId] = newEndTime;
-            const notificationMessage = `${usere.userName} kicked from room ${selectedChatRoom.title} for ${duration} minutes`;
-            showNotification(notificationMessage)
-            if (roomId === selectedChatRoomid) {
-                // Calculate the time at which the kicked duration will end.
-                showChatHistory = false;
-                showSendMessage = false;
-                const timer = setTimeout(() => {
-                    if (new Date().getTime() > (kickEndTimes[roomId] || 0)) {
-                        showChatHistory = true;
-                        showSendMessage = true;
-                    }
-                }, duration * 60 * 1000); // The duration until chat history will be closed
-                clearTimeout(timer);
-            }
-            ;
-        });
+            // Handle an updated room
+            $session.on("roomUpdated", (updatedRoom: any) => {
+                const index = chatRooms.findIndex(
+                    (room) => room.id === updatedRoom.id
+                );
+                if (index !== -1) {
+                    chatRooms[index] = updatedRoom;
+                    chatRooms = [...chatRooms]; // Re-assign to trigger reactivity in Svelte
+                }
+                const notificationMessage = `Attention room ${selectedChatRoom.title} updated!`;
+                showNotification(notificationMessage);
+            });
+            $session.on("newMessagedm", (data: any) => {
+                alert(
+                    "You have new direct message from " +
+                        data.messages.senderLogin
+                ); //--------------------3
+                dmNotif.set(true); //---------------4
+            });
 
-        $session.on("mutedFromRoom", ({ roomId, duration }: any) => {
-            const newEndTime = new Date().getTime() + duration * 60 * 1000;
-            muteEndTimes[roomId] = newEndTime;
-            const notificationMessage = `${usere.userName} muted from room ${selectedChatRoom.title} for ${duration} minutes`;
-            showNotification(notificationMessage)
-            if (roomId === selectedChatRoomid) {
-                showSendMessage = false;
-                const timer = setTimeout(() => {
-                    if (new Date().getTime() > (muteEndTimes[roomId] || 0)) {
-                        showSendMessage = true;
-                    }
-                }, duration * 60 * 1000); // The duration until chat history will be closed
-                clearTimeout(timer);
-            }
-        });
-
-        $session.on("bannedFromRoom", ({ roomId }: any) => {
-            if (roomId === selectedChatRoomid) {
-                showChatHistory = false;
-                showSendMessage = false;
-                const notificationMessage = `${usere.userName} banned from room ${selectedChatRoom.title} entering this room is forbiden!`;
-                showNotification(notificationMessage)
-            }
-            
-        });
-
-        // Handle an updated room
-        $session.on("roomUpdated", (updatedRoom: any) => {
-            const index = chatRooms.findIndex(
-                (room) => room.id === updatedRoom.id
-            );
-            if (index !== -1) {
-                chatRooms[index] = updatedRoom;
-                chatRooms = [...chatRooms]; // Re-assign to trigger reactivity in Svelte
-            }
-            const notificationMessage = `Attention room ${selectedChatRoom.title} updated!`;
-                showNotification(notificationMessage)
-        });
-        $session.on("newMessagedm", (data: any) => {
-            alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
-            dmNotif.set(true); //---------------4
-        });
-
-        return () => {
-            $session.off("repChatRooms");
-            $session.off("repMessagesInChatRoom");
-            $session.off("newMessage");
-            $session.off("chatRoomCreated");
-            $session.off("chatRoomDeleted");
-            $session.off("membersList");
-            $session.off("joinedChatRoom");
-            $session.off("kickedFromRoom");
-            $session.off("mutedFromRoom");
-            $session.off("bannedFromRoom");
-            $session.off("roomUpdated");
-        };}
+            return () => {
+                $session.off("repChatRooms");
+                $session.off("repMessagesInChatRoom");
+                $session.off("newMessage");
+                $session.off("chatRoomCreated");
+                $session.off("chatRoomDeleted");
+                $session.off("membersList");
+                $session.off("joinedChatRoom");
+                $session.off("kickedFromRoom");
+                $session.off("mutedFromRoom");
+                $session.off("bannedFromRoom");
+                $session.off("roomUpdated");
+            };
+        }
     });
 
     function fetchMembersInRoom(roomId: string) {
@@ -494,7 +505,6 @@
         showChatRoom = true;
     }
 
-
     function kickUser(user: any, login: string, roomId: string, duration: any) {
         $session.emit("kickUser", {
             user,
@@ -625,47 +635,45 @@
 </script>
 
 {#if $latestNotification}
-  <div class="notification" class:showNotification>
-    <p>{$latestNotification.message}</p>
-  </div>
+    <div class="notification" class:showNotification>
+        <p>{$latestNotification.message}</p>
+    </div>
 {/if}
 {#if showChatWindow}
-{#if showChatRoom}
-    <div class="chat-window">
-        <button
-            class="close-btn"
-            on:click={() => {
-                // console.log('Close button clicked');
-                showChatWindow = false;
-            }}>X</button
-        >
+    {#if showChatRoom}
+        <div class="chat-window">
+            <button
+                class="close-btn"
+                on:click={() => {
+                    // console.log('Close button clicked');
+                    showChatWindow = false;
+                }}>X</button
+            >
 
-        <form on:submit|preventDefault={createChatRoom}>
-            <p class="user-list-title">CREATE CHANNEL</p>
+            <form on:submit|preventDefault={createChatRoom}>
+                <p class="user-list-title">CREATE CHANNEL</p>
 
-            <label>
-                Room Title:
-                <input bind:value={title} required />
-            </label>
-            <label>
-                <input type="checkbox" bind:checked={isPrivate} /> Is Private
-            </label>
-
-            {#if isPrivate}
                 <label>
-                    Password:
-                    <input type="password" bind:value={password} required />
+                    Room Title:
+                    <input bind:value={title} required />
                 </label>
-            {/if}
+                <label>
+                    <input type="checkbox" bind:checked={isPrivate} /> Is Private
+                </label>
 
-            <!-- goto('/current-route'); -->
+                {#if isPrivate}
+                    <label>
+                        Password:
+                        <input type="password" bind:value={password} required />
+                    </label>
+                {/if}
 
-            <button type="submit">
-                Create Chat Room</button>
-    
-        </form>
-    </div>
-   {/if}
+                <!-- goto('/current-route'); -->
+
+                <button type="submit"> Create Chat Room</button>
+            </form>
+        </div>
+    {/if}
 {/if}
 
 <div class="rooms-list">
@@ -763,126 +771,121 @@
                             </button>
                         {/if}
 
-
                         <!-- svelte-ignore empty-block -->
-                        {#if (user.role === "Admin" && usere.login != user.user.login)}
+                        {#if user.role === "Admin" && usere.login != user.user.login}
+                            <!-- {#if usere.role === "Owner"} -->
+                            <div>
+                                <input
+                                    type="number"
+                                    class="kickd"
+                                    bind:value={kickDuration}
+                                    placeholder="Duration (minutes)"
+                                    min="1"
+                                    max="60"
+                                />
+                                <button
+                                    on:click={() =>
+                                        kickUser(
+                                            usere,
+                                            user.user.login,
+                                            selectedChatRoomid,
+                                            kickDuration
+                                        )}>Kick</button
+                                >
+                                <button
+                                    on:click={() =>
+                                        muteUser(
+                                            usere,
+                                            user.user.login,
+                                            selectedChatRoomid,
+                                            kickDuration
+                                        )}>Mute</button
+                                >
+                            </div>
 
-                        <!-- {#if usere.role === "Owner"} -->
-                        <div>
-                            <input
-                                type="number"
-                                class="kickd"
-                                bind:value={kickDuration}
-                                placeholder="Duration (minutes)"
-                                min="1"
-                                max="60"
-                            />
                             <button
                                 on:click={() =>
-                                    kickUser(
+                                    banUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid,
-                                        kickDuration
-                                    )}>Kick</button
+                                        selectedChatRoomid
+                                    )}>Ban</button
                             >
                             <button
                                 on:click={() =>
-                                    muteUser(
+                                    unbanUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid,
-                                        kickDuration
-                                    )}>Mute</button
+                                        selectedChatRoomid
+                                    )}>Unban</button
                             >
-                        </div>
 
-                        <button
-                            on:click={() =>
-                                banUser(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Ban</button
-                        >
-                        <button
-                            on:click={() =>
-                                unbanUser(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Unban</button
-                        >
-
-                        <button
-                            on:click={() =>
-                                makeAdmin(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Make Admin</button
-                        >
-                    <!-- {/if} -->
-
-
-                 {/if }
-                        {#if user.role === "Participant" && user.user.login != usere.login }
-                        <div>
-                            <input
-                                type="number"
-                                class="kickd"
-                                bind:value={kickDuration}
-                                placeholder="Duration (minutes)"
-                                min="1"
-                                max="60"
-                            />
                             <button
                                 on:click={() =>
-                                    kickUser(
+                                    makeAdmin(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid,
-                                        kickDuration
-                                    )}>Kick</button
+                                        selectedChatRoomid
+                                    )}>Make Admin</button
+                            >
+                            <!-- {/if} -->
+                        {/if}
+                        {#if user.role === "Participant" && user.user.login != usere.login}
+                            <div>
+                                <input
+                                    type="number"
+                                    class="kickd"
+                                    bind:value={kickDuration}
+                                    placeholder="Duration (minutes)"
+                                    min="1"
+                                    max="60"
+                                />
+                                <button
+                                    on:click={() =>
+                                        kickUser(
+                                            usere,
+                                            user.user.login,
+                                            selectedChatRoomid,
+                                            kickDuration
+                                        )}>Kick</button
+                                >
+                                <button
+                                    on:click={() =>
+                                        muteUser(
+                                            usere,
+                                            user.user.login,
+                                            selectedChatRoomid,
+                                            kickDuration
+                                        )}>Mute</button
+                                >
+                            </div>
+
+                            <button
+                                on:click={() =>
+                                    banUser(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid
+                                    )}>Ban</button
                             >
                             <button
                                 on:click={() =>
-                                    muteUser(
+                                    unbanUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid,
-                                        kickDuration
-                                    )}>Mute</button
+                                        selectedChatRoomid
+                                    )}>Unban</button
                             >
-                        </div>
 
-                        <button
-                            on:click={() =>
-                                banUser(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Ban</button
-                        >
-                        <button
-                            on:click={() =>
-                                unbanUser(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Unban</button
-                        >
-
-                        <button
-                            on:click={() =>
-                                makeAdmin(
-                                    usere,
-                                    user.user.login,
-                                    selectedChatRoomid
-                                )}>Make Admin</button
-                        >
-                    {/if}
-                      
+                            <button
+                                on:click={() =>
+                                    makeAdmin(
+                                        usere,
+                                        user.user.login,
+                                        selectedChatRoomid
+                                    )}>Make Admin</button
+                            >
+                        {/if}
                     </li>
                 {/each}
             </ul>
@@ -918,43 +921,43 @@
 <button on:click={clean}>New window</button>
 
 <style>
-  .notification {
-    position: fixed;
-    top: 7%;
-    right: 50%;
-    padding: 10px;
-    background-color: #a9abc2;
-    border: 1px solid #181313;
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Red shadow */
-    border-radius: 5px;
-    transition: all 0.3s ease-in-out;
-    max-width: 300px; /* Adjust the maximum width as needed */
-  }
+    .notification {
+        position: fixed;
+        top: 7%;
+        right: 50%;
+        padding: 10px;
+        background-color: #a9abc2;
+        border: 1px solid #181313;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.2); /* Red shadow */
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+        max-width: 300px; /* Adjust the maximum width as needed */
+    }
 
-  .notification:hover {
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger shadow on hover */
-  }
-  .notification:active {
-    position: fixed;
-    top: 15%;
-    left: 28%;
-    width: 38%;
-    padding: 10px;
-    background-color: #a9abc2;
-    border: 1px solid #181313;
-    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger red shadow on active */
-    border-radius: 10px;
-  }
-  .showNotification {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    .notification:hover {
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger shadow on hover */
+    }
+    .notification:active {
+        position: fixed;
+        top: 15%;
+        left: 28%;
+        width: 38%;
+        padding: 10px;
+        background-color: #a9abc2;
+        border: 1px solid #181313;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4); /* Larger red shadow on active */
+        border-radius: 10px;
+    }
+    .showNotification {
+        opacity: 1;
+        transform: translateY(0);
+    }
 
-  .notification:not(.showNotification) {
-    opacity: 0;
-    transform: translateY(-100%);
-    pointer-events: none; /* Prevent interaction with hidden notification */
-  }
+    .notification:not(.showNotification) {
+        opacity: 0;
+        transform: translateY(-100%);
+        pointer-events: none; /* Prevent interaction with hidden notification */
+    }
     .chat-message p {
         white-space: pre-wrap;
     }

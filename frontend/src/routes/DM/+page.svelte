@@ -38,10 +38,10 @@
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ DM ] ! ***[ Refresh ]*** !");
+			// console.log(" [ DM ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ DM ] *{ Not a Refresh ! }* ");
+			// console.log(" [ DM ] *{ Not a Refresh ! }* ");
 		}
 
 		if (!browser || !$session) return;
@@ -106,8 +106,11 @@
 
 		$session.on("newMessagedm", (data: any) => {
 			messages = [...messages, data.messages];
-			if(data.messages.sendTo == $user.id){
-				alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
+			if (data.messages.sendTo == $user.id) {
+				alert(
+					"You have new direct message from " +
+						data.messages.senderLogin
+				); //--------------------3
 				dmNotif.set(true); //---------------4
 			}
 			scrollToBottom();

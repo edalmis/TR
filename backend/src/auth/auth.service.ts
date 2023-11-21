@@ -5,9 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import * as otplib from 'otplib';
 import { toDataURL } from 'qrcode';
-// import { JwtService } from '@nestjs/jwt';
 import { JwtAuthService } from './jwt/jwt.service';
-// import { UserEntity } from 'src/users/orm/user.entity';
 import { UserService } from 'src/users/user.service';
 
 @Injectable()
@@ -41,7 +39,7 @@ export class AuthService {
         //console.log("secret: ", secret);
         const redirect_uri = encodeURIComponent('http://localhost:3000/auth/42api-return');
 
-        console.log("Tentative recuperation { Access ( 42 ) Token } .. .");
+        // console.log("Tentative recuperation { Access ( 42 ) Token } .. .");
         const url = 'https://api.intra.42.fr/oauth/token';
         const param = `grant_type=authorization_code&code=${code}&client_id=${uid}&client_secret=${secret}&redirect_uri=${redirect_uri}`;
         const response$ = this.httpService.post(url, param);

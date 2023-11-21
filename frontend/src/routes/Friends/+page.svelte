@@ -98,10 +98,10 @@
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ Friends ] ! ***[ Refresh ]*** !");
+			// console.log(" [ Friends ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ Friends ] *{ Not a Refresh ! }* ");
+			// console.log(" [ Friends ] *{ Not a Refresh ! }* ");
 		}
 
 		try {

@@ -48,10 +48,10 @@
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ Matchmaking ] ! ***[ Refresh ]*** !");
+			// console.log(" [ Matchmaking ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ Matchmaking ] *{ Not a Refresh ! }* ");
+			// console.log(" [ Matchmaking ] *{ Not a Refresh ! }* ");
 		}
 
 		winnerScore.set(3);
@@ -62,7 +62,6 @@
 		navbar.set(false);
 		launchedGame.set(true);
 		EnterGame();
-
 
 		clientColyseus.subscribe((dataClient) => {
 			client = dataClient;
@@ -160,7 +159,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Enter Game Button ]- ");
+				// console.log("-[ Enter Game Button ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
 			}
 		} catch (e) {}
@@ -181,7 +180,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Leave Game ]- ");
+				// console.log("-[ Leave Game ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
 			}
 		} catch (e) {}
@@ -203,7 +202,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Match History ]-  Set !");
+				// console.log("-[ Match History ]-  Set !");
 			}
 		} catch (e) {}
 	}
@@ -250,7 +249,7 @@
 				LeaveGame();
 			});
 		} catch (e) {
-			console.error("Failed to connect to the game server:", e);
+			// console.error("Failed to connect to the game server:", e);
 		}
 	}
 

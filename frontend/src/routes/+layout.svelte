@@ -122,7 +122,7 @@
 			// [ 1 ] Check si un Jwt est deja present Dans le LocalStorage du Browser
 			const token = localStorage.getItem("jwt");
 			if (token) {
-				console.log("On a bien un JWT present dans le localStorage !");
+				// console.log("On a bien un JWT present dans le localStorage !");
 				try {
 					// [ 1 - 1 ] Verification validite du Jwt aupres du Backend
 					const jwt_verifier_url =

@@ -30,10 +30,10 @@
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ First GamePage ] ! ***[ Refresh ]*** !");
+			// console.log(" [ First GamePage ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ First GamePage ] *{ Not a Refresh ! }* ");
+			// console.log(" [ First GamePage ] *{ Not a Refresh ! }* ");
 		}
 	});
 
@@ -95,7 +95,8 @@
 		<button
 			style="margin-top: 2px"
 			on:click={openModal}
-			class="create-privateRoom-button">
+			class="create-privateRoom-button"
+		>
 			Create PrivateGame
 		</button>
 		<button
@@ -107,7 +108,6 @@
 		</button>
 	</div>
 </main>
-
 
 {#if $showModal}
 	<div class="modal">
@@ -219,7 +219,6 @@
 	}
 
 	label {
-		
 		display: flex;
 		align-items: center; /* text aligns with the column.*/
 		margin-bottom: 10px;
@@ -246,9 +245,9 @@
 	.range::-webkit-slider-thumb {
 		/*-webkit-appearance: none; /* Remove default appearance for thumb */
 		appearance: none;
-		width: 20px; 
+		width: 20px;
 		height: 20px;
-		background: #00cc99; 
+		background: #00cc99;
 		border: 2px solid #d5dfe9;
 		cursor: pointer;
 	}
@@ -268,7 +267,7 @@
 	button {
 		cursor: pointer;
 		color: white;
-		background: #007bff; 
+		background: #007bff;
 		border-radius: 3px;
 		padding: 10px 20px;
 		font-size: 18px;
@@ -278,6 +277,6 @@
 	}
 
 	button:hover {
-		background: #245a1a; 
+		background: #245a1a;
 	}
 </style>
