@@ -110,21 +110,21 @@ export class UserController {
 	@Post('addFriend')
 	async addNewFriendship(@Request() req) {
 		// console.log(" -[ addFriends  / UsrCtrl ]- ");
-		const token = req.headers.authorization;
+		const token = await req.headers.authorization;
 		if (token) {
 			const jwt = token.replace('Bearer', '').trim();
 			const decoded = this.jwtService.decode(jwt) as { [key: string]: any };
 			//console.log('New Jwt encode: ', decoded);
 
 			// const friendUsername: string = req.body.data.username;
-			const friendId: number = req.body.data.idToAccept;
+			const friendId: number = await req.body.data.idToAccept;
 			// console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
 
 
 			//console.log(" -[ addFriends  / UsrCtrl ]-  req.body.data [", req.body.data);
 			//console.log(" -[ addFriends  / UsrCtrl ]-  friend Username: [", friendUsername, '] et decoded.login [', decoded.login, "]");
 
-			this.userService.addFriend(decoded.login, friendId);
+			await this.userService.addFriend(decoded.login, friendId);
 
 			const user2login = await this.userService.find_user_by_id(friendId);
 			const user1username = await this.userService.find_user_by_login(decoded.login);
