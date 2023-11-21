@@ -22,29 +22,11 @@
 	let usersWhoBlockedMeEmptyArray: boolean = false;
 	let blockedUsername: boolean = false;
 	let messageListContainer: any = null;
-	let msg: any;
 
 	interface Emoji {
 		unicode: string;
 		// other properties...
 	}
-
-	// function addEmoji({ unicode }: Emoji) {
-	// 	chatMessage += unicode;
-	// 	showEmojiPicker = false;
-	// }
-
-	// function askNotificationPermission() {
-	// 	Notification.requestPermission().then((permission) => {
-	// 		if (permission !== "granted") {
-	// 			throw new Error("Permission not granted for Notification");
-	// 		}
-	// 	});
-	// }
-
-	// function showNotification(message: string) {
-	// 	new Notification("New Message", { body: message });
-	// }
 
 	function scrollToBottom() {
 		messageListContainer.scrollTop = messageListContainer.scrollHeight;
@@ -61,8 +43,6 @@
 		} else {
 			console.log(" [ DM ] *{ Not a Refresh ! }* ");
 		}
-
-		// askNotificationPermission();
 
 		if (!browser || !$session) return;
 		const fetchData = async () => {
@@ -126,11 +106,7 @@
 
 		$session.on("newMessagedm", (data: any) => {
 			messages = [...messages, data.messages];
-			const isNOnDMPage = !window.location.href.includes("localhost/DM"); ///1-------
-
-			if (!isPageFocused && isNOnDMPage) {
-				//------2
-				// showNotification(data.messages.message);
+			if(data.messages.sendTo == $user.id){
 				alert("You have new direct message from " + data.messages.senderLogin); //--------------------3
 				dmNotif.set(true); //---------------4
 			}
