@@ -1,19 +1,17 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
-	import { closeModal } from "$lib/store/ModalValues";
-	import { isGoogleAuthEnabled } from "$lib/store/store";
 	import { onMount } from "svelte";
-
-	import { showModal } from "$lib/store/ModalValues";
-	let show_Modal: boolean;
-	showModal.subscribe((a: boolean) => {
-		show_Modal = a;
-	});
+	import { goto } from "$app/navigation";
+	import { closeModal, showModal } from "$lib/store/ModalValues";
+	import { isGoogleAuthEnabled } from "$lib/store/store";
+	import GoogleAuth from "$lib/auth/GoogleAuth.svelte";
 
 	export let login: string;
 	let QrSource: string;
 
+	let show_Modal: boolean;
+	showModal.subscribe((a: boolean) => {
+		show_Modal = a;
+	});
 	let google2faEnabled = false;
 	isGoogleAuthEnabled.subscribe((a) => {
 		google2faEnabled = a;

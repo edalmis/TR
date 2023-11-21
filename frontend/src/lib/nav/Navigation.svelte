@@ -1,24 +1,12 @@
 <script lang="ts">
-	// Imports -[ SvelteKit Fct ]-
-	import { goto } from "$app/navigation";
-	// import Modal from "$lib/modals/Modal.svelte";
-
-	// Imports -[ Functions ]-
-	import {
-		// openModal,
-		selectedPage,
-		showModal,
-	} from "$lib/store/ModalValues";
 	import { onMount } from "svelte";
-
-	// Imports -[ Writable - Values ]-
+	import { goto } from "$app/navigation";
+	import { selectedPage, showModal } from "$lib/store/ModalValues";
 	import {
 		authentificated,
 		isGoogleAuthEnabled,
 		session,
 		inviteNotif,
-		// launchedGame,
-		// dataGame,
 		inviteNotifModal,
 		dmNotif,
 	} from "../store/store";
@@ -37,12 +25,10 @@
 	showModal.subscribe((a: boolean) => {
 		show_Modal = a;
 	});
-
 	let selectedModal: string;
 	selectedPage.subscribe((b: string) => {
 		selectedModal = b;
 	});
-
 	dmNotif.subscribe((a: any) => {
 		notifDm = a;
 	});
@@ -108,7 +94,6 @@
 
 <nav class="w-full flex gap-10 p-2 justify-center items-center h-full">
 	<button on:click={() => goto("/")}>Home</button>
-	<!-- <button on:click={() => openModal("profile")}>Profile</button> -->
 	<button on:click={handleProfile}>Profile</button>
 	<button on:click={handleGame}>Game</button>
 	<button
@@ -116,10 +101,6 @@
 			goto("/Chat");
 		}}>Chat</button
 	>
-	<!-- <button on:click={() => goto("/game/matchmaking")}>Matchmaking</button> -->
-
-	<!-- <button on:click={() => { goto("/"); openModal("chat"); }}>Chat</button -->
-	<!-- <button on:click={() => { goto("/"); openModal("findFriends"); }}>Find Friends</button> -->
 	<button on:click={handleFriends}>Friends</button>
 	{#if notifDm === true}
 		<button on:click={handleDMNotif}>DM</button>
@@ -134,15 +115,6 @@
 	{/if}
 </nav>
 
-<!-- <div>
-	<nav class="w-full flex gap-10 p-2 justify-center items-center h-full">
-		<button on:click={() => openModalProfil()}>Profil</button>
-		<button on:click={() => openModal("imgT1.jpg")}>Jeu</button>
-		<button on:click={() => openModal("imgT2.jpg")}>Chat</button>
-		<button on:click={() => openModal("imgT3.jpg")}>Find Friends</button>
-		<button on:click={handleLoggout}>Logout</button>
-	</nav>
-</div> -->
 {#if isModalOpen}
 	<div
 		class="relative z-10"
@@ -228,17 +200,4 @@
 	.notif {
 		color: blue;
 	}
-	/* .dmButton {
-		background-color: blue; 
-		color: white;
-		padding: 10px 20px;
-		border: none;
-		border-radius: 5px;
-		cursor: pointer; 
-		transition: background-color 0.3s; 
-
-	
-		&:hover {
-			background-color: darkblue; 
-	} */
 </style>

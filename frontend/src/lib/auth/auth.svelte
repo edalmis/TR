@@ -21,11 +21,11 @@
 			});
 
 			if (response.ok) {
-				console.log(" -[ CheckJWT ]- reponse Backend ( OK )");
+				// console.log(" -[ CheckJWT ]- reponse Backend ( OK )");
 				authentificated.set(true);
 				return true;
 			} else {
-				console.log(" -[ CheckJWT ]- reponse Backend ( BAD )");
+				// console.log(" -[ CheckJWT ]- reponse Backend ( BAD )");
 				authentificated.set(false);
 				return false;
 			}

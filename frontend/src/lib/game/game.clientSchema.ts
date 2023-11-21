@@ -20,18 +20,18 @@ enum PaddleSide {
 // wriable paddle size
 let paddleSizeChoice: string = 'normal';
 
-paddleSize.subscribe((a)=>{
+paddleSize.subscribe((a) => {
 	paddleSizeChoice = a;
-	console.log("Game schema [paddleSizeChoice] :",  paddleSizeChoice);
+	console.log("Game schema [paddleSizeChoice] :", paddleSizeChoice);
 })
 
 export class Paddle extends Schema {
 	// Constants for the paddle dimensions and offsets
 	public static offset: number;
-	public static width :number; //default width
-	public static height :number // default height;
-	public static widthFactor : number;
-	public static heightFactor : number;
+	public static width: number; //default width
+	public static height: number // default height;
+	public static widthFactor: number;
+	public static heightFactor: number;
 
 	// x and y coordinates of the paddle
 	@type('int32')
@@ -68,7 +68,7 @@ export class Paddle extends Schema {
 }
 
 export class Ball extends Schema {
-	public static readonly radius = 25;
+	public static readonly radius = 12;
 
 	@type('int32')
 	public x = center.x;
@@ -100,10 +100,10 @@ export class Scoreboard extends Schema {
 
 export enum GameStatus {
 	WAITING = 0,
-    PLAYING,
-    FINISHED,
-    INTERRUPTED,
-    STOPSOLO,
+	PLAYING,
+	FINISHED,
+	INTERRUPTED,
+	STOPSOLO,
 }
 
 export class GameState extends Schema {
@@ -117,7 +117,7 @@ export class GameState extends Schema {
 	public leftPaddle = new Paddle(PaddleSide.LEFT);
 
 	@type(Paddle)
-	 public rightPaddle = new Paddle(PaddleSide.RIGHT);
+	public rightPaddle = new Paddle(PaddleSide.RIGHT);
 
 	@type(Ball)
 	public ball = new Ball();
@@ -129,16 +129,16 @@ export class GameState extends Schema {
 	constructor() {
 		super();
 
-	actualUsername.subscribe((a) => {
-		this.username = a;
-	});
+		actualUsername.subscribe((a) => {
+			this.username = a;
+		});
 
-	winnerScore.subscribe((a) => {
-		this.scoreToWin = a;
-	});
+		winnerScore.subscribe((a) => {
+			this.scoreToWin = a;
+		});
 
-	InvitedUserLogin.subscribe((a) => {
-		this.userLoginToInvite = a;
-	});
+		InvitedUserLogin.subscribe((a) => {
+			this.userLoginToInvite = a;
+		});
 	}
 }

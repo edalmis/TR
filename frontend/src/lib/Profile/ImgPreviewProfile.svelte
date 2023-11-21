@@ -31,46 +31,39 @@
 	}
 </script>
 
-<div >
+<div>
 	<h3>That is your Preview Bro, Enjoy !!!</h3>
 	<div>
 		<img class="profile-pic" src={image} alt=" 🤖 ❌ Error 🍪 🤣 " />
 	</div>
 	<div>
-		<!-- <p>Login : {login}</p>
-		<p>Name : {username}</p> -->
-
-		<p class="info-container"> 
-			<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Login : </span>
-				{login}
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<span style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"> Username : </span>
-				{username}
+		<p class="info-container">
+			<span
+				style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+			>
+				Login :
+			</span>
+			{login}
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<span
+				style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
+			>
+				Username :
+			</span>
+			{username}
 		</p>
 	</div>
 </div>
 <br />
 <br />
-<div>	
+<div>
 	<div>Make a Choice Son !</div>
 	<button on:click={handleGarderImg}>Garder</button>
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	<button on:click={handleNo}>Pas Top!</button>
 </div>
 
-
 <style>
-	/* button {
-		margin-left: 5px;
-		border-width: 1px;
-		border-color: brown;
-		border-radius: 42%;
-	}
-	button:hover {
-		color: brown;
-	} */
-
 	button {
 		cursor: pointer;
 		color: white; /* Change text color to white */
@@ -103,5 +96,4 @@
 		border-color: black;
 		border-width: 2px;
 	}
-
 </style>

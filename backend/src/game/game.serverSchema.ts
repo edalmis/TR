@@ -55,7 +55,7 @@ export class Paddle extends Schema {
 }
 
 export class Ball extends Schema {
-	public static readonly radius = 25;
+	public static readonly radius = 12;
 
 	@type('int32')
 	public x = center.x;
@@ -87,11 +87,11 @@ export class Scoreboard extends Schema {
 }
 
 export enum GameStatus {
-    WAITING = 0,
-    PLAYING,
-    FINISHED,
-    INTERRUPTED, // a player has left the match
-    STOPSOLO,
+	WAITING = 0,
+	PLAYING,
+	FINISHED,
+	INTERRUPTED, // a player has left the match
+	STOPSOLO,
 }
 
 export class GameState extends Schema {

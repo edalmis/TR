@@ -27,21 +27,18 @@
 		);
 
 		if (response.ok) {
-			console.log("-[ Google Authentificator ]- OK !");
+			// console.log("-[ Google Authentificator ]- OK !");
 			let res = await response.json();
 			if (res.jwt !== null) {
 				const jwt: string = res.jwt;
-				console.log(
-					"-[Google Auth]-JWT: de la Reponse GoogleAuth",
-					jwt
-				);
+				// console.log("-[Google Auth]-JWT: de la Reponse GoogleAuth",jwt);
 				localStorage.setItem("jwt", jwt);
 				authentificated.set(true);
 				isGoogleAuthEnabled.set(true);
 				googleAuth.set(true);
 				verif = true;
 			} else {
-				console.log("Google Auth Paramètre 'jwt' { NULL }.");
+				// console.log("Google Auth Paramètre 'jwt' { NULL }.");
 				isGoogleAuthActivated.set(false);
 				openModal("errorMsg");
 				goto("/");
@@ -49,8 +46,6 @@
 				errorMsg.set("Google Auth Code Incorect !");
 			}
 		}
-		// closeModal();
-		// goto("/");
 		verif = false;
 	}
 </script>
@@ -58,7 +53,6 @@
 <div>
 	<div>Google Authenticator</div>
 	<div>Use Google Authenticator App to scan the QR Code</div>
-	<!-- <div>{@html QrCode}</div> -->
 	<img src={QrCode} alt="Error Google generating QR" />
 
 	<div>Code d'authentification Google :</div>
@@ -68,9 +62,6 @@
 			placeholder="Put code here !"
 			bind:value={codeVerif}
 		/>
-
-		<!-- <button on:click={handleVerifyCode}>Verify</button> -->
-		<!-- <button on:click={handleVerifCode}>Verify</button> -->
 		<button
 			on:click={async () => {
 				if (!codeVerif.length) {

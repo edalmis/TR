@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { onDestroy, onMount } from "svelte";
 	import { goto } from "$app/navigation";
-	import InviteToPlayButton from "$lib/game/InviteToPlayButton.svelte";
 	import { closeModal } from "$lib/store/ModalValues";
+	import InviteToPlayButton from "$lib/game/InviteToPlayButton.svelte";
 	import {
 		InvitedUserId,
 		InvitedUserLogin,
@@ -9,7 +10,6 @@
 		session,
 		userId,
 	} from "$lib/store/store";
-	import { onDestroy, onMount } from "svelte";
 
 	export let username: string;
 
@@ -52,7 +52,7 @@
 			if (!jwt) {
 				goto("/");
 			} else {
-				console.log("-[ OtherProfile ]-  - username: ", username);
+				// console.log("-[ OtherProfile ]-  - username: ", username);
 				const url = `http://localhost:3000/user/profileOther?username=${username}`;
 				const response = await fetch(url, {
 					method: "GET",
@@ -63,7 +63,7 @@
 				});
 				if (response.ok) {
 					otherUser = await response.json(); // Convertit la réponse JSON en objet JavaScript
-					console.log(" -[ Profile Other ]- User: ", otherUser);
+					// console.log(" -[ Profile Other ]- User: ", otherUser);
 					login = otherUser.login;
 					id = otherUser.id;
 					pictureLink = otherUser.avatar;
@@ -94,18 +94,6 @@
 				wsClient.on("otherGameHistory", (data: any) => {
 					games = data;
 				});
-				// const url_History = `http://localhost:3000/user/getMatchHistory`;
-				// const response_history = await fetch(url_History, {
-				// 	method: "GET",
-				// 	headers: {
-				// 		Authorization: `Bearer ${jwt}`,
-				// 		"Content-Type": "application/json",
-				// 	},
-				// });
-				// if (response_history.ok) {
-				// 	games = await response_history.json();
-				// 	console.log("-[ Game History ]- Response: [Games]", games);
-				// }
 			}
 		} catch (e) {}
 	});
@@ -122,146 +110,6 @@
 		});
 		closeModal();
 	}
-
-	// async function handleSendFriendRequest() {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { username: username };
-	// 	const response = await fetch(
-	// 		"http://localhost:3000/user/sendFriendRequest",
-	// 		{
-	// 			method: "POST",
-	// 			headers: {
-	// 				Authorization: `Bearer ${jwt}`,
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 			body: JSON.stringify({ data }),
-	// 		}
-	// 	);
-	// 	if (response.ok) {
-	// 		console.log(
-	// 			"response { OK } du [ SendFriendRequest ] : ",
-	// 			response.ok
-	// 		);
-	// 		socket.emit("SendFriendRequest", {
-	// 			username: username,
-	// 			myId: $userId,
-	// 		});
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Add Friend ]");
-	// 	}
-	// 	closeModal();
-
-	// 	// goto("/");
-	// }
-
-	// async function handleAcceptFriend(friendId: number) {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { idToAccept: friendId };
-	// 	//console.log("-[ Add Friend ]- username sent: ", username);
-	// 	const response = await fetch("http://localhost:3000/user/addFriend", {
-	// 		method: "POST",
-	// 		headers: {
-	// 			Authorization: `Bearer ${jwt}`,
-	// 			"Content-Type": "application/json",
-	// 		},
-	// 		body: JSON.stringify({ data }),
-	// 	});
-	// 	if (response.ok) {
-	// 		// console.log("response { OK } du [ Add Friend ]");
-	// 		await socket.emit("acceptOrRefuseFriendRequest", {
-	// 			idToAccept: friendId,
-	// 			myId: id,
-	// 		});
-	// 		await socket.emit("updateFriendList", {
-	// 			idToAccept: friendId,
-	// 			myId: id,
-	// 		});
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Add Friend ]");
-	// 	}
-
-	// 	closeModal();
-	// }
-
-	// async function handleAcceptFriend() {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { username: username };
-	// 	//console.log("-[ Add Friend ]- username sent: ", username);
-	// 	const response = await fetch("http://localhost:3000/user/addFriend", {
-	// 		method: "POST",
-	// 		headers: {
-	// 			Authorization: `Bearer ${jwt}`,
-	// 			"Content-Type": "application/json",
-	// 		},
-	// 		body: JSON.stringify({ data }),
-	// 	});
-	// 	if (response.ok) {
-	// 		// console.log("response { OK } du [ Add Friend ]");
-	// 		socket.emit("acceptOrRefuseFriendRequest", {
-	// 			idToAccept: friendId,
-	// 			myId: id,
-	// 		});
-	// 		socket.emit("updateFriendList", { username: username, myId: id });
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Add Friend ]");
-	// 	}
-
-	// 	closeModal();
-	// }
-
-	// async function handleRefuseFriendRequest(friendId: number) {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { idToRefuse: friendId };
-	// 	const response = await fetch(
-	// 		"http://localhost:3000/user/refuseFriendRequest",
-	// 		{
-	// 			method: "POST",
-	// 			headers: {
-	// 				Authorization: `Bearer ${jwt}`,
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 			body: JSON.stringify({ data }),
-	// 		}
-	// 	);
-	// 	if (response.ok) {
-	// 		console.log("response { OK } du [ Refuse Friend ] : ", response.ok);
-	// 		socket.emit("acceptOrRefuseFriendRequest", {
-	// 			idToAccept: friendId,
-	// 			myId: id,
-	// 		});
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Refuse Friend ]");
-	// 	}
-
-	// 	closeModal();
-	// }
-
-	// async function handleRefuseFriendRequest() {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { username: username };
-	// 	const response = await fetch(
-	// 		"http://localhost:3000/user/refuseFriendRequest",
-	// 		{
-	// 			method: "POST",
-	// 			headers: {
-	// 				Authorization: `Bearer ${jwt}`,
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 			body: JSON.stringify({ data }),
-	// 		}
-	// 	);
-	// 	if (response.ok) {
-	// 		// console.log("response { OK } du [ Add Friend ]");
-	// 		socket.emit("acceptOrRefuseFriendRequest", {
-	// 			idToAccept: friendId,
-	// 			myId: id,
-	// 		});
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Add Friend ]");
-	// 	}
-
-	// 	closeModal();
-	// }
 
 	async function handleRemoveFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
@@ -291,32 +139,6 @@
 		closeModal();
 	}
 
-	// async function handleRemoveFriend() {
-	// 	const jwt = localStorage.getItem("jwt");
-	// 	const data = { username: username };
-	// 	//console.log("-[ Remove Friend ]- username sent: ", username);
-	// 	const response = await fetch(
-	// 		"http://localhost:3000/user/removeFriend",
-	// 		{
-	// 			method: "POST",
-	// 			headers: {
-	// 				Authorization: `Bearer ${jwt}`,
-	// 				"Content-Type": "application/json",
-	// 			},
-	// 			body: JSON.stringify({ data }),
-	// 		}
-	// 	);
-	// 	if (response.ok) {
-	// 		// console.log("response { OK } du [ Remove Friend ]");
-	// 		socket.emit("updateFriendList", { username: username, myId: id });
-	// 	} else {
-	// 		console.log("response { NOT OK } du [ Remove Friend ]");
-	// 	}
-
-	// 	closeModal();
-	// 	// goto("/");
-	// }
-
 	async function handleBlockUser() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
@@ -330,9 +152,9 @@
 			body: JSON.stringify({ data }),
 		});
 		if (response.ok) {
-			console.log("response { OK } du [ Block User ]");
+			// console.log("response { OK } du [ Block User ]");
 		} else {
-			console.log("response { NOT OK } du [ Block User ]");
+			// console.log("response { NOT OK } du [ Block User ]");
 		}
 		closeModal();
 		goto("/");
@@ -351,9 +173,9 @@
 			body: JSON.stringify({ data }),
 		});
 		if (response.ok) {
-			console.log("response { OK } du [ Unblock User ]");
+			// console.log("response { OK } du [ Unblock User ]");
 		} else {
-			console.log("response { NOT OK } du [ Unblock User ]");
+			// console.log("response { NOT OK } du [ Unblock User ]");
 		}
 		isModalOpen = false;
 		closeModal();
@@ -413,14 +235,12 @@
 			class="button"
 			on:click={() => {
 				handleUnblockUser();
-				// handleOpenModal()
 			}}>Unblock</button
 		>
 	{:else if hasBlocked === false}
 		<button
 			class="buttonBlock"
 			on:click={() => {
-				// handleBlockUser();
 				handleOpenModal();
 			}}>Block</button
 		>
@@ -535,9 +355,6 @@
 		</div>
 	</div>
 {/if}
-
-<!-- Faire affichage de differents buttons en fonction du friend status -> sendFriendRequest,
-Unfriend -->
 
 <style>
 	li {

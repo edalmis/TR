@@ -8,27 +8,21 @@
 	}
 
 	// Colometrie Du 'et des' Button's'
-	const colors = ["green", "yellow", "orange","red"];
+	const colors = ["green", "yellow", "orange", "red"];
 	let selected: string = colors[0];
 	let a: number = 0;
 	let b: number = colors.length - 1;
-	// function colorUpdate() {
-	// 	selected = colors[a - 1];
-	// }
 </script>
 
 <div>
-	
-	<button 
+	<button
 		class="bigButton"
 		style="background-color: {selected}"
 		on:click={handleLogin}
 	>
 		Log in</button
 	>
-	<!-- <h3 class="pick-a-color" style="color: {selected}">Pick your colour</h3> -->
 	<div class="pick-a-color">
-		
 		{#each colors as color, i}
 			<button
 				class="round-button"
@@ -49,16 +43,12 @@
 		max-width: 400px;
 	}
 
-	/* h3 {
-		align-items: center;
-	} */
 	.pick-a-color {
-		margin-top:400px;
+		margin-top: 400px;
 		align-items: center;
 	}
 
 	.round-button {
-		/* aspect-ratio: 1; */
 		width: 1em;
 		height: 1em;
 		border-radius: 50%;
@@ -67,14 +57,12 @@
 		filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.2));
 		transition: all 0.1s;
 		margin-right: 9%;
-		/* margin-top:00px; */
 		font-size: small;
 	}
 
 	.bigButton {
 		cursor: not-allowed;
-		font :medium;
-		/* font-size: 1.4em; */
+		font: medium;
 		width: 6em;
 		height: 6em;
 		border-radius: 50%;
@@ -87,8 +75,6 @@
 		transform: translate(0, -8px);
 		transition: all 0.2s;
 		margin-top: 190%;
-		/* margin-top: 10px; */
-		/*margin-left: 25%;*/
 		transition: color 4.2s;
 	}
 

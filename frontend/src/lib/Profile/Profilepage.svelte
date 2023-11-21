@@ -2,22 +2,24 @@
 	import { goto } from "$app/navigation";
 	import { onMount, onDestroy } from "svelte";
 	import Modal from "$lib/modals/Modal.svelte";
-	import { openModal, selectedPage } from "$lib/store/ModalValues";
-	import { closeModal } from "$lib/store/ModalValues";
-	import { showModal } from "$lib/store/ModalValues"; // Est ce que Display une Modal  -[ boolean ]-
-	import { session, dmNotif } from "$lib/store/store";
-	import {
-		actualUsername,
-		authentificated,
-		isItARefreshement,
-	} from "$lib/store/store";
-	import { googleAuth } from "$lib/store/store";
-	let Google2fa: boolean = false;
-
 	import ImgPreviewProfile from "./ImgPreviewProfile.svelte";
 	import ErrorModal from "$lib/modals/ErrorModal.svelte";
 	import Enable2Fa from "./Enable2Fa.svelte";
 	import Disable2Fa from "./Disable2Fa.svelte";
+	import {
+		openModal,
+		selectedPage,
+		closeModal,
+		showModal,
+	} from "$lib/store/ModalValues";
+	import {
+		googleAuth,
+		actualUsername,
+		authentificated,
+		isItARefreshement,
+		session,
+		dmNotif,
+	} from "$lib/store/store";
 
 	let show_Modal: boolean;
 	showModal.subscribe((a: boolean) => {
@@ -29,6 +31,7 @@
 		selectedModal = b;
 	});
 
+	let Google2fa: boolean = false;
 	let wsClient: any;
 	let login: string;
 	let pictureLink: string;
@@ -38,13 +41,11 @@
 	let loose: number;
 	let myId: number;
 	let games: any = [];
-
-	let newUserName: string = "";
-	// $: newImg = "";
-	$: username = "";
-
 	let indication_username: string = "";
 	let indication_avatar: string = "";
+	let newUserName: string = "";
+	let refresh: boolean;
+	$: username = "";
 
 	let isModalOpen = false;
 	function handleOpenModal() {
@@ -54,16 +55,15 @@
 		isModalOpen = false;
 	}
 
-	let refresh: boolean;
 	onMount(async () => {
 		isItARefreshement.subscribe((a: boolean) => {
 			refresh = a;
 		});
 		if (refresh === true) {
-			console.log(" [ ProfilePage ] ! ***[ Refresh ]*** !");
+			// console.log(" [ ProfilePage ] ! ***[ Refresh ]*** !");
 			goto("/");
 		} else {
-			console.log(" [ ProfilePage ] *{ Not a Refresh ! }* ");
+			// console.log(" [ ProfilePage ] *{ Not a Refresh ! }* ");
 		}
 		session.subscribe((a: any) => {
 			wsClient = a;
@@ -83,7 +83,7 @@
 						},
 					}
 				);
-				console.log(" -[ Profile ]- response: ", response);
+				// console.log(" -[ Profile ]- response: ", response);
 				if (response.ok) {
 					//const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
 					const user = await response.json(); // Convertit la réponse JSON en objet JavaScript
@@ -99,24 +99,12 @@
 					myId = user.id;
 
 					googleAuth.set(user.fa2);
-					console.log("2fa Value from user: [ ", user.fa2, " ]");
+					// console.log("2fa Value from user: [ ", user.fa2, " ]");
 				} else {
 					localStorage.clear();
 					authentificated.set(false);
 					goto("/");
 				}
-				// const url_History = `http://localhost:3000/user/getMatchHistory`;
-				// const response_history = await fetch(url_History, {
-				// 	method: "GET",
-				// 	headers: {
-				// 		Authorization: `Bearer ${jwt}`,
-				// 		"Content-Type": "application/json",
-				// 	},
-				// });
-				// if (response_history.ok) {
-				// 	games = await response_history.json();
-				// 	console.log("-[ Game History ]- Response: [Games]", games);
-				// }
 
 				// Get Match History
 				session.subscribe((a: any) => {
@@ -145,7 +133,7 @@
 	});
 
 	async function handleChangeName() {
-		console.log("login ", login, "    newUserame: ", newUserName);
+		// console.log("login ", login, "    newUserame: ", newUserName);
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, newUsername: newUserName };
 
@@ -241,10 +229,9 @@
 	</div>
 {:else}
 	<div class="profile-Page">
-		<!-- <h1 > {username} Profile:  You will get a Cookie if you are a Good Boy</h1> -->
 		<h1>
 			<span class="profileName">{username}</span> 's Profile
-			<span>Give a Cookie if you are a Good Boy </span>
+			<span>You will get a Cookie if you are a Good Boy </span>
 		</h1>
 		<div>
 			<img
@@ -254,11 +241,6 @@
 			/>
 		</div>
 		<div>
-			<!-- <p>Login : {login}</p>
-			<p>Username : {username}</p>
-			<p>Rank : {rank}</p>
-			<p>Title : {title}</p>
-			<p>Total Won: {win} - {loose} :Lost</p> -->
 			<p class="info-container">
 				<span
 					style="font-family:sans-serif;border:1px orange solid;margin-right:5px;"
@@ -332,7 +314,6 @@
 					placeholder="new username"
 					bind:value={newUserName}
 				/>
-				<!-- <button on:click={handleChangeName}>Change</button> -->
 				<button
 					on:click={async () => {
 						if (!newUserName.length) {
@@ -350,7 +331,6 @@
 				{#if indication_username !== ""}
 					<div class="indication">{indication_username}</div>
 				{/if}
-				<!-- </p2> -->
 			</p2>
 
 			{#if isModalOpen}
@@ -464,11 +444,6 @@
 				</button>
 
 				<button on:click={handleRestAvatar}>Reset</button>
-				<!-- <select bind:value={i} size={4}>
-					{#each filteredPeople as person, i}
-						<option value={i}>{person.newImg}</option>
-					{/each}
-				</select> -->
 				{#if indication_avatar !== ""}
 					<div class="indication">{indication_avatar}</div>
 				{/if}
@@ -479,34 +454,6 @@
 					<option value={i}>{person.newImg}</option>
 				{/each}
 			</select>
-			<!-- 			
-
-			<div>
-				<span> Google Authentificator : </span>
-				{#if Google2fa === true}
-					<span>
-						<button
-							on:click={() => {
-								openModal("Try Disable 2fa");
-								goto("/Profile");
-							}}
-						>
-							Disable
-						</button>
-					</span>
-				{:else}
-					<span>
-						<button
-							on:click={() => {
-								openModal("Try Enable 2fa");
-								goto("/Profile");
-							}}
-						>
-							Enable
-						</button>
-					</span>
-				{/if}
-			</div> -->
 		</div>
 		<div>
 			<h1>Game History</h1>
@@ -515,16 +462,11 @@
 					{#each games as game, i}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-						<!-- <li
-							class:selected={selectedGame === game}
-							on:click={() => selectGame(game)}
-						> -->
 						<div>
 							{game.player1}
 							{game.scorePlayer1} vs {game.scorePlayer2}
 							{game.player2}
 						</div>
-						<!-- </li> -->
 					{/each}
 				</ul>
 			{:else}
