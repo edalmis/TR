@@ -228,11 +228,16 @@
 		</Modal>
 	</div>
 {:else}
+<div class="text-center">
+<h1>
+	<span class="profileName">{username}</span> 's Profile
+	<span>You will get a Cookie if you are a Good Boy </span>
+</h1>
+</div>
+<div class='w-full flex'>
 	<div class="profile-Page">
-		<h1>
-			<span class="profileName">{username}</span> 's Profile
-			<span>You will get a Cookie if you are a Good Boy </span>
-		</h1>
+		<div class="partie-gauche">
+		
 		<div>
 			<img
 				class="profile-pic"
@@ -307,8 +312,7 @@
 				{/if}
 			</p>
 			<p2 class="flex-container">
-				<!-- <p2> -->
-				<span class="label">Change username :</span>
+				<span class="hidden shrink-0 sm:flex sm:flex-col sm:items-front">Change username :</span>
 				<input
 					type="text"
 					placeholder="new username"
@@ -420,7 +424,7 @@
 			{/if}
 
 			<p2 class="flex-container">
-				<span class="label">Change Avatar : </span>
+				<span class="hidden shrink-0 sm:flex sm:flex-col sm:items-front">Change Avatar : </span>
 
 				<label><input bind:value={newImg} placeholder="newImg" /></label
 				>
@@ -434,7 +438,6 @@
 						} else if (/\s/.test(newImg)) {
 							indication_avatar = "No whitespace allowed";
 						} else {
-							// handleOpenModal()
 							openModal("Try Avatar");
 							goto("/Profile");
 						}
@@ -455,8 +458,13 @@
 				{/each}
 			</select>
 		</div>
-		<div>
-			<h1>Game History</h1>
+	</div>
+</div>
+
+	<div class="game-history">
+	
+			<!-- <h1>Game History</h1> -->
+			<span class="hidden shrink-0 sm:flex sm:flex-col sm:items-front">Game History :</span>
 			{#if games.length > 0}
 				<ul>
 					{#each games as game, i}
@@ -470,10 +478,11 @@
 					{/each}
 				</ul>
 			{:else}
-				<p>Aucune partie trouvée.</p>
+				<p class="p1">Aucune partie trouvée.</p>
 			{/if}
-		</div>
 	</div>
+
+</div> <!-- divGlobale -->
 {/if}
 
 <style>
@@ -496,7 +505,6 @@
 		border-width: 1px;
 		border-radius: 20%;
 		background: rgba(255, 0, 0, 0.326); /* A cool blue color */
-		/* border-radius: 3px; */
 		padding: 5px 5px;
 		font-size: 8px;
 		border: 2px solid #eff1f4;
@@ -510,46 +518,39 @@
 	}
 
 	.profile-Page {
-		/* height: 2500px;
-		width: 2500px; */
-		align-items: center;
-		color: rgb(119, 101, 129);
-		margin-left: 300px;
+		flex: 1; 
+		align-items: flex;
 	}
-
+	.game-history{
+		flex: 0.5;
+		align-items: flex-end ;
+	}
+	
 	.profile-pic {
 		max-width: 19%;
-		/* max-height: ; */
 		border-radius: 40%;
 		align-items: center;
-		/* position: relative; */
 		border-color: rgb(111, 151, 142);
 		border-width: 2px;
-		/* margin: 0 auto; */
 	}
 
 	p {
-		/* margin-top: 0; */
 		color: rgb(32, 43, 33);
-		/* margin-left: 0px;	 */
 		font-family: inherit;
 		align-items: center;
 	}
 
-	/*label {
-		max-width: 100%;
-		display: inline-block; /* Makes it inline and allows for horizontal alignment 
-		margin-right: 0em; /* Adjust the spacing as needed
-	}*/
+	.p1{
+		color: rgb(17, 199, 196);
+		font-family: inherit;
+		align-items: center;
+		font-size: small;
+	}
 
 	.flex-container {
 		display: flex;
 		align-items: center;
 		gap: 10px; /* Adjust the gap as needed to control the spacing between elements */
-	}
-
-	.label {
-		flex: 0.5; /* This will make the label take up all available space */
 	}
 
 	.info-container {
@@ -562,7 +563,6 @@
 		color: rgb(237, 228, 228);
 		font-size: 30px;
 		margin-top: 10;
-		/* margin-bottom: 0; */
 		font-family: fantasy;
 	}
 	h1 {
@@ -579,7 +579,7 @@
 	* {
 		font-family: inherit;
 		font-size: inherit;
-		color: rgb(97, 118, 113);
+		color: rgb(186, 199, 196);
 	}
 
 	select {
