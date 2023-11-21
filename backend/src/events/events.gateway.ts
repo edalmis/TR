@@ -42,13 +42,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	private onlineUsersMap: Map<number, UserEntity> = new Map();
 
 	afterInit(server: Server) {
-		console.log(' -[ EventsGateway ]- *initialized* afterInit( server io )')
+		// console.log(' -[ EventsGateway ]- *initialized* afterInit( server io )')
 	}
 
 	async handleConnection(client: Socket) {
 		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
 		if (connected) {
-			console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
+			// console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
 			this.socketsByUserID.delete(connected.id); // remove old connection from helper map
 			connected.disconnect(); // disconnect old connection
 		}
@@ -92,7 +92,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('getOnlineUsersDatas')
 	async sendOnlineUsersDatas(client: Socket) {
-		console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
+		// console.log(' -[ EventsGateway ]- getOnlineUsersDatas');
 		const usersDatas: any[] = [];
 		for (const [id, user] of this.onlineUsersMap) {
 			const usr = await this.userService.find_user_by_id(user.id);
@@ -156,7 +156,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('updateFriendList')
 	async updateFriendList(client: Socket, data: any) {
-		console.log(' -[ EventsGateway ]- acceptFriend');
+		// console.log(' -[ EventsGateway ]- acceptFriend');
 		const friend: UserEntity = await this.userService.find_user_by_id(data.idToAccept);
 		const friendnewFriendList: any[] = await this.userService.getFriendsList(friend.id);
 		let friendClient: any = this.socketsByUserID.get(friend.id.toString());
@@ -380,7 +380,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 				});
 			}
 		} catch (error) {
-			console.error("Error fetching messages:", error);
+			// console.error("Error fetching messages:", error);
 		}
 	}
 
@@ -417,7 +417,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 				});
 			}
 		} catch (error) {
-			console.error('Error sending message:', error);
+			// console.error('Error sending message:', error);
 			client.emit('messageSendError', { message: error.message });
 		}
 	}
