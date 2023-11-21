@@ -111,12 +111,13 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		
 	}
 
 	autoTyping {
-		content: "";
-		margin-top: -420px;
-		font-size: 2rem;
+		/* content: ""; */
+		margin-top: 3%;
+		font-size: 1rem;
 		text-align: center;
 		position: relative;
 	}
