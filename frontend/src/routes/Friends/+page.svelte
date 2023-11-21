@@ -550,7 +550,6 @@
 </script>
 
 <ul role="list" class="divide-y divide-gray-100">
-	<!-- <h1>Find friends</h1> -->
 	{#if show_Modal}
 		<div>
 			<Modal>
@@ -597,7 +596,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Empty Leaderboard !
 						</p>
 					</div>
@@ -611,13 +610,12 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Sorry Bro no one is connected !
 						</p>
 					</div>
 				</li>
 			{:else}
-				<!--  -->
 
 				{#each onlineUsersDatas as { id, login, username, avatar }}
 					{#if id != myId}
@@ -661,7 +659,7 @@
 								{/if}
 
 								<button
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
+									class="mt-1 truncate text-xs leading-5 text-neutral-600"
 									on:click={() => {
 										if (activeUserId === id) {
 											handleButtonClick(id, username);
@@ -685,7 +683,7 @@
 									/>
 								</div>
 								<p
-									class="text-xs leading-5 text-gray-500"
+									class="text-xs leading-5 text-neutral-600"
 									style="margin-right: 130px;"
 								>
 									Online
@@ -703,7 +701,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Sorry Bro your friends are not connected. Request
 							new Friends !
 						</p>
@@ -745,7 +743,7 @@
 							{/if}
 
 							<button
-								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								class="mt-1 truncate text-xs leading-5 text-neutral-600"
 								on:click={() => {
 									if (activeUserId === id) {
 										handleButtonClick(id, username);
@@ -769,7 +767,7 @@
 								/>
 							</div>
 							<p
-								class="text-xs leading-5 text-gray-500"
+								class="text-xs leading-5 text-neutral-600"
 								style="margin-right: 130px;"
 							>
 								Online
@@ -785,7 +783,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							None of your friends is playing. Invite them to play
 							!
 						</p>
@@ -829,7 +827,7 @@
 								/>
 							</div>
 							<p
-								class="text-xs leading-5 text-gray-500"
+								class="text-xs leading-5 text-neutral-600"
 								style="margin-right: 130px;"
 							>
 								Game-On
@@ -845,7 +843,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Sorry Bro, you're a lone wolf! Try to make friends,
 							request online users!
 						</p>
@@ -884,7 +882,7 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								class="mt-1 truncate text-xs leading-5 text-neutral-600"
 								style="margin-right: 130px;"
 							>
 								<button
@@ -905,7 +903,7 @@
 									/>
 								</div>
 								<p
-									class="text-xs leading-5 text-gray-500"
+									class="text-xs leading-5 text-neutral-600"
 									style="margin-right:130px;"
 								>
 									Online
@@ -933,7 +931,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Sorry Bro, no one wants to be your friend !
 						</p>
 					</div>
@@ -971,7 +969,7 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								class="mt-1 truncate text-xs leading-5 text-neutral-600"
 								style="margin-left:90px;"
 							>
 								<button
@@ -986,7 +984,7 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class="mt-1 truncate text-xs leading-5 text-gray-500"
+								class="mt-1 truncate text-xs leading-5 text-neutral-600"
 								style="margin-right:400px;"
 							>
 								<button
@@ -1007,13 +1005,13 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-gray-300">
 							Request new friends Bro !
 						</p>
 					</div>
 				</li>
 			{:else}
-				<p class="text-xs leading-5 text-gray-500">
+				<p class="text-xs leading-5 text-gray-300">
 					Waiting an answer from
 				</p>
 				{#each sentRequestsList as { id, login, username, avatar }}
@@ -1052,7 +1050,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-neutral-100">
 							Users I Blocke
 						</p>
 					</div>
@@ -1073,7 +1071,7 @@
 									{username}
 								</p> -->
 								<p
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
+									class="mt-1 truncate text-xs leading-5 text-gray-300"
 								>
 									<button
 										on:click={() => {
@@ -1093,7 +1091,7 @@
 					<div
 						class="hidden shrink-0 sm:flex sm:flex-col sm:items-front"
 					>
-						<p class="text-xs leading-5 text-gray-500">
+						<p class="text-xs leading-5 text-neutral-100">
 							Users Who Blocked Me
 						</p>
 					</div>
@@ -1114,7 +1112,7 @@
 									{username}
 								</p> -->
 								<p
-									class="mt-1 truncate text-xs leading-5 text-gray-500"
+									class="mt-1 truncate text-xs leading-5 text-gray-300"
 								>
 									<button
 										on:click={() => {
@@ -1137,10 +1135,13 @@
 		line-height: 1;
 	}
 
+	.text-xs {
+  		padding-top: 5px; /* Adjust this value as needed */
+	}
 	.text-xs,
 	.text-sm {
-		line-height: 0.85;
-		/* text-indent: 1em; */
+		/* line-height: 0.85; */
+		line-height: 1em;
 	}
 
 	h2 {
@@ -1155,9 +1156,4 @@
 		color: rgb(241, 58, 58);
 		align-items: center;
 	}
-	/* h1 {
-		color: rgb(134, 58, 241);
-		align-items: center;
-		line-height:3;
-	} */
 </style>
