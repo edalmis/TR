@@ -969,7 +969,7 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class="mt-1 truncate text-xs leading-5 text-neutral-600"
+								class="mt-1 truncate text-xs leading-5 text-neutral-900"
 								style="margin-left:90px;"
 							>
 								<button
@@ -984,7 +984,7 @@
 							class="hidden shrink-0 sm:flex sm:flex-col sm:items-end"
 						>
 							<p
-								class="mt-1 truncate text-xs leading-5 text-neutral-600"
+								class="mt-1 truncate text-xs leading-5 text-neutral-900"
 								style="margin-right:400px;"
 							>
 								<button
