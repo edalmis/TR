@@ -2,19 +2,21 @@
 	import { goto } from "$app/navigation";
 
 	async function IncrementRank() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/increment", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try{
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch("http://localhost:3000/user/increment", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+			});
 
-		if (response.ok) {
-			console.log("-[ Increment Rank ]- Rank and Title well Updated !");
-		}
-		goto("/Profile");
+			if (response.ok) {
+				console.log("-[ Increment Rank ]- Rank and Title well Updated !");
+			}
+			goto("/Profile");
+		}catch (e) {}
 	}
 </script>
 

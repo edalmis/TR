@@ -33,7 +33,7 @@
     }
   
     .original-pong
-	{
+	  {
       flex: 1;
       text-align: center;
       font-family: fantasy;

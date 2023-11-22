@@ -28,40 +28,43 @@
 	let isInvitOn: boolean;
 
 	function handleAccept() {
-		inviteNotif.set(false);
-		inviteNotifModal.set(false);
-		iAmInvited.set(true);
-		isInvitationStillOn.subscribe((a) => {
-			isInvitOn = a;
-		});
-		if (isInvitOn) {
-			winnerScore.set(gameData.scoreToWin);
-			rightPlayerUsername.set(gameData.loginToInvite);
-			leftPlayerUsername.set(gameData.login);
-			backgroundColor.set(gameData.colorMode);
-			paddleSize.set(gameData.paddleSize);
-			closeModal();
-			goto("/game/create");
-		} else {
-			alert("Your Opponent Canceled the Game");
-			iAmInvited.set(false);
-			closeModal();
-		}
+		try{
+			inviteNotif.set(false);
+			inviteNotifModal.set(false);
+			iAmInvited.set(true);
+			isInvitationStillOn.subscribe((a) => {
+				isInvitOn = a;
+			});
+			if (isInvitOn) {
+				winnerScore.set(gameData.scoreToWin);
+				rightPlayerUsername.set(gameData.loginToInvite);
+				leftPlayerUsername.set(gameData.login);
+				backgroundColor.set(gameData.colorMode);
+				paddleSize.set(gameData.paddleSize);
+				closeModal();
+				goto("/game/create");
+			} else {
+				alert("Your Opponent Canceled the Game");
+				iAmInvited.set(false);
+				closeModal();
+		}}catch (e) {}
 	}
 
 	function handleRefuse() {
-		isInvitationStillOn.subscribe((a) => {
-			isInvitOn = a;
-		});
-		if (isInvitOn) {
-			wsClient.emit("refuseGameInvitation", gameData);
-			// console.log(" [GameInvitaion -- handleRefuse] data:", data);
-		}
-		inviteNotif.set(false);
-		inviteNotifModal.set(false);
-		iAmInvited.set(false);
-		closeModal();
-		// goto("/game");
+		try{
+			isInvitationStillOn.subscribe((a) => {
+				isInvitOn = a;
+			});
+			if (isInvitOn) {
+				wsClient.emit("refuseGameInvitation", gameData);
+				// console.log(" [GameInvitaion -- handleRefuse] data:", data);
+			}
+			inviteNotif.set(false);
+			inviteNotifModal.set(false);
+			iAmInvited.set(false);
+			closeModal();
+		}catch (e) {}
+		
 	}
 
 	onDestroy(() => {
@@ -107,6 +110,4 @@
 	button:hover {
 		background: rgb(67, 90, 26);
 	}
-
-	
 </style>

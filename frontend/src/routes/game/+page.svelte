@@ -63,10 +63,14 @@
 	};
 
 	function openGameRuleModal() {
-		showModal.set(true);
+		try{
+			showModal.set(true);
+		}catch (e) {}
 	}
 	function closeGameRuleModal() {
-		showModal.set(false);
+		try{
+			showModal.set(false);
+		}catch (e) {}
 	}
 
 	const onSubmit = () => {

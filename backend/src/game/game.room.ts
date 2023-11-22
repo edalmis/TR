@@ -81,7 +81,7 @@ export class PongRoom extends Room<GameState> {
 				}
 				if (this.state.scoreboard.left > this.state.scoreboard.right) // [* Left Player Won *]
 				{
-					console.log('[ tentative - Increment Rank Left Won ]...')
+					// console.log('[ tentative - Increment Rank Left Won ]...')
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.lpUserName }, { except: [this.client2] });
@@ -89,7 +89,7 @@ export class PongRoom extends Room<GameState> {
 				}
 				else //  [ *Right Player Won* ]
 				{
-					console.log('[ tentative - Increment Rank Right Won ]...')
+					// console.log('[ tentative - Increment Rank Right Won ]...')
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
@@ -113,13 +113,13 @@ export class PongRoom extends Room<GameState> {
 		let mapSize = PongRoom.roomPlayerInfosMap.size;
 		// console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
 			if (this.roomLocked) {
-			  console.log('Matchmaking room is locked!');
+			//   console.log('Matchmaking room is locked!');
 			  return;
 			}
 		
 		if (this.clients.length === 1 && options.loginName !== undefined) {
 
-				console.log(' -[ onJoin() ]- Player [1]');
+				// console.log(' -[ onJoin() ]- Player [1]');
 				this.client1 = client;
 				this.lpId = client.id;
 				this.lpUserName = options.username;
@@ -139,7 +139,7 @@ export class PongRoom extends Room<GameState> {
 
 			//}
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
-					console.log(' -[ onJoin ]- Player [2]');
+					// console.log(' -[ onJoin ]- Player [2]');
 					this.client2 = client;
 					this.rpId = client.id;
 					this.rpUserName = options.username;
@@ -153,8 +153,8 @@ export class PongRoom extends Room<GameState> {
 						client: client,
 					};
 					
-					console.log('-[ onJoin() - ]- userInfos.id  ', userInfos.id );
-					console.log('-[ onJoin() - ]- this.lpUserId ', this.lpUserId);
+					// console.log('-[ onJoin() - ]- userInfos.id  ', userInfos.id );
+					// console.log('-[ onJoin() - ]- this.lpUserId ', this.lpUserId);
 				if (userInfos.id != this.lpUserId) {
 					// Ajout a la liste des InGame Friends
 					UserService.inGameUsersSet.add(this.rpUserId);
@@ -174,23 +174,24 @@ export class PongRoom extends Room<GameState> {
 		this.roomLocked = true;
 		this.lock();
 		this.state.gameStatus = GameStatus.PLAYING;
-		this.setSimulationInterval(deltaTime => this.update(deltaTime, loginName));
+		const intervalFor80FPS = 12.5;
+		this.setSimulationInterval(deltaTime => this.update(deltaTime, loginName), intervalFor80FPS);
 	}
 
 	private handlePlayerDisconnection() {
 		this.onMessage('player_disconnected', (client, message) => {
-			console.log('-[ onJoin() - onMessage \'PlayerDisconnected\' )]- message: ', message);
-			console.log(' -- Before -- call onLeave()');
+			// console.log('-[ onJoin() - onMessage \'PlayerDisconnected\' )]- message: ', message);
+			// console.log(' -- Before -- call onLeave()');
 			this.onLeave(client);
-			console.log(' -- After -- call onLeave()');
+			// console.log(' -- After -- call onLeave()');
 			this.onDispose();
 			PongRoom.roomPlayerInfosMap.clear();
-			console.log(" -[ OnMessage -disconnect- ]- mapSize (end): ", PongRoom.roomPlayerInfosMap.size);
+			//console.log(" -[ OnMessage -disconnect- ]- mapSize (end): ", PongRoom.roomPlayerInfosMap.size);
 			client.leave();
 		});
 	}
 	async onLeave(client: Client, consented?: boolean) {
-		console.log('client Onleave ')
+		// console.log('client Onleave ')
 		if (client.id === this.lpId) {
 			this.lpId = undefined;
 		} else if (client.id === this.rpId) {
@@ -229,6 +230,6 @@ export class PongRoom extends Room<GameState> {
 		this.disconnect();
 	}
 	onDispose() {
-		console.log("-[ onDispose() ]- ");
+		// console.log("-[ onDispose() ]- ");
 	}
 }

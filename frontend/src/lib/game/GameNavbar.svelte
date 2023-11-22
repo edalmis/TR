@@ -5,15 +5,21 @@
 	let isModalOpen = false;
 
 	export function handleBackHomeModal() {
-		isModalOpen = true;
+		try{
+			isModalOpen = true;
+		}catch (e) {}
 	}
 	export function handleCancelLeaveGame(){
-		isModalOpen = false
+		try{
+			isModalOpen = false
+		}catch (e) {}
 	}
 
 	export function leaveGame() {
-		isModalOpen = false; // Close the modal
-		goto("/"); // Redirect to the home page
+		try{
+			isModalOpen = false; // Close the modal
+			goto("/"); // Redirect to the home page
+		}catch (e) {}
 	}
 
 	onMount(()=> {

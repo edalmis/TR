@@ -42,7 +42,7 @@ export class privateRoom extends Room<GameState> {
 	private winningScore: number;
 
 	onCreate(options: any) {
-		console.log(' -[ (Private) - onCreate () ]- -> Options : ', options);
+		// console.log(' -[ (Private) - onCreate () ]- -> Options : ', options);
 
 		this.setState(new GameState());
 		const physicsOptions: PhysicsOptions = {
@@ -59,7 +59,7 @@ export class privateRoom extends Room<GameState> {
 		// console.log(" -[ OnJoin() ]- mapSize: ", mapSize)
 		if (this.clients.length === 1 && options.loginName !== undefined) {
 
-				console.log(' -[ (Private) - onJoin() ]- Player [1]');
+				// console.log(' -[ (Private) - onJoin() ]- Player [1]');
 				this.client1 = client;
 				this.lpId = client.id;
 				this.lpUserName = options.username;
@@ -84,12 +84,12 @@ export class privateRoom extends Room<GameState> {
 				privateRoom.roomPlayerInfosMap.set(1, userInfos);
 
 				// // [ Send Invitation to Other player ] // // // // 
-				console.log(' -[ (Private) - onJoin() ]- Player [1] -> Broadcast Send...');
+				//console.log(' -[ (Private) - onJoin() ]- Player [1] -> Broadcast Send...');
 				this.broadcast('invitation', userInfos);
 
 		} else if (this.clients.length === 2 && options.loginName !== undefined) {
 
-					console.log(' -[ (Private) - onJoin ]- Player [2]');
+					//console.log(' -[ (Private) - onJoin ]- Player [2]');
 					this.client2 = client;
 					this.rpId = client.id;
 					this.rpUserName = options.username;
@@ -118,7 +118,7 @@ export class privateRoom extends Room<GameState> {
 		}
 
 		this.onMessage('player_disconnected', (client, message) => {
-			console.log('-[ onJoin() - onMessage\'PlayerDisconected\' )]- message: ', message);
+			//console.log('-[ onJoin() - onMessage\'PlayerDisconected\' )]- message: ', message);
 			// console.log(' -- Before -- appel onLeave()');
 			this.onLeave(client);
 			// console.log(' -- After -- appel onLeave()');
@@ -142,9 +142,7 @@ export class privateRoom extends Room<GameState> {
 			this.physics.setAngle(Math.PI);
 		}
 		if (this.state.gameStatus === GameStatus.INTERRUPTED) {
-
 		}
-
 		else {
 			// -[ End of Game ]- 
 			if (this.state.scoreboard.left >= this.winningScore || this.state.scoreboard.right >= this.winningScore) {
@@ -161,10 +159,10 @@ export class privateRoom extends Room<GameState> {
 					rpUserId: this.rpUserId,
 					rpScore: this.state.scoreboard.right,
 				}
-				console.log('-------Game Finished:');
+				//console.log('-------Game Finished:');
 				if (this.state.scoreboard.left > this.state.scoreboard.right) // [* Left Player Won *]
 				{
-					console.log(' - Game Results:', gameResults);
+					//console.log(' - Game Results:', gameResults);
 					//console.log('[ tentative - Increment Rank Left Won ]...')
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client1] });
@@ -176,7 +174,7 @@ export class privateRoom extends Room<GameState> {
 				}
 				else //  [ *Right Player Won* ]
 				{
-					console.log('[ tentative - Increment Rank Right Won ]...')
+					//console.log('[ tentative - Increment Rank Right Won ]...')
 					this.broadcast('updateWinningScore', { winningScore: this.winningScore });
 					this.broadcast('scoreHistory', gameResults, { except: [this.client2] });
 					this.broadcast('gameFinished', { message: winnerMessage, winnerLogin: this.rpUserName }, { except: [this.client1] });
@@ -238,7 +236,7 @@ export class privateRoom extends Room<GameState> {
 	}
 
 	onDispose() {
-		console.log("-[ (Private) - onDispose() ]- ");
+		// console.log("-[ (Private) - onDispose() ]- ");
 	}
 
 }

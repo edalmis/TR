@@ -2,19 +2,21 @@
 	import { goto } from "$app/navigation";
 
 	async function LeaveGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/leaveGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try{
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch("http://localhost:3000/user/leaveGame", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+			});
 
-		if (response.ok) {
-			console.log("-[ Leave Game Button ]- ");
-		}
-		goto("/Friends");
+			if (response.ok) {
+				console.log("-[ Leave Game Button ]- ");
+			}
+			goto("/Friends");
+		}catch (e) {}
 	}
 </script>
 

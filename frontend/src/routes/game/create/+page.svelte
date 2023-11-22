@@ -346,12 +346,15 @@
 	}
 
 	function handleReconnection() {
-		isDisconnected = false;
-		isGamePaused = false; // Resume the game on reconnection
+		try {
+			isDisconnected = false;
+			isGamePaused = false; // Resume the game on reconnection
+		}catch (e) {}
 	}
 
 	//  Handle key events
 	function handleKeydown(e: KeyboardEvent) {
+		try {
 		if (isGamePaused) {
 			return; // Don't handle key events when the game is paused
 		}
@@ -367,6 +370,7 @@
 				room.send("paddleMove", { newDirection: PaddleDirection.DOWN });
 				break;
 		}
+		}catch (e) {}
 	}
 
 	enum PaddleDirection {
@@ -376,6 +380,7 @@
 	}
 
 	function handleKeyup(e: KeyboardEvent) {
+		try {
 		if (isGamePaused) {
 			return; // Don't handle key events when the game is paused
 		}
@@ -388,22 +393,26 @@
 			case "s":
 				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
 				break;
-		}
+		}}catch (e) {}
 	}
 
 	function resizeCanvas() {
-		const scale = Math.min(
-			window.innerWidth / GameDimensions.width,
-			window.innerHeight / GameDimensions.height
-		);
-		ctx.canvas.width = GameDimensions.width * scale;
-		ctx.canvas.height = GameDimensions.height * scale;
-		ctx.scale(scale, scale);
+		try{
+			const scale = Math.min(
+				window.innerWidth / GameDimensions.width,
+				window.innerHeight / GameDimensions.height
+			);
+			ctx.canvas.width = GameDimensions.width * scale;
+			ctx.canvas.height = GameDimensions.height * scale;
+			ctx.scale(scale, scale);
+		}catch (e) {}
 	}
 	function renderLoop() {
-		requestAnimationFrame(renderLoop);
-		//gameRender();
-		gameRender(ctx, state);
+		try{
+			requestAnimationFrame(renderLoop);
+			//gameRender();
+			gameRender(ctx, state);
+		} catch (e) {}
 	}
 </script>
 

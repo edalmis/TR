@@ -2,19 +2,21 @@
 	import { goto } from "$app/navigation";
 
 	async function EnterGame() {
-		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/user/enterGame", {
-			method: "POST",
-			headers: {
-				Authorization: `Bearer ${jwt}`,
-				"Content-Type": "application/json",
-			},
-		});
+		try{
+			const jwt = localStorage.getItem("jwt");
+			const response = await fetch("http://localhost:3000/user/enterGame", {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+			});
 
 		if (response.ok) {
 			console.log("-[ Enter Game Button ]- ");
 		}
 		goto("/Friends");
+		}catch (e) {}
 	}
 </script>
 

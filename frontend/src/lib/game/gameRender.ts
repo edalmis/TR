@@ -31,93 +31,114 @@ paddleSize.subscribe((a) => {
 })
 
 export function drawTextCenter(ctx: CanvasRenderingContext2D, text: string) {
-    ctx.font = 'italic 58px Arial, sans-serif';
-    ctx.fillText(text, GameDimensions.width / 2, GameDimensions.height / 2);
+    try{
+        ctx.font = 'italic 58px Arial, sans-serif';
+        ctx.fillText(text, GameDimensions.width / 2, GameDimensions.height / 2);
+    }catch (e) {}
 }
 
 export function drawText(ctx: CanvasRenderingContext2D, text: string) {
-    ctx.font = 'italic 42px Arial, sans-serif';
-    ctx.fillText(text, GameDimensions.width / 2,(GameDimensions.height * 2) / 3);
+    try{
+        ctx.font = 'italic 42px Arial, sans-serif';
+        ctx.fillText(text, GameDimensions.width / 2,(GameDimensions.height * 2) / 3);
+    }catch (e) {}
 }
 
 export function drawHalfwayLine(ctx: CanvasRenderingContext2D, color: string) {
-    ctx.beginPath();
-    ctx.setLineDash([2, 4]);
-    ctx.strokeStyle = color; // Set the line color
-    ctx.moveTo(GameDimensions.width / 2, 0);
-    ctx.lineTo(GameDimensions.width / 2, GameDimensions.height);
-    ctx.stroke();
+    try{
+        ctx.beginPath();
+        ctx.setLineDash([2, 4]);
+        ctx.strokeStyle = color; // Set the line color
+        ctx.moveTo(GameDimensions.width / 2, 0);
+        ctx.lineTo(GameDimensions.width / 2, GameDimensions.height);
+        ctx.stroke();
+    }catch (e) {}
 }
 export function drawLeftDashedLine(ctx: CanvasRenderingContext2D, color: string) {
-    ctx.beginPath();
-    ctx.setLineDash([2, 4]);
-    ctx.strokeStyle = color;
-    ctx.moveTo(0, GameDimensions.height / 6);
-    ctx.lineTo(GameDimensions.width, GameDimensions.height / 6);
-    ctx.stroke();
-    ctx.moveTo(0, (GameDimensions.height / 6) * 5);
-    ctx.lineTo(GameDimensions.width, (GameDimensions.height / 6) * 5);
-    ctx.stroke();
+    try{
+        ctx.beginPath();
+        ctx.setLineDash([2, 4]);
+        ctx.strokeStyle = color;
+        ctx.moveTo(0, GameDimensions.height / 6);
+        ctx.lineTo(GameDimensions.width, GameDimensions.height / 6);
+        ctx.stroke();
+        ctx.moveTo(0, (GameDimensions.height / 6) * 5);
+        ctx.lineTo(GameDimensions.width, (GameDimensions.height / 6) * 5);
+        ctx.stroke();
+    }catch (e) {}
 
 }
 
 export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string) {
-    ctx.beginPath();
-    ctx.setLineDash([2, 4]);
-    ctx.strokeStyle = color;
-    ctx.moveTo((GameDimensions.width / 10) * 9, GameDimensions.height / 6);
-    ctx.lineTo((GameDimensions.width / 10) * 9, (GameDimensions.height / 6) * 5);
-    ctx.stroke();
-    ctx.moveTo((GameDimensions.width / 10), GameDimensions.height / 6);
-    ctx.lineTo((GameDimensions.width / 10), (GameDimensions.height / 6) * 5);
-    ctx.stroke();
+    try{
+        ctx.beginPath();
+        ctx.setLineDash([2, 4]);
+        ctx.strokeStyle = color;
+        ctx.moveTo((GameDimensions.width / 10) * 9, GameDimensions.height / 6);
+        ctx.lineTo((GameDimensions.width / 10) * 9, (GameDimensions.height / 6) * 5);
+        ctx.stroke();
+        ctx.moveTo((GameDimensions.width / 10), GameDimensions.height / 6);
+        ctx.lineTo((GameDimensions.width / 10), (GameDimensions.height / 6) * 5);
+        ctx.stroke();
+    }catch (e) {}
 }
 
 
 export function renderBall(ctx: CanvasRenderingContext2D, ball: Ball) {
-    ctx.beginPath();
-    ctx.arc(ball.x, ball.y, Ball.radius, 0, 2 * Math.PI);
-    ctx.closePath();
-    ctx.fill();
+    try{
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, Ball.radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.fill();
+    }catch (e) {}
 }
 
 export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
-    if (paddleSizeChoice === 'small') {
-        Paddle.width = 30;
-        Paddle.height = 160;
-    } else if (paddleSizeChoice === 'invisible') {
-        Paddle.width = 40;
-        Paddle.height = 0;
-    }
-    else {
-        Paddle.width = 40;
-        Paddle.height = 200;
-    }
-
-    ctx.fillRect(paddle.x - Paddle.width / 2, paddle.y - Paddle.height / 2, Paddle.width, Paddle.height);
+    try{
+        if (paddleSizeChoice === 'small') {
+            Paddle.width = 30;
+            Paddle.height = 160;
+        } else if (paddleSizeChoice === 'invisible') {
+            Paddle.width = 40;
+            Paddle.height = 0;
+        }
+        else {
+            Paddle.width = 40;
+            Paddle.height = 200;
+        }
+        ctx.fillRect(paddle.x - Paddle.width / 2, paddle.y - Paddle.height / 2, Paddle.width, Paddle.height);
+    }catch (e) {}
 }
 
 export function renderScoreboard(ctx: CanvasRenderingContext2D, scoreboard: Scoreboard) {
-    ctx.font = 'italic 58px Arial, sans-serif';
-    ctx.fillText(scoreboard.left.toString(), GameDimensions.width * (1 / 4), 100);
-    ctx.fillText(scoreboard.right.toString(), GameDimensions.width * (3 / 4), 100);
+    try{
+        ctx.font = 'italic 58px Arial, sans-serif';
+        ctx.fillText(scoreboard.left.toString(), GameDimensions.width * (1 / 4), 100);
+        ctx.fillText(scoreboard.right.toString(), GameDimensions.width * (3 / 4), 100);
+    }catch (e) {}
 }
 
 let isModalOpen = false;
-
 export function handleBackHomeModal() {
-    isModalOpen = true;
+    try{
+        isModalOpen = true;
+    }catch (e) {}
 }
 export function handleCancelLeaveGame() {
-    isModalOpen = false
+    try{
+        isModalOpen = false
+    }catch (e) {}
 }
 
 export function leaveGame() {
-    isModalOpen = false;
-    goto("/game");
+    try{
+        isModalOpen = false;
+        goto("/game");
+    }catch (e) {}
 }
 
 export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
+    try{
     let backgroundColor: string;
     let paddleColor: string;
 
@@ -156,4 +177,5 @@ export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
             drawTextCenter(ctx, 'Opponent is yourself!  Stop playing solo!');
             break;
     }
+    }catch (e) {}
 }

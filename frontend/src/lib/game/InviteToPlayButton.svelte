@@ -2,7 +2,9 @@
 	import { goto } from "$app/navigation";
 
 	async function handleInviteToPlay() {
+		try{
 		goto("/game");
+		}catch (e) {}
 	}
 </script>
 
