@@ -296,7 +296,8 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			}
 			if (userTwo) {
 				userTwo.emit('newMessagedm', {
-					messages: a
+					messages: a,
+					alert : true
 				})
 			}
 		} catch (e) { }
@@ -377,7 +378,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			const channel = await this.chatService.createChatRoom({
 				title,
 				isPrivate,
-				// password,
 				hashedPassword,
 				userId,
 				user
@@ -399,7 +399,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			if (await this.chatService.eligibleMember(str, id)) {
 				let messages = await this.chatService.listMessages(id);
-				// let contents = messages.map(message => message.content);
 				// console.log('Extracted contents:', messages);
 				const blockedMembersLogins = roomMembers.filter(member =>
 					member.user.blockedUser && member.user.blockedUser.includes(user.login)
@@ -481,11 +480,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('roomIdChatRoom')
 	async getRoomIdChatRoom(client: Socket, roomTitle: string) {
+		try{
 		let a = await this.chatService.findRoomIdByTitle(roomTitle)
 		// console.log('a-----------------', a)
 		client.emit('repRoomIdChatRoom', {
 			id: a,
 		})
+	} catch (e) { }
 	}
 
 
@@ -604,9 +605,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			// console.log('members----------', members)
 
 			// Check if the client is the owner
-			// const ownerId = this.userIdFindHelper.get(client.id);
 			// console.log('ownerID----------', ownerId)
-			// const isOwner = members.some(member => member.role === 'Owner' || 'Admin' && member.user.id === user.id);
 			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
 			// console.log('isowner----------', isOwner)
 
@@ -685,7 +684,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			const memberes = await this.chatService.findMembersByRoomId(room.id);
 
-			// const isOwner = memberes.some(member => member.role === 'Owner' && member.user.id === user.id);
 			const isOwner = memberes.some(member => (member.role === 'Owner') && member.user.id === user.id);
 			// console.log(isOwner)
 
@@ -737,7 +735,6 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 			// Check if the client is the owner
 			// console.log('ownerID----------', ownerId)
-			// const isOwner = members.some(member => (member.role === 'Owner' || 'Admin') && member.user.id === user.id);
 			const isOwner = members.some(member => (member.role === 'Owner' || member.role === 'Admin') && member.user.id === user.id);
 			// console.log('isowner----------', isOwner)
 

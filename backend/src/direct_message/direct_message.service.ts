@@ -22,6 +22,7 @@ export class DirectMessageService {
 	) { }
 
 	async sendMessage(sender: number, receiver: number, messageText: string): Promise<DirectMessage> {
+		try{
 		const userSender = await this.userService.find_user_by_id(sender);
 		const userReceiver = await this.userService.find_user_by_id(receiver);
 
@@ -50,9 +51,11 @@ export class DirectMessageService {
 		const mes = await this.dmRepository.save(message);
 
 		return mes;
+	} catch (e) { }
 	}
 
 	async findAllRoomsForUser(userId: number): Promise<EnhancedDirectMessageRoom[]> {
+		try{
 		const rooms = await this.roomRepository.createQueryBuilder("room")
 			.leftJoinAndSelect("room.userOne", "userOne")
 			.leftJoinAndSelect("room.userTwo", "userTwo")
@@ -73,18 +76,24 @@ export class DirectMessageService {
 		}));
 
 		return enhancedRooms;
+	} catch (e) { }
 	}
 
 	async findAllMessagesForRoom(roomId: number): Promise<DirectMessage[]> {
+		try {
 		const messages = await this.dmRepository.find({
 			where: { roomId: roomId },
 			order: { date: 'ASC' } // Order by date in ascending order, you can also use 'DESC' for descending
 		});
 		return messages;
+	} catch (e) { }
+
 	}
 
 	async clearDatabase() {
+		try{
 		await this.roomRepository.clear()
 		await this.dmRepository.clear()
+	} catch (e) { }
 	}
 }

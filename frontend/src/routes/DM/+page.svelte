@@ -23,11 +23,6 @@
 	let blockedUsername: boolean = false;
 	let messageListContainer: any = null;
 
-	interface Emoji {
-		unicode: string;
-		// other properties...
-	}
-
 	function scrollToBottom() {
 		try {
 			messageListContainer.scrollTop = messageListContainer.scrollHeight;
@@ -108,7 +103,7 @@
 
 		$session.on("newMessagedm", (data: any) => {
 			messages = [...messages, data.messages];
-			if (data.messages.sendTo == $user.id) {
+			if (data.alert && data.messages.sendTo == $user.id) {
 				alert(
 					"You have new direct message from " +
 						data.messages.senderLogin
@@ -126,6 +121,7 @@
 	});
 
 	function handleClick(use: number, logine: string) {
+	try{
 		// console.log('use----------',use)
 		if (
 			!(blockedUsername = usersIBlockedList.some(
@@ -148,9 +144,11 @@
 			chatMessage = "";
 			showEmojiPicker = false;
 		}
+	} catch (e) {}
 	}
 
 	function handleKeyPress(event: any) {
+	try{
 		if (event.key === "Enter" && !event.shiftKey) {
 			event.preventDefault();
 			handleClick(
@@ -162,13 +160,17 @@
 					: rooms[roomSelected].userOne.userName
 			);
 		}
+	} catch (e) {}
 	}
 
 	function handleEmojiSelect(event: any) {
+	try{
 		const selectedEmoji = event.detail.emoji;
 		chatMessage += selectedEmoji;
 		// console.log('emo',selectedEmoji)
 		// Do something with the selectedEmoji
+	} catch (e) {}
+
 	}
 </script>
 

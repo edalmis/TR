@@ -68,6 +68,7 @@
     const sessionStore = writable(null);
 
     function showNotification(message: string) {
+    try{
         const notification: Notification = {
             message,
             timestamp: Date.now(),
@@ -84,9 +85,11 @@
             );
             latestNotification.set(null);
         }, 5000); // Remove the notification after 5 seconds
+    } catch (e) {}
     }
 
     function promptPasswordAndEnter(room: any) {
+    try{
         enteredPassword = prompt("Enter password for room:");
 
         if (enteredPassword) {
@@ -125,6 +128,7 @@
                     console.error("An error occurred:", error.message);
                 });
         }
+    } catch (e) {}
     }
 
     let refresh: boolean;
@@ -344,15 +348,19 @@
     });
 
     function fetchMembersInRoom(roomId: string) {
+    try{
         $session.emit("getsMembersInRoom", roomId);
         usersInRoom = [];
+    } catch (e) {}
     }
 
     function scrollToBottom() {
+    try{
         const chatHistoryDiv = document.querySelector(".chat-history");
         if (chatHistoryDiv) {
             chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
         }
+    } catch (e) {}
     }
 
     $: if (chatMessages && chatMessages.length > 0) {
@@ -360,6 +368,7 @@
     }
 
     async function selectChatRoom(room: any) {
+    try{
         selectedChatRoom = room;
         selectedChatRoomid = room.id;
         // console.log('useri d ****', usere.id)
@@ -417,7 +426,6 @@
             fetchMembersInRoom(selectedChatRoomid);
 
             // Check if user is still kicked from this room
-            // if (new Date().getTime() <= (kickEndTimes[selectedChatRoomid] || 0)) {
             if (
                 new Date().getTime() <= (kickEndTimes[selectedChatRoomid] || 0)
             ) {
@@ -463,16 +471,20 @@
 
             $session.emit("getMessagesInChatRoom", selectedChatRoomid);
         });
+    } catch (e) {}
     }
 
     function handleEmojiSelect(event: any) {
+    try{
         const selectedEmoji = event.detail.emoji;
         message += selectedEmoji;
         // console.log('emo',selectedEmoji)
         // Do something with the selectedEmoji
+    } catch (e) {}
     }
 
     function createChatRoom() {
+    try{
         const payload = {
             title,
             member,
@@ -483,9 +495,11 @@
         };
         $session.emit("sendChatRooms", payload);
         showChatRoom = false;
+    } catch (e) {}
     }
 
     function sendMessage() {
+    try{
         // console.log('here***-*-*-*-*-')
 
         $session.emit("sendMessageChannel", {
@@ -497,42 +511,52 @@
         // console.log(selectedChatRoomid)
 
         message = ""; // Clear the message after sending
+    } catch (e) {}
     }
 
     function clean() {
+    try{
         // showChatHistory = true;
         showChatWindow = true;
         showChatRoom = true;
+    } catch (e) {}
     }
 
     function kickUser(user: any, login: string, roomId: string, duration: any) {
+    try{
         $session.emit("kickUser", {
             user,
             roomId: roomId,
             login: login,
             duration,
         });
+    } catch (e) {}
     }
     function muteUser(user: any, login: string, roomId: string, duration: any) {
+    try{
         $session.emit("muteUser", {
             user,
             roomId: roomId,
             login: login,
             duration,
         });
+    } catch (e) {}
     }
 
     function banUser(user: any, login: string, roomId: string) {
+    try{
         $session.emit("banUser", { user, roomId: roomId, login: login });
+    } catch (e) {}
     }
+
     function makeAdmin(user: any, login: string, roomId: string) {
+    try{
         $session.emit("makeAdmin", { user, roomId: roomId, login: login });
-        // const notificationMessage = `New Admin selected in room "${selectedChatRoom.title}" congratulations!`;
-        // showNotification(notificationMessage);
-        // fetchMembersInRoom(selectedChatRoomid);
+    } catch (e) {}
     }
 
     function unbanUser(user: any, userId: any, roomId: any) {
+    try{
         $session.emit("unbanUser", { user, userId, roomId });
 
         // Listen for confirmation or errors
@@ -543,11 +567,13 @@
         $session.on("unbanError", ({ message }: any) => {
             // Handle the error (e.g., display an error message to the admin)
         });
+    } catch (e) {}
     }
 
     //------------------------------OFFLINE ADDINGS----------------------------===============
 
     async function leaveChatRoom() {
+        try{
         if (selectedChatRoom) {
             $session.emit("leaveChatRoom", {
                 user: usere,
@@ -558,9 +584,11 @@
         } else {
             console.warn("No chat room selected to leave.");
         }
+    } catch (e) { }
     }
 
     async function passChatRoom() {
+        try{
         if (selectedChatRoom) {
             let newPassword;
             if (selectedChatRoom.password) {
@@ -581,9 +609,11 @@
                 console.warn("Password change aborted. No password provided.");
             }
         }
+    } catch (e) { }
     }
 
     async function cancelpassChatRoom() {
+        try{
         if (selectedChatRoom) {
             if (selectedChatRoom.hashedPassword) {
                 $session.emit("cancelpassChatRoom", {
@@ -594,23 +624,29 @@
         } else {
             console.warn("Password cancel aborted..");
         }
+    } catch (e) { }
     }
 
     function openProfileModal(username: any) {
+    try{
         userToDisplay = username;
         isProfileModalOpen = true;
         isModalVisible = true;
+    } catch (e) {}
     }
 
     function toggleModal() {
+    try{
         isModalVisible = !isModalVisible;
 
         if (!isModalVisible) {
             isProfileModalOpen = false;
         }
+    } catch (e) {}
     }
 
     function handleKeyDown(event: any) {
+    try{
         // If the Enter key is pressed
         if (event.key === "Enter") {
             event.preventDefault(); // To prevent a newline or form submission
@@ -631,6 +667,7 @@
             event.target.selectionStart = start + 1;
             event.target.selectionEnd = start + 1;
         }
+    } catch (e) {}
     }
 </script>
 
