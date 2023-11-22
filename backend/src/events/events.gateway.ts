@@ -46,6 +46,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	}
 
 	async handleConnection(client: Socket) {
+		try {
 		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
 		if (connected) {
 			// console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
@@ -71,9 +72,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			this.server.emit('onlineUsersUpdate', usersDatas);
 			// console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
 		}
+	} catch (e) { }
 	}
 
 	async handleDisconnect(client: Socket) {
+		try {
 		this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
 		this.userIdFindHelper.delete(client.id);
 
@@ -88,6 +91,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		}
 		this.server.emit('onlineUsersUpdate', usersDatas);
 		// console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
+	} catch (e) { }
 	}
 
 	@SubscribeMessage('getOnlineUsersDatas')

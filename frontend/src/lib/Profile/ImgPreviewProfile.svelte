@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { closeModal } from "$lib/store/ModalValues";
+  import { onDestroy } from "svelte";
 
 	export let image: string;
 	export let login: string;
@@ -29,6 +30,9 @@
 		closeModal();
 		goto("/Profile");
 	}
+	onDestroy(()=>{
+        closeModal();
+    })
 </script>
 
 <div>

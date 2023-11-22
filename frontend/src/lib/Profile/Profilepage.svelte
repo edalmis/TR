@@ -130,6 +130,7 @@
 	onDestroy(() => {
 		$session.off("newMessagedm");
 		$session.off("updateAvata");
+		closeModal();
 	});
 
 	async function handleChangeName() {
@@ -201,6 +202,9 @@
 	function reset_inputs(person: any) {
 		newImg = person ? person.newImg : "";
 	}
+	onDestroy(() => {
+		closeModal();
+	});
 </script>
 
 {#if show_Modal}

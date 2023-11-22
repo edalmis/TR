@@ -34,7 +34,7 @@ export class ChatService {
 
 			// Assigning the user as the owner of the room in ChatRoomMember entity
 
-			console.log("USERRR", payload.user)
+			// console.log("USERRR", payload.user)
 			const newOwner = this.chatRoomMemberRepository.create({
 				user: payload.user,
 				chatRoom: savedRoom,
@@ -453,7 +453,7 @@ export class ChatService {
 			if (!chatRoom.isPrivate)
 				chatRoom.isPrivate = true;
 			// chatRoom.password = newPassword;
-			let hashedPassword;
+			let hashedPassword: string;
 			const saltRounds = 10; // or another number of rounds
 			hashedPassword = await bcrypt.hash(newPassword, saltRounds);
 			chatRoom.hashedPassword = hashedPassword;

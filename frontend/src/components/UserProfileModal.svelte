@@ -1,8 +1,9 @@
 <script lang="ts">
     import { session } from "$lib/store/store";
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { InvitedUserId, InvitedUserLogin } from "$lib/store/store";
     import InviteToPlayButton from "$lib/game/InviteToPlayButton.svelte";
+  import { closeModal } from "$lib/store/ModalValues";
 
     export let username: any ; 
     
@@ -11,7 +12,7 @@
     
 
     onMount(() => {
-        console.log('here', username)
+        // console.log('here', username)
             $session.emit('message', username);
 
             $session.on("userResponse", (data: any) => {
@@ -26,7 +27,9 @@
             };
             
     });
-
+    onDestroy(()=>{
+        closeModal();
+    })
 
 </script>
 
