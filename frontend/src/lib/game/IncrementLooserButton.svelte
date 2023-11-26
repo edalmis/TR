@@ -18,6 +18,9 @@
 			if (response.ok) {
 				console.log("-[ Increment Looser ]- Score Looser Updated !");
 			}
+			else {
+					goto("/");
+				}
 			goto("/Profile");
 		}catch (e) {}
 	}

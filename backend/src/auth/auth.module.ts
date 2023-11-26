@@ -30,7 +30,7 @@ import { DirectMessageRoom } from 'src/direct_message/direct_message_room.entity
       global: true,
       secret: process.env.JWTSECRET,
       signOptions: { expiresIn: '8h' },
-      //signOptions: { expiresIn: '1m' },
+      // signOptions: { expiresIn: '1m' },
     }),
   ],
 

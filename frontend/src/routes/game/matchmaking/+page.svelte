@@ -161,7 +161,9 @@
 			if (response.ok) {
 				// console.log("-[ Enter Game Button ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
-			}
+			}else {
+			goto("/");
+		}
 		} catch (e) {}
 	}
 
@@ -182,7 +184,9 @@
 			if (response.ok) {
 				// console.log("-[ Leave Game ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
-			}
+			}else {
+			goto("/");
+		}
 		} catch (e) {}
 	}
 
@@ -203,7 +207,9 @@
 
 			if (response.ok) {
 				// console.log("-[ Match History ]-  Set !");
-			}
+			}else {
+			goto("/");
+		}
 		} catch (e) {}
 	}
 

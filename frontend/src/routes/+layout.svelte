@@ -108,6 +108,7 @@
 			} else {
 				localStorage.clear();
 				authentificated.set(false);
+				goto("/");
 				return -1;
 			}
 		} catch (e) {
@@ -219,6 +220,9 @@
 						isGoogleAuthActivated.set(true);
 						qrGoogle.set(res.url);
 						//console.log("-[ Enable 2fa]- qrSource: ", QrSource);
+					}
+					else {
+					goto("/");
 					}
 					// else {console.log("-[ Layout Get QR ]-  PROBLEME pas OK");}
 				}

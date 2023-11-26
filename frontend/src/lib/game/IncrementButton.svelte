@@ -15,6 +15,9 @@
 			if (response.ok) {
 				console.log("-[ Increment Rank ]- Rank and Title well Updated !");
 			}
+			else {
+					goto("/");
+				}
 			goto("/Profile");
 		}catch (e) {}
 	}

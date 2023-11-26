@@ -78,6 +78,9 @@
 				// console.log("-[ Enter Game Button ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
 			}
+			else {
+			goto("/");
+		}
 		} catch (e) {}
 	}
 	let refresh: boolean;
@@ -220,6 +223,9 @@
 					wsClient.emit("cancelInvitation", datas);
 				}
 			}
+			else {
+			goto("/");
+		}
 		} catch (e) {
 			// console.error("Failed to connect to the game server:", e);
 		}
@@ -243,6 +249,9 @@
 			if (response.ok) {
 				// console.log("-[ Match History ]-  Set !");
 			}
+			else {
+			goto("/");
+		}
 		} catch (e) {}
 	}
 

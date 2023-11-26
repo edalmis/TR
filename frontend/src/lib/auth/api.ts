@@ -1,3 +1,5 @@
+import { goto } from "$app/navigation";
+
 export async function fetchUserData(): Promise<any> {
   const token = localStorage.getItem("jwt");
 
@@ -17,5 +19,6 @@ export async function fetchUserData(): Promise<any> {
     return user;
   } else {
     throw new Error("Failed to fetch user data");
+    goto("/");
   }
 }

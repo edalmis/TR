@@ -24,6 +24,9 @@
 		if (response.ok) {
 			console.log("-[ Disable 2fa ]- OK ");
 		}
+		else {
+			goto("/");
+		}
 		isGoogleAuthEnabled.set(false);
 		isGoogleAuthActivated.set(false);
 		googleAuth.set(false);

@@ -227,6 +227,9 @@
 					const user = await response.json();
 					pictureLink = user.avatar;
 				}
+				else {
+					goto("/");
+				}
 
 				// [ InGame Users ]
 				const inGameUsersListResponse = await fetch(
@@ -245,6 +248,9 @@
 						inGameUsersEmptyArray = true;
 					}
 					// console.log("inGameUsersList: ", inGameUsersList);
+				}
+				else {
+					goto("/");
 				}
 
 				// [ Pending List ]
@@ -289,6 +295,8 @@
 						friendsListDatasEmptyArray = false;
 					}
 					// console.log("friendsListDatas: ", friendsListDatas);
+				}	else {
+					goto("/");
 				}
 
 				// [ Sent Requests List ]
@@ -308,6 +316,8 @@
 						sentRequestListEmptyArray = true;
 					}
 					// console.log("sendRequest List: ", sentRequestsList);
+				}else {
+					goto("/");
 				}
 
 				// [ Users I Blocked List ]
@@ -327,6 +337,8 @@
 						usersIBlockedEmptyArray = true;
 					}
 					// console.log("usersIblockedList: ", usersIBlockedList);
+				}else {
+					goto("/");
 				}
 
 				// [ Users Who Blocked Me ]
@@ -347,6 +359,8 @@
 						usersWhoBlockedMeEmptyArray = true;
 					}
 					// console.log("usersWhoBlockedMeList: ",usersWhoBlockedMeList);
+				}else {
+					goto("/");
 				}
 
 				// [ Online Friends ]
@@ -424,6 +438,7 @@
 			});
 		} else {
 			// console.log("response { NOT OK } du [ Add Friend ]");
+			goto("/");
 		}
 
 		closeModal();
@@ -451,6 +466,7 @@
 			});
 		} else {
 			// console.log("response { NOT OK } du [ Refuse Friend ]");
+			goto("/");
 		}
 
 		closeModal();
@@ -479,6 +495,8 @@
 			});
 		} else {
 			// console.log("response { NOT OK } du [ Undo Friend ]");
+			goto("/");
+				
 		}
 
 		closeModal();

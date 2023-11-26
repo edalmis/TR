@@ -84,6 +84,8 @@
 					InvitedUserLogin.set(otherUser.login);
 					InvitedUserUsername.set(otherUser.username);
 					InvitedUserId.set(otherUser.id);
+				}else {
+					goto("/");
 				}
 
 				// Get Match History
@@ -127,13 +129,14 @@
 			}
 		);
 		if (response.ok) {
-			console.log("response { OK } du [ Undo Friend ] ", response.ok);
+			// console.log("response { OK } du [ Undo Friend ] ", response.ok);
 			await socket.emit("updateFriendList", {
 				idToAccept: friendId,
 				myId: id,
 			});
 		} else {
-			console.log("response { NOT OK } du [ Undo Friend ]");
+			// console.log("response { NOT OK } du [ Undo Friend ]")
+			goto("/");
 		}
 
 		closeModal();
@@ -155,6 +158,7 @@
 			// console.log("response { OK } du [ Block User ]");
 		} else {
 			// console.log("response { NOT OK } du [ Block User ]");
+			goto("/");
 		}
 		closeModal();
 		goto("/");
@@ -176,6 +180,7 @@
 			// console.log("response { OK } du [ Unblock User ]");
 		} else {
 			// console.log("response { NOT OK } du [ Unblock User ]");
+			goto("/");
 		}
 		isModalOpen = false;
 		closeModal();

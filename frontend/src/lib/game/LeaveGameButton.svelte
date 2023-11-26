@@ -15,6 +15,9 @@
 			if (response.ok) {
 				console.log("-[ Leave Game Button ]- ");
 			}
+			else {
+					goto("/");
+			}
 			goto("/Friends");
 		}catch (e) {}
 	}

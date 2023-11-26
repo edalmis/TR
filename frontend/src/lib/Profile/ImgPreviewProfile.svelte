@@ -22,6 +22,9 @@
 		if (response.ok) {
 			console.log("-[ Change Image ]- New Image bien Set");
 		}
+		else {
+			goto("/");
+		}
 		closeModal();
 		goto("/");
 	}
