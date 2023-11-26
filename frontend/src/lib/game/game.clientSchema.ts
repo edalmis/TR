@@ -22,7 +22,7 @@ let paddleSizeChoice: string = 'normal';
 
 paddleSize.subscribe((a) => {
 	paddleSizeChoice = a;
-	console.log("Game schema [paddleSizeChoice] :", paddleSizeChoice);
+	// console.log("Game schema [paddleSizeChoice] :", paddleSizeChoice);
 })
 
 export class Paddle extends Schema {

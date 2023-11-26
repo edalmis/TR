@@ -9,8 +9,10 @@ import { ConfigService } from "@nestjs/config";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-const frontUrl = 'http://localhost:5173';
-const redirect_uri = encodeURIComponent('http://localhost:3000/auth/42api-return');
+// const frontUrl = 'http://localhost:5173';
+// const host = this.configService.get<string>('HOST');
+// const front_port = this.configService.get<string>('FRONTEND_PORT');
+// const back_port = this.configService.get<string>('BACKEND_PORT');
 
 @Controller('auth')
 export class AuthController {
@@ -22,13 +24,15 @@ export class AuthController {
         private jwtService: JwtService,
     ) { }
 
-
     /////////////////////////////////   [ 4 2   A u t h ]        //////////////////////////////////
     // --> [ ** Etape 1 **   -> Rediriger le User vers l'Api de 42 afin d'avoir un GET 'code' ] <--
     @Get('42')
     @HttpCode(302)
     redirect(@Response() res) {
         try {
+            const host = this.configService.get<string>('HOST');
+            const back_port = this.configService.get<string>('BACKEND_PORT');
+            const redirect_uri = encodeURIComponent(`http://${host}:${back_port}/auth/42api-return`);
             const api_uid: string = this.configService.get<string>('UID');
             const url_42: string = `https://api.intra.42.fr/oauth/authorize?client_id=${api_uid}&redirect_uri=${redirect_uri}&response_type=code`;
             res.redirect(url_42);
@@ -47,16 +51,21 @@ export class AuthController {
             const jwtdecoded = await this.jwtService.decode(jwt) as { login: string };;
             //console.log("le jwtdecoded :", jwtdecoded);
             const user = await this.userService.find_user_by_login(jwtdecoded.login);
+            const host = this.configService.get<string>('HOST');
+            const front_port = this.configService.get<string>('FRONTEND_PORT');
             if (user.fa2 === true) {
                 // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { True }");
+
                 const login: string = user.login;
-                const frontUrl = `http://localhost:5173/?login=${login}`;
+                // const frontUrl = `http://localhost:5173/?login=${login}`;
+                const frontUrl = `http://${host}:${front_port}/?login=${login}`;
                 res.redirect(frontUrl);
             }
             else {
                 // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { False }");
                 // redirection vers le front avec le Jwt en Url
-                const frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
+                // const frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
+                const frontendUrl = `http://${host}:${front_port}/?jwt=${jwt}`;
                 res.redirect(frontendUrl);
             }
         }
@@ -92,7 +101,10 @@ export class AuthController {
     @Get('get_google_2fa')
     async get_google_2fa(@Request() req, @Response() res) {
         try {
-            const url = new URL(req.url, 'http://localhost:5173');
+            const host = this.configService.get<string>('HOST');
+            const front_port = this.configService.get<string>('FRONTEND_PORT');
+            // const adress: string = `http://${host}:${front_port}`;
+            const url = new URL(req.url, `http://${host}:${front_port}`);
             // Vérifiez si le paramètre "code" est présent dans l'URL
             if (url.searchParams.has('login')) {
                 const login = url.searchParams.get('login');
@@ -194,7 +206,9 @@ export class AuthController {
                 //const newJwt = await this.authService.asign_jtw_token(payload);;
                 const newJwt = await this.jwtAuthService.createToken(payload);
                 res.header('Authorization', `Bearer ${newJwt}`);
-                const frontendUrl = `http://localhost:5173/?jwt=${newJwt}`;
+                const host = this.configService.get<string>('HOST');
+                const front_port = this.configService.get<string>('FRONTEND_PORT');
+                const frontendUrl = `http://${host}:${front_port}/?jwt=${newJwt}`;
                 res.redirect(frontendUrl);
 
             }
@@ -219,7 +233,11 @@ export class AuthController {
             }
             const updatedUser = await this.userService.change_avatar(login, img);
             // console.log("-[ Img ]-  new Avatar: ", updatedUser.avatar);
-            res.redirect(frontUrl);
+            const host = this.configService.get<string>('HOST');
+            const front_port = this.configService.get<string>('FRONTEND_PORT');
+            const frontendUrl = `http://${host}:${front_port}`;
+            res.redirect(frontendUrl);
+            // res.redirect(frontUrl);
         } catch (e) { }
     }
 

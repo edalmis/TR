@@ -21,41 +21,41 @@ const PaddleColors: any = {
 let backgroundColorChoice: string;
 backgroundColor.subscribe((a) => {
     backgroundColorChoice = a;
-    console.log("gameRender:", backgroundColorChoice);
+    // console.log("gameRender:", backgroundColorChoice);
 });
 
 let paddleSizeChoice: string;
 paddleSize.subscribe((a) => {
     paddleSizeChoice = a;
-    console.log("paddleSizeChoice :", paddleSizeChoice);
+    // console.log("paddleSizeChoice :", paddleSizeChoice);
 })
 
 export function drawTextCenter(ctx: CanvasRenderingContext2D, text: string) {
-    try{
+    try {
         ctx.font = 'italic 58px Arial, sans-serif';
         ctx.fillText(text, GameDimensions.width / 2, GameDimensions.height / 2);
-    }catch (e) {}
+    } catch (e) { }
 }
 
 export function drawText(ctx: CanvasRenderingContext2D, text: string) {
-    try{
+    try {
         ctx.font = 'italic 42px Arial, sans-serif';
-        ctx.fillText(text, GameDimensions.width / 2,(GameDimensions.height * 2) / 3);
-    }catch (e) {}
+        ctx.fillText(text, GameDimensions.width / 2, (GameDimensions.height * 2) / 3);
+    } catch (e) { }
 }
 
 export function drawHalfwayLine(ctx: CanvasRenderingContext2D, color: string) {
-    try{
+    try {
         ctx.beginPath();
         ctx.setLineDash([2, 4]);
         ctx.strokeStyle = color; // Set the line color
         ctx.moveTo(GameDimensions.width / 2, 0);
         ctx.lineTo(GameDimensions.width / 2, GameDimensions.height);
         ctx.stroke();
-    }catch (e) {}
+    } catch (e) { }
 }
 export function drawLeftDashedLine(ctx: CanvasRenderingContext2D, color: string) {
-    try{
+    try {
         ctx.beginPath();
         ctx.setLineDash([2, 4]);
         ctx.strokeStyle = color;
@@ -65,12 +65,12 @@ export function drawLeftDashedLine(ctx: CanvasRenderingContext2D, color: string)
         ctx.moveTo(0, (GameDimensions.height / 6) * 5);
         ctx.lineTo(GameDimensions.width, (GameDimensions.height / 6) * 5);
         ctx.stroke();
-    }catch (e) {}
+    } catch (e) { }
 
 }
 
 export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string) {
-    try{
+    try {
         ctx.beginPath();
         ctx.setLineDash([2, 4]);
         ctx.strokeStyle = color;
@@ -80,21 +80,21 @@ export function drawRightDashedLine(ctx: CanvasRenderingContext2D, color: string
         ctx.moveTo((GameDimensions.width / 10), GameDimensions.height / 6);
         ctx.lineTo((GameDimensions.width / 10), (GameDimensions.height / 6) * 5);
         ctx.stroke();
-    }catch (e) {}
+    } catch (e) { }
 }
 
 
 export function renderBall(ctx: CanvasRenderingContext2D, ball: Ball) {
-    try{
+    try {
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, Ball.radius, 0, 2 * Math.PI);
         ctx.closePath();
         ctx.fill();
-    }catch (e) {}
+    } catch (e) { }
 }
 
 export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
-    try{
+    try {
         if (paddleSizeChoice === 'small') {
             Paddle.width = 30;
             Paddle.height = 160;
@@ -107,75 +107,75 @@ export function renderPaddle(ctx: CanvasRenderingContext2D, paddle: Paddle) {
             Paddle.height = 200;
         }
         ctx.fillRect(paddle.x - Paddle.width / 2, paddle.y - Paddle.height / 2, Paddle.width, Paddle.height);
-    }catch (e) {}
+    } catch (e) { }
 }
 
 export function renderScoreboard(ctx: CanvasRenderingContext2D, scoreboard: Scoreboard) {
-    try{
+    try {
         ctx.font = 'italic 58px Arial, sans-serif';
         ctx.fillText(scoreboard.left.toString(), GameDimensions.width * (1 / 4), 100);
         ctx.fillText(scoreboard.right.toString(), GameDimensions.width * (3 / 4), 100);
-    }catch (e) {}
+    } catch (e) { }
 }
 
 let isModalOpen = false;
 export function handleBackHomeModal() {
-    try{
+    try {
         isModalOpen = true;
-    }catch (e) {}
+    } catch (e) { }
 }
 export function handleCancelLeaveGame() {
-    try{
+    try {
         isModalOpen = false
-    }catch (e) {}
+    } catch (e) { }
 }
 
 export function leaveGame() {
-    try{
+    try {
         isModalOpen = false;
         goto("/game");
-    }catch (e) {}
+    } catch (e) { }
 }
 
 export function gameRender(ctx: CanvasRenderingContext2D, state: GameState) {
-    try{
-    let backgroundColor: string;
-    let paddleColor: string;
+    try {
+        let backgroundColor: string;
+        let paddleColor: string;
 
-    backgroundColor = BackgroundColors[backgroundColorChoice] || BackgroundColors.default;
-    paddleColor = PaddleColors[backgroundColorChoice] || PaddleColors.default;
-    ctx.fillStyle = backgroundColor;
+        backgroundColor = BackgroundColors[backgroundColorChoice] || BackgroundColors.default;
+        paddleColor = PaddleColors[backgroundColorChoice] || PaddleColors.default;
+        ctx.fillStyle = backgroundColor;
 
-    ctx.fillRect(0, 0, GameDimensions.width, GameDimensions.height);
-    ctx.fillStyle = paddleColor;
-    ctx.lineWidth = 8;
-    
-    ctx.textAlign = "center";
-    
-    switch (state.gameStatus) {
-        case GameStatus.WAITING:
-            drawTextCenter(ctx, 'Waiting an Opponent...');
-            drawText(ctx, 'UP Down W S to play');
-            break;
-        case GameStatus.PLAYING:
-            drawHalfwayLine(ctx, 'white');
-            drawLeftDashedLine(ctx, 'white');
-            drawRightDashedLine(ctx, 'white');
-            renderBall(ctx, state.ball);
-            renderPaddle(ctx, state.leftPaddle);
-            renderPaddle(ctx, state.rightPaddle);
-            renderScoreboard(ctx, state.scoreboard);
-            break;
-        case GameStatus.FINISHED:
-            renderScoreboard(ctx, state.scoreboard);
-            drawTextCenter(ctx, 'Game Over !');
-            break;
-        case GameStatus.INTERRUPTED:
-            drawTextCenter(ctx, 'Opponent left, You Win Bro !');
-            break;
-        case GameStatus.STOPSOLO:
-            drawTextCenter(ctx, 'Opponent is yourself!  Stop playing solo!');
-            break;
-    }
-    }catch (e) {}
+        ctx.fillRect(0, 0, GameDimensions.width, GameDimensions.height);
+        ctx.fillStyle = paddleColor;
+        ctx.lineWidth = 8;
+
+        ctx.textAlign = "center";
+
+        switch (state.gameStatus) {
+            case GameStatus.WAITING:
+                drawTextCenter(ctx, 'Waiting an Opponent...');
+                drawText(ctx, 'UP Down W S to play');
+                break;
+            case GameStatus.PLAYING:
+                drawHalfwayLine(ctx, 'white');
+                drawLeftDashedLine(ctx, 'white');
+                drawRightDashedLine(ctx, 'white');
+                renderBall(ctx, state.ball);
+                renderPaddle(ctx, state.leftPaddle);
+                renderPaddle(ctx, state.rightPaddle);
+                renderScoreboard(ctx, state.scoreboard);
+                break;
+            case GameStatus.FINISHED:
+                renderScoreboard(ctx, state.scoreboard);
+                drawTextCenter(ctx, 'Game Over !');
+                break;
+            case GameStatus.INTERRUPTED:
+                drawTextCenter(ctx, 'Opponent left, You Win Bro !');
+                break;
+            case GameStatus.STOPSOLO:
+                drawTextCenter(ctx, 'Opponent is yourself!  Stop playing solo!');
+                break;
+        }
+    } catch (e) { }
 }
