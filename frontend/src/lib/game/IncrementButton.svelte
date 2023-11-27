@@ -4,7 +4,7 @@
 	async function IncrementRank() {
 		try{
 			const jwt = localStorage.getItem("jwt");
-			const response = await fetch("http://{process.env.HOST}:3000/user/increment", {
+			const response = await fetch(`http://${process.env.HOST}:3000/user/increment`, {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${jwt}`,

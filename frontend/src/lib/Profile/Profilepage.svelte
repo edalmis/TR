@@ -74,7 +74,7 @@
 				goto("/");
 			} else {
 				const response = await fetch(
-					"http://{process.env.HOST}:3000/user/profile",
+					`http://${process.env.HOST}:3000/user/profile`,
 					{
 						method: "GET",
 						headers: {
@@ -138,7 +138,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, newUsername: newUserName };
 
-		const response = await fetch("http://{process.env.HOST}:3000/auth/changeName", {
+		const response = await fetch(`http://${process.env.HOST}:3000/auth/changeName`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,

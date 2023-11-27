@@ -48,7 +48,7 @@
 			// Users I Blocked List----------------------------------------------
 			const jwt = localStorage.getItem("jwt");
 			const blockedUsersListResponse = await fetch(
-				`http://{process.env.HOST}:3000/user/blockUserList`,
+				`http://${process.env.HOST}:3000/user/blockUserList`,
 				{
 					method: "GET",
 					headers: {
@@ -68,7 +68,7 @@
 
 			// Users Who Blocked Me
 			const usersWhoBlockedMeListResponse = await fetch(
-				`http://{process.env.HOST}:3000/user/blockedByList`,
+				`http://${process.env.HOST}:3000/user/blockedByList`,
 				{
 					method: "GET",
 					headers: {

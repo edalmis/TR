@@ -214,7 +214,7 @@
 
 				// [ User - Me]
 				const response = await fetch(
-					"http://{process.env.HOST}:3000/user/profile",
+					`http://${process.env.HOST}:3000/user/profile`,
 					{
 						method: "GET",
 						headers: {
@@ -233,7 +233,7 @@
 
 				// [ InGame Users ]
 				const inGameUsersListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/inGameUsers`,
+					`http://${process.env.HOST}:3000/user/inGameUsers`,
 					{
 						method: "GET",
 						headers: {
@@ -255,7 +255,7 @@
 
 				// [ Pending List ]
 				const pendingListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/pendingList`,
+					`http://${process.env.HOST}:3000/user/pendingList`,
 					{
 						method: "GET",
 						headers: {
@@ -278,7 +278,7 @@
 
 				// [ Friends List ]
 				const friendsListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/friendsList`,
+					`http://${process.env.HOST}:3000/user/friendsList`,
 					{
 						method: "GET",
 						headers: {
@@ -301,7 +301,7 @@
 
 				// [ Sent Requests List ]
 				const sentRequestsListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/sentRequestsList`,
+					`http://${process.env.HOST}:3000/user/sentRequestsList`,
 					{
 						method: "GET",
 						headers: {
@@ -322,7 +322,7 @@
 
 				// [ Users I Blocked List ]
 				const blockedUsersListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/blockUserList`,
+					`http://${process.env.HOST}:3000/user/blockUserList`,
 					{
 						method: "GET",
 						headers: {
@@ -343,7 +343,7 @@
 
 				// [ Users Who Blocked Me ]
 				const usersWhoBlockedMeListResponse = await fetch(
-					`http://{process.env.HOST}:3000/user/blockedByList`,
+					`http://${process.env.HOST}:3000/user/blockedByList`,
 					{
 						method: "GET",
 						headers: {
@@ -418,7 +418,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToAccept: friendId };
 		//console.log("-[ Add Friend ]- username sent: ", username);
-		const response = await fetch("http://{process.env.HOST}:3000/user/addFriend", {
+		const response = await fetch(`http://${process.env.HOST}:3000/user/addFriend`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
@@ -448,7 +448,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToRefuse: friendId };
 		const response = await fetch(
-			"http://{process.env.HOST}:3000/user/refuseFriendRequest",
+			`http://${process.env.HOST}:3000/user/refuseFriendRequest`,
 			{
 				method: "POST",
 				headers: {
@@ -477,7 +477,7 @@
 		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const response = await fetch(
-			"http://{process.env.HOST}:3000/user/removeFriend",
+			`http://${process.env.HOST}:3000/user/removeFriend`,
 			{
 				method: "POST",
 				headers: {

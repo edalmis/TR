@@ -17,7 +17,7 @@
 
 	async function handleVerifyCode() {
 		const response = await fetch(
-			`http://{process.env.HOST}:3000/auth/verify_2fa?code=${codeVerif}&login=${login}`,
+			`http://${process.env.HOST}:3000/auth/verify_2fa?code=${codeVerif}&login=${login}`,
 			{
 				method: "GET",
 				headers: {

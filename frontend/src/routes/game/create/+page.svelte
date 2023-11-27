@@ -64,7 +64,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				"http://{process.env.HOST}:3000/user/enterGame",
+				`http://${process.env.HOST}:3000/user/enterGame`,
 				{
 					method: "POST",
 					headers: {
@@ -96,7 +96,7 @@
 		}
 
 		console.log("Connection Ws Colyseus [ 3001 ]");
-		client = new Colyseus.Client("ws://{process.env.HOST}:3001");
+		client = new Colyseus.Client(`ws://${process.env.HOST}:3001`);
 		clientColyseus.set(client);
 		navbar.set(false);
 		launchedGame.set(true);
@@ -198,7 +198,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				"http://{process.env.HOST}:3000/user/leaveGame",
+				`http://${process.env.HOST}:3000/user/leaveGame`,
 				{
 					method: "POST",
 					headers: {
@@ -235,7 +235,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				"http://{process.env.HOST}:3000/user/matchHistory",
+				`http://${process.env.HOST}:3000/user/matchHistory`,
 				{
 					method: "POST",
 					headers: {

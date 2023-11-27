@@ -3,7 +3,7 @@
 
 	export async function checkJWT() {
 		const host = process.env.HOST;
-		// const jwt_verifier_url = "http://{process.env.HOST}:3000/auth/verifier_jwt";
+		// const jwt_verifier_url = "http://${process.env.HOST}:3000/auth/verifier_jwt";
 		const jwt_verifier_url = `http://${host}:3000/auth/verifier_jwt`;
 		
 		const token = localStorage.getItem("jwt");

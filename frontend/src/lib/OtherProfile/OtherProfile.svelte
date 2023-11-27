@@ -53,7 +53,7 @@
 				goto("/");
 			} else {
 				// console.log("-[ OtherProfile ]-  - username: ", username);
-				const url = `http://{process.env.HOST}:3000/user/profileOther?username=${username}`;
+				const url = `http://${process.env.HOST}:3000/user/profileOther?username=${username}`;
 				const response = await fetch(url, {
 					method: "GET",
 					headers: {
@@ -118,7 +118,7 @@
 		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const response = await fetch(
-			"http://{process.env.HOST}:3000/user/removeFriend",
+			`http://${process.env.HOST}:3000/user/removeFriend`,
 			{
 				method: "POST",
 				headers: {
@@ -146,7 +146,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const response = await fetch("http://{process.env.HOST}:3000/user/blockUser", {
+		const response = await fetch(`http://${process.env.HOST}:3000/user/blockUser`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
@@ -168,7 +168,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const response = await fetch("http://{process.env.HOST}:3000/user/unblockUser", {
+		const response = await fetch(`http://${process.env.HOST}:3000/user/unblockUser`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
