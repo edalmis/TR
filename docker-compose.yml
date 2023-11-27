@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3"
 
 networks:
   net:
@@ -43,7 +43,7 @@ services:
       SECRET: ${SECRET}
       JWTSECRET: ${JWTSECRET}
     networks:
-      - net 
+      - net
     depends_on:
       - db
   db:
