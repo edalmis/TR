@@ -2,7 +2,10 @@
 	import { authentificated } from "$lib/store/store";
 
 	export async function checkJWT() {
-		const jwt_verifier_url = "http://localhost:3000/auth/verifier_jwt";
+		const host = process.env.HOST;
+		// const jwt_verifier_url = "http://{process.env.HOST}:3000/auth/verifier_jwt";
+		const jwt_verifier_url = `http://${host}:3000/auth/verifier_jwt`;
+		
 		const token = localStorage.getItem("jwt");
 
 		if (!token) {

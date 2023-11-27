@@ -59,7 +59,7 @@
 	// // // // // [  Functions  ] // // // // //
 	function connectSocket(id: number) {
 		// console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
-		const socket = io("http://localhost:3002", {
+		const socket = io("http://{process.env.HOST}:3002", {
 			withCredentials: true,
 			extraHeaders: {
 				Accept: "abcd",
@@ -89,7 +89,7 @@
 
 	async function getUserInfo(jwt: string): Promise<number> {
 		try {
-			const response = await fetch("http://localhost:3000/user/profile", {
+			const response = await fetch("http://{process.env.HOST}:3000/user/profile", {
 				method: "GET",
 				headers: {
 					Authorization: `Bearer ${jwt}`,
@@ -127,7 +127,7 @@
 				try {
 					// [ 1 - 1 ] Verification validite du Jwt aupres du Backend
 					const jwt_verifier_url =
-						"http://localhost:3000/auth/verifier_jwt";
+						"http://{process.env.HOST}:3000/auth/verifier_jwt";
 					const response = await fetch(jwt_verifier_url, {
 						method: "POST",
 						headers: {
@@ -204,7 +204,7 @@
 					userLogin.set(login);
 					// console.log("-[ Verif QR Layout ]-   login: ", login);
 					const response = await fetch(
-						`http://localhost:3000/auth/get_google_2fa/?login=${login}&qr=google`,
+						`http://{process.env.HOST}:3000/auth/get_google_2fa/?login=${login}&qr=google`,
 						{
 							method: "GET",
 							headers: {

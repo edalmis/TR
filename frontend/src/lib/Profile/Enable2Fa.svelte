@@ -19,7 +19,7 @@
 
 	async function handleEnable_2fa() {
 		const jwt = localStorage.getItem("jwt");
-		const response = await fetch("http://localhost:3000/auth/enable_2fa", {
+		const response = await fetch("http://{process.env.HOST}:3000/auth/enable_2fa", {
 			method: "GET",
 			headers: {
 				Authorization: `Bearer ${jwt}`,

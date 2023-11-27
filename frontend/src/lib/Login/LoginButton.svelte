@@ -2,7 +2,7 @@
 	import { goto } from "$app/navigation";
 
 	// Url Redirection Lorsque click Button   *-[ Login ]-*   .
-	const loginUrl = "http://localhost:3000/auth/42";
+	const loginUrl = "http://{process.env.HOST}:3000/auth/42";
 	function handleLogin() {
 		goto(loginUrl);
 	}

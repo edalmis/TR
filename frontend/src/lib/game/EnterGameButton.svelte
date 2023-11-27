@@ -4,7 +4,7 @@
 	async function EnterGame() {
 		try{
 			const jwt = localStorage.getItem("jwt");
-			const response = await fetch("http://localhost:3000/user/enterGame", {
+			const response = await fetch("http://{process.env.HOST}:3000/user/enterGame", {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${jwt}`,

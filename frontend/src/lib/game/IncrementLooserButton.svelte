@@ -5,7 +5,7 @@
 		try{
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				"http://localhost:3000/user/incrementLooser",
+				"http://{process.env.HOST}:3000/user/incrementLooser",
 				{
 					method: "POST",
 					headers: {

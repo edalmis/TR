@@ -10,7 +10,7 @@
 	async function handleGarderImg() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, img: image };
-		const response = await fetch("http://localhost:3000/auth/changeImage", {
+		const response = await fetch("http://{process.env.HOST}:3000/auth/changeImage", {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
