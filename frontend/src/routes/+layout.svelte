@@ -154,7 +154,6 @@
 						connectSocket(id);
 						navbar.set(true);
 						goto("/");
-						location.reload();
 					}
 
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
