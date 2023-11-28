@@ -112,6 +112,7 @@
 				localStorage.clear();
 				authentificated.set(false);
 				goto("/");
+				location.reload();
 				return -1;
 			}
 		} catch (e) {
@@ -154,6 +155,7 @@
 						connectSocket(id);
 						navbar.set(true);
 						goto("/");
+						location.reload();
 					}
 
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
@@ -162,6 +164,7 @@
 						authentificated.set(false);
 						localStorage.clear();
 						goto("/");
+						location.reload();
 					}
 				} catch (e) {}
 			}
@@ -199,6 +202,7 @@
 
 					// [ 2 - 5 ] Redirection Vers Le Home afin de relancer Verification
 					goto("/");
+					location.reload();
 				}
 
 				if (urlParams.has("login")) {
@@ -226,6 +230,7 @@
 						//console.log("-[ Enable 2fa]- qrSource: ", QrSource);
 					} else {
 						goto("/");
+						location.reload();
 					}
 					// else {console.log("-[ Layout Get QR ]-  PROBLEME pas OK");}
 				}
