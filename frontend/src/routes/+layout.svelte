@@ -155,13 +155,13 @@
 						connectSocket(id);
 						navbar.set(true);
 						goto("/");
-						isItARefreshement.subscribe((a) => {
-							refresh = a;
-						});
-						if (refresh === true) {
-							location.reload();
-							isItARefreshement.set(false);
-						}
+						// isItARefreshement.subscribe((a) => {
+						// 	refresh = a;
+						// });
+						// if (refresh === true) {
+						// 	location.reload();
+						// 	isItARefreshement.set(false);
+						// }
 					}
 
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
@@ -207,13 +207,13 @@
 
 					// [ 2 - 5 ] Redirection Vers Le Home afin de relancer Verification
 					goto("/");
-					isItARefreshement.subscribe((a) => {
-						refresh = a;
-					});
-					if (refresh === true) {
-						location.reload();
-						isItARefreshement.set(false);
-					}
+					// isItARefreshement.subscribe((a) => {
+					// 	refresh = a;
+					// });
+					// if (refresh === true) {
+					// 	location.reload();
+					// 	isItARefreshement.set(false);
+					// }
 				}
 
 				if (urlParams.has("login")) {
