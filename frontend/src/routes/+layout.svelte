@@ -112,7 +112,6 @@
 				localStorage.clear();
 				authentificated.set(false);
 				goto("/");
-				location.reload();
 				return -1;
 			}
 		} catch (e) {
@@ -164,7 +163,6 @@
 						authentificated.set(false);
 						localStorage.clear();
 						goto("/");
-						location.reload();
 					}
 				} catch (e) {}
 			}
@@ -230,7 +228,6 @@
 						//console.log("-[ Enable 2fa]- qrSource: ", QrSource);
 					} else {
 						goto("/");
-						location.reload();
 					}
 					// else {console.log("-[ Layout Get QR ]-  PROBLEME pas OK");}
 				}
