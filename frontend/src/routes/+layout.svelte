@@ -54,7 +54,7 @@
 	});
 
 	let login: any;
-	let refresh: boolean;
+	// let refresh: boolean;
 
 	/// // // // // // // // // // // // // // ///
 	// // // // // [  Functions  ] // // // // //
@@ -73,7 +73,7 @@
 		});
 		// $session = socket;
 		session.set(socket);
-		// isItARefreshement.set(false);
+		isItARefreshement.set(false);
 
 		socket.on("receivedGameInvitation", (data) => {
 			// console.log("[ Layout socket.on(receivedGameInvitation) ] data: ",data);
