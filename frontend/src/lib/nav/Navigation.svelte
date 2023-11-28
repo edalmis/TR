@@ -64,6 +64,7 @@
 		});
 		socket.close();
 		goto("/");
+		location.reload();
 	}
 	onMount(() => {
 		const handleLoggoutButton =
