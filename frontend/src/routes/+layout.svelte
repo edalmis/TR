@@ -154,6 +154,7 @@
 						connectSocket(id);
 						navbar.set(true);
 						goto("/");
+						location.reload();
 					}
 
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
@@ -199,7 +200,6 @@
 
 					// [ 2 - 5 ] Redirection Vers Le Home afin de relancer Verification
 					goto("/");
-					location.reload();
 				}
 
 				if (urlParams.has("login")) {
