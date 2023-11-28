@@ -116,28 +116,31 @@
 					games = data;
 				});
 			}
+			googleAuth.subscribe((a) => {
+				Google2fa = a;
+			});
+			session.subscribe((a: any) => {
+				wsClient = a;
+			});
+			wsClient.on("newMessagedm", (data: any) => {
+				alert(
+					"You have new direct message from " +
+						data.messages.senderLogin,
+				); //--------------------3
+				dmNotif.set(true); //---------------4
+			});
 		} catch (e) {}
-		googleAuth.subscribe((a) => {
-			Google2fa = a;
-		});
-		session.subscribe((a: any) => {
-			wsClient = a;
-		});
-		wsClient.on("newMessagedm", (data: any) => {
-			alert(
-				"You have new direct message from " + data.messages.senderLogin,
-			); //--------------------3
-			dmNotif.set(true); //---------------4
-		});
 	});
 
 	onDestroy(() => {
-		session.subscribe((a: any) => {
-			wsClient = a;
-		});
-		wsClient.off("newMessagedm");
-		wsClient.off("updateAvata");
-		closeModal();
+		return () => {
+			session.subscribe((a: any) => {
+				wsClient = a;
+			});
+			wsClient.off("newMessagedm");
+			wsClient.off("updateAvata");
+			closeModal();
+		};
 	});
 
 	async function handleChangeName() {
