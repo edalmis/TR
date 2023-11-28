@@ -12,7 +12,8 @@
 	async function handleDisable_2fa() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login };
-		const response = await fetch(`http://${process.env.HOST}:3000/auth/disable_2fa`, {
+		const host = process.env.HOST;
+		const response = await fetch(`http://${host}:3000/auth/disable_2fa`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,

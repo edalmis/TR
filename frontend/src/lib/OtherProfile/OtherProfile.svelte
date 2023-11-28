@@ -52,8 +52,9 @@
 			if (!jwt) {
 				goto("/");
 			} else {
+				const host = process.env.HOST;
 				// console.log("-[ OtherProfile ]-  - username: ", username);
-				const url = `http://${process.env.HOST}:3000/user/profileOther?username=${username}`;
+				const url = `http://${host}:3000/user/profileOther?username=${username}`;
 				const response = await fetch(url, {
 					method: "GET",
 					headers: {
@@ -116,9 +117,10 @@
 	async function handleRemoveFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToRemove: friendId };
+		const host = process.env.HOST;
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const response = await fetch(
-			`http://${process.env.HOST}:3000/user/removeFriend`,
+			`http://${host}:3000/user/removeFriend`,
 			{
 				method: "POST",
 				headers: {
@@ -146,7 +148,8 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const response = await fetch(`http://${process.env.HOST}:3000/user/blockUser`, {
+		const host = process.env.HOST;
+		const response = await fetch(`http://${host}:3000/user/blockUser`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
@@ -168,7 +171,8 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const response = await fetch(`http://${process.env.HOST}:3000/user/unblockUser`, {
+		const host = process.env.HOST;
+		const response = await fetch(`http://${host}:3000/user/unblockUser`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,

@@ -56,7 +56,7 @@
 
 		winnerScore.set(3);
 		ballSpeed.set(3);
-		client = new Colyseus.Client(`ws://${process.env.HOST}:3001`);
+		client = new Colyseus.Client(`ws://localhost:3001`);
 		clientColyseus.set(client);
 
 		navbar.set(false);
@@ -148,7 +148,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/enterGame`,
+				`http://localhost:3000/user/enterGame`,
 				{
 					method: "POST",
 					headers: {
@@ -171,7 +171,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/leaveGame`,
+				`http://localhost:3000/user/leaveGame`,
 				{
 					method: "POST",
 					headers: {
@@ -194,7 +194,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/matchHistory`,
+				`http://localhost:3000/user/matchHistory`,
 				{
 					method: "POST",
 					headers: {

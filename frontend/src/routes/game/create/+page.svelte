@@ -63,8 +63,9 @@
 	async function EnterGame() {
 		try {
 			const jwt = localStorage.getItem("jwt");
+			const host = process.env.HOST;
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/enterGame`,
+				`http://${host}:3000/user/enterGame`,
 				{
 					method: "POST",
 					headers: {
@@ -96,7 +97,7 @@
 		}
 
 		console.log("Connection Ws Colyseus [ 3001 ]");
-		client = new Colyseus.Client(`ws://${process.env.HOST}:3001`);
+		client = new Colyseus.Client(`ws://localhost:3001`);
 		clientColyseus.set(client);
 		navbar.set(false);
 		launchedGame.set(true);
@@ -197,8 +198,9 @@
 	async function LeaveGame() {
 		try {
 			const jwt = localStorage.getItem("jwt");
+			const host = process.env.HOST;
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/leaveGame`,
+				`http://${host}:3000/user/leaveGame`,
 				{
 					method: "POST",
 					headers: {
@@ -235,7 +237,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/matchHistory`,
+				`http://localhost:3000/user/matchHistory`,
 				{
 					method: "POST",
 					headers: {

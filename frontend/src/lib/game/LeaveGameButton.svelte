@@ -4,7 +4,8 @@
 	async function LeaveGame() {
 		try{
 			const jwt = localStorage.getItem("jwt");
-			const response = await fetch(`http://${process.env.HOST}:3000/user/leaveGame`, {
+			const host = process.env.HOST;
+			const response = await fetch(`http://${host}:3000/user/leaveGame`, {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${jwt}`,

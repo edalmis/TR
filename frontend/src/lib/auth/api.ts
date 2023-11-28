@@ -18,7 +18,7 @@ export async function fetchUserData(): Promise<any> {
     const user = await responseUser.json();
     return user;
   } else {
-    throw new Error("Failed to fetch user data");
     goto("/");
+    throw new Error("Failed to fetch user data");
   }
 }

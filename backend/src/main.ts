@@ -21,9 +21,10 @@ async function gameServer() {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const host = process.env.HOST;
   app.use(express.json());
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: `http://${host}:5173`,
     // methods: 'GET,POST',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,

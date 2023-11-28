@@ -93,7 +93,7 @@
         enteredPassword = prompt("Enter password for room:");
 
         if (enteredPassword) {
-            fetch(`http://${process.env.HOST}:3000/chat/verify-room-password`, {
+            fetch(`http://localhost:3000/chat/verify-room-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

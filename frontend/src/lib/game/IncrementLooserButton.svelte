@@ -4,8 +4,9 @@
 	async function IncrementLooser() {
 		try{
 			const jwt = localStorage.getItem("jwt");
+			const host = process.env.HOST;
 			const response = await fetch(
-				`http://${process.env.HOST}:3000/user/incrementLooser`,
+				`http:/${host}:3000/user/incrementLooser`,
 				{
 					method: "POST",
 					headers: {
