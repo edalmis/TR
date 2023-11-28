@@ -70,7 +70,7 @@
 				id: id,
 			},
 		});
-		$session = socket;
+		// $session = socket;
 		session.set(socket);
 		isItARefreshement.set(false);
 
