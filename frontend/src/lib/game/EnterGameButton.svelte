@@ -2,9 +2,9 @@
 	import { goto } from "$app/navigation";
 
 	async function EnterGame() {
-		try{
+		try {
 			const jwt = localStorage.getItem("jwt");
-			const host = process.env.HOST;
+			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(`http:/${host}:3000/user/enterGame`, {
 				method: "POST",
 				headers: {
@@ -13,11 +13,11 @@
 				},
 			});
 
-		if (response.ok) {
-			console.log("-[ Enter Game Button ]- ");
-		}
-		goto("/Friends");
-		}catch (e) {}
+			if (response.ok) {
+				console.log("-[ Enter Game Button ]- ");
+			}
+			goto("/Friends");
+		} catch (e) {}
 	}
 </script>
 

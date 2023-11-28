@@ -42,6 +42,7 @@ services:
       UID: ${UID}
       SECRET: ${SECRET}
       JWTSECRET: ${JWTSECRET}
+      HOST: ${HOST}
     networks:
       - net
     depends_on:

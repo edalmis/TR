@@ -68,67 +68,68 @@
     const sessionStore = writable(null);
 
     function showNotification(message: string) {
-    try{
-        const notification: Notification = {
-            message,
-            timestamp: Date.now(),
-        };
-        notifications.update((prev) => [...prev, notification]);
+        try {
+            const notification: Notification = {
+                message,
+                timestamp: Date.now(),
+            };
+            notifications.update((prev) => [...prev, notification]);
 
-        // Update the latestNotification store
-        latestNotification.set(notification);
+            // Update the latestNotification store
+            latestNotification.set(notification);
 
-        // Optionally, you can add a timeout to remove the notification after a certain period
-        setTimeout(() => {
-            notifications.update((prev) =>
-                prev.filter((n) => n !== notification)
-            );
-            latestNotification.set(null);
-        }, 5000); // Remove the notification after 5 seconds
-    } catch (e) {}
+            // Optionally, you can add a timeout to remove the notification after a certain period
+            setTimeout(() => {
+                notifications.update((prev) =>
+                    prev.filter((n) => n !== notification),
+                );
+                latestNotification.set(null);
+            }, 5000); // Remove the notification after 5 seconds
+        } catch (e) {}
     }
 
     function promptPasswordAndEnter(room: any) {
-    try{
-        enteredPassword = prompt("Enter password for room:");
+        try {
+            enteredPassword = prompt("Enter password for room:");
 
-        if (enteredPassword) {
-            fetch(`http://localhost:3000/chat/verify-room-password`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    roomId: room.id,
-                    password: enteredPassword,
-                }),
-            })
-                .then((response) => response.text()) // Get the response as text first
-                .then((text) => {
-                    try {
-                        // Now try to parse the text as JSON
-                        return JSON.parse(text);
-                    } catch (error) {
-                        console.error("Failed to parse JSON:", error);
-                        console.error("Server response:", text); // log the server's response to inspect what's wrong
-                        throw new Error(
-                            "Received non-JSON response from server."
-                        );
-                    }
+            if (enteredPassword) {
+                const host = import.meta.env.VITE_HOST;
+                fetch(`http://${host}:3000/chat/verify-room-password`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        roomId: room.id,
+                        password: enteredPassword,
+                    }),
                 })
-                .then((parsedData) => {
-                    if (parsedData.success) {
-                        selectChatRoom(room);
-                    } else {
-                        alert("Incorrect password");
-                    }
-                })
-                .catch((error) => {
-                    // Handle the error
-                    console.error("An error occurred:", error.message);
-                });
-        }
-    } catch (e) {}
+                    .then((response) => response.text()) // Get the response as text first
+                    .then((text) => {
+                        try {
+                            // Now try to parse the text as JSON
+                            return JSON.parse(text);
+                        } catch (error) {
+                            console.error("Failed to parse JSON:", error);
+                            console.error("Server response:", text); // log the server's response to inspect what's wrong
+                            throw new Error(
+                                "Received non-JSON response from server.",
+                            );
+                        }
+                    })
+                    .then((parsedData) => {
+                        if (parsedData.success) {
+                            selectChatRoom(room);
+                        } else {
+                            alert("Incorrect password");
+                        }
+                    })
+                    .catch((error) => {
+                        // Handle the error
+                        console.error("An error occurred:", error.message);
+                    });
+            }
+        } catch (e) {}
     }
 
     let refresh: boolean;
@@ -187,7 +188,7 @@
                             return false; // Don't process the message as this user should not see it
                         }
                         return true; // Process the message
-                    }
+                    },
                 );
                 chatMessagesPerRoom[selectedChatRoomid] = filteredMessages;
                 scrollToBottom();
@@ -206,7 +207,7 @@
                 if (!data || !data.savedMessage) {
                     console.error(
                         "Error: received message without savedMessage property:",
-                        data
+                        data,
                     );
                     return;
                 }
@@ -236,7 +237,7 @@
                         chatMessagesPerRoom[selectedChatRoomid] = [];
                     }
                     chatMessagesPerRoom[selectedChatRoomid].push(
-                        data.savedMessage
+                        data.savedMessage,
                     );
                     chatMessagesPerRoom = { ...chatMessagesPerRoom }; // Trigger Svelte's reactivity
                     scrollToBottom();
@@ -272,14 +273,18 @@
                     // Calculate the time at which the kicked duration will end.
                     showChatHistory = false;
                     showSendMessage = false;
-                    const timer = setTimeout(() => {
-                        if (
-                            new Date().getTime() > (kickEndTimes[roomId] || 0)
-                        ) {
-                            showChatHistory = true;
-                            showSendMessage = true;
-                        }
-                    }, duration * 60 * 1000); // The duration until chat history will be closed
+                    const timer = setTimeout(
+                        () => {
+                            if (
+                                new Date().getTime() >
+                                (kickEndTimes[roomId] || 0)
+                            ) {
+                                showChatHistory = true;
+                                showSendMessage = true;
+                            }
+                        },
+                        duration * 60 * 1000,
+                    ); // The duration until chat history will be closed
                     clearTimeout(timer);
                 }
             });
@@ -291,13 +296,17 @@
                 showNotification(notificationMessage);
                 if (roomId === selectedChatRoomid) {
                     showSendMessage = false;
-                    const timer = setTimeout(() => {
-                        if (
-                            new Date().getTime() > (muteEndTimes[roomId] || 0)
-                        ) {
-                            showSendMessage = true;
-                        }
-                    }, duration * 60 * 1000); // The duration until chat history will be closed
+                    const timer = setTimeout(
+                        () => {
+                            if (
+                                new Date().getTime() >
+                                (muteEndTimes[roomId] || 0)
+                            ) {
+                                showSendMessage = true;
+                            }
+                        },
+                        duration * 60 * 1000,
+                    ); // The duration until chat history will be closed
                     clearTimeout(timer);
                 }
             });
@@ -314,7 +323,7 @@
             // Handle an updated room
             $session.on("roomUpdated", (updatedRoom: any) => {
                 const index = chatRooms.findIndex(
-                    (room) => room.id === updatedRoom.id
+                    (room) => room.id === updatedRoom.id,
                 );
                 if (index !== -1) {
                     chatRooms[index] = updatedRoom;
@@ -326,7 +335,7 @@
             $session.on("newMessagedm", (data: any) => {
                 alert(
                     "You have new direct message from " +
-                        data.messages.senderLogin
+                        data.messages.senderLogin,
                 ); //--------------------3
                 dmNotif.set(true); //---------------4
             });
@@ -348,19 +357,19 @@
     });
 
     function fetchMembersInRoom(roomId: string) {
-    try{
-        $session.emit("getsMembersInRoom", roomId);
-        usersInRoom = [];
-    } catch (e) {}
+        try {
+            $session.emit("getsMembersInRoom", roomId);
+            usersInRoom = [];
+        } catch (e) {}
     }
 
     function scrollToBottom() {
-    try{
-        const chatHistoryDiv = document.querySelector(".chat-history");
-        if (chatHistoryDiv) {
-            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-        }
-    } catch (e) {}
+        try {
+            const chatHistoryDiv = document.querySelector(".chat-history");
+            if (chatHistoryDiv) {
+                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+            }
+        } catch (e) {}
     }
 
     $: if (chatMessages && chatMessages.length > 0) {
@@ -368,306 +377,310 @@
     }
 
     async function selectChatRoom(room: any) {
-    try{
-        selectedChatRoom = room;
-        selectedChatRoomid = room.id;
-        // console.log('useri d ****', usere.id)
-        // Check if the user is banned from this room
-        $session.emit("checkUserBan", {
-            userId: usere.id,
-            roomId: selectedChatRoomid,
-        });
-
-        // Listen to the server's response
-        $session.once("userBanStatus", (data: any) => {
-            if (data.isBanned) {
-                showChatHistory = false;
-                showSendMessage = false;
-                // Notify the user that they are banned or take appropriate action.
-                return;
-            }
-            // Request user's status in the chat room
-            $session.emit("CheckUserStatus", {
+        try {
+            selectedChatRoom = room;
+            selectedChatRoomid = room.id;
+            // console.log('useri d ****', usere.id)
+            // Check if the user is banned from this room
+            $session.emit("checkUserBan", {
                 userId: usere.id,
                 roomId: selectedChatRoomid,
             });
 
             // Listen to the server's response
-            $session.once("userStatus", (data: any) => {
+            $session.once("userBanStatus", (data: any) => {
                 if (data.isBanned) {
                     showChatHistory = false;
                     showSendMessage = false;
                     // Notify the user that they are banned or take appropriate action.
-                } else {
-                    // Check if user is still kicked from this room
-                    if (
-                        new Date().getTime() <=
-                        (data.kickEndTimes[selectedChatRoomid] || 0)
-                    ) {
-                        // If the user is still kicked from the room
+                    return;
+                }
+                // Request user's status in the chat room
+                $session.emit("CheckUserStatus", {
+                    userId: usere.id,
+                    roomId: selectedChatRoomid,
+                });
+
+                // Listen to the server's response
+                $session.once("userStatus", (data: any) => {
+                    if (data.isBanned) {
                         showChatHistory = false;
                         showSendMessage = false;
+                        // Notify the user that they are banned or take appropriate action.
                     } else {
-                        showChatHistory = true;
-                        showSendMessage = true;
+                        // Check if user is still kicked from this room
+                        if (
+                            new Date().getTime() <=
+                            (data.kickEndTimes[selectedChatRoomid] || 0)
+                        ) {
+                            // If the user is still kicked from the room
+                            showChatHistory = false;
+                            showSendMessage = false;
+                        } else {
+                            showChatHistory = true;
+                            showSendMessage = true;
+                        }
+
+                        if (
+                            new Date().getTime() <=
+                            (data.muteEndTimes[selectedChatRoomid] || 0)
+                        ) {
+                            // If the user is still muted in the room
+                            showSendMessage = false;
+                        } else {
+                            showSendMessage = true;
+                        }
                     }
+                });
+                fetchMembersInRoom(selectedChatRoomid);
 
-                    if (
-                        new Date().getTime() <=
-                        (data.muteEndTimes[selectedChatRoomid] || 0)
-                    ) {
-                        // If the user is still muted in the room
-                        showSendMessage = false;
-                    } else {
-                        showSendMessage = true;
-                    }
-                }
-            });
-            fetchMembersInRoom(selectedChatRoomid);
-
-            // Check if user is still kicked from this room
-            if (
-                new Date().getTime() <= (kickEndTimes[selectedChatRoomid] || 0)
-            ) {
-                // If the user is still kicked from the room
-                showChatHistory = false;
-                showSendMessage = false;
-            } else {
-                showChatHistory = true;
-                showSendMessage = true;
-            }
-
-            if (
-                new Date().getTime() <= (muteEndTimes[selectedChatRoomid] || 0)
-            ) {
-                // If the user is still mute from the room
-                showSendMessage = false;
-            } else {
-                showSendMessage = true;
-            }
-            if (member.kickedTime && member.kickDuration) {
-                const currentTime = new Date().getTime();
-                const kickEndTime =
-                    member.kickedTime.getTime() +
-                    member.kickDuration * 60 * 1000;
-                if (currentTime <= kickEndTime) {
-                    // The user is still within the kick duration
+                // Check if user is still kicked from this room
+                if (
+                    new Date().getTime() <=
+                    (kickEndTimes[selectedChatRoomid] || 0)
+                ) {
+                    // If the user is still kicked from the room
                     showChatHistory = false;
                     showSendMessage = false;
-                    // You can display a message to the user indicating the remaining kick duration.
+                } else {
+                    showChatHistory = true;
+                    showSendMessage = true;
                 }
-            }
-            const isMember = usersInRoom.some(
-                (member) => member.user.id == usere.id
-            );
-            if (!isMember) {
-                const payload = {
-                    user: usere,
-                    room: selectedChatRoom,
-                    role: "Participant",
-                };
-                $session.emit("joinChatRoom", payload);
-            }
 
-            $session.emit("getMessagesInChatRoom", selectedChatRoomid);
-        });
-    } catch (e) {}
+                if (
+                    new Date().getTime() <=
+                    (muteEndTimes[selectedChatRoomid] || 0)
+                ) {
+                    // If the user is still mute from the room
+                    showSendMessage = false;
+                } else {
+                    showSendMessage = true;
+                }
+                if (member.kickedTime && member.kickDuration) {
+                    const currentTime = new Date().getTime();
+                    const kickEndTime =
+                        member.kickedTime.getTime() +
+                        member.kickDuration * 60 * 1000;
+                    if (currentTime <= kickEndTime) {
+                        // The user is still within the kick duration
+                        showChatHistory = false;
+                        showSendMessage = false;
+                        // You can display a message to the user indicating the remaining kick duration.
+                    }
+                }
+                const isMember = usersInRoom.some(
+                    (member) => member.user.id == usere.id,
+                );
+                if (!isMember) {
+                    const payload = {
+                        user: usere,
+                        room: selectedChatRoom,
+                        role: "Participant",
+                    };
+                    $session.emit("joinChatRoom", payload);
+                }
+
+                $session.emit("getMessagesInChatRoom", selectedChatRoomid);
+            });
+        } catch (e) {}
     }
 
     function handleEmojiSelect(event: any) {
-    try{
-        const selectedEmoji = event.detail.emoji;
-        message += selectedEmoji;
-        // console.log('emo',selectedEmoji)
-        // Do something with the selectedEmoji
-    } catch (e) {}
+        try {
+            const selectedEmoji = event.detail.emoji;
+            message += selectedEmoji;
+            // console.log('emo',selectedEmoji)
+            // Do something with the selectedEmoji
+        } catch (e) {}
     }
 
     function createChatRoom() {
-    try{
-        const payload = {
-            title,
-            member,
-            IdduUser,
-            usere,
-            isPrivate,
-            password: isPrivate ? password : null,
-        };
-        $session.emit("sendChatRooms", payload);
-        showChatRoom = false;
-    } catch (e) {}
+        try {
+            const payload = {
+                title,
+                member,
+                IdduUser,
+                usere,
+                isPrivate,
+                password: isPrivate ? password : null,
+            };
+            $session.emit("sendChatRooms", payload);
+            showChatRoom = false;
+        } catch (e) {}
     }
 
     function sendMessage() {
-    try{
-        // console.log('here***-*-*-*-*-')
+        try {
+            // console.log('here***-*-*-*-*-')
 
-        $session.emit("sendMessageChannel", {
-            message: message,
-            sendBy: usere,
-            sendBylogin: usere.login,
-            sendTo: selectedChatRoomid,
-        });
-        // console.log(selectedChatRoomid)
+            $session.emit("sendMessageChannel", {
+                message: message,
+                sendBy: usere,
+                sendBylogin: usere.login,
+                sendTo: selectedChatRoomid,
+            });
+            // console.log(selectedChatRoomid)
 
-        message = ""; // Clear the message after sending
-    } catch (e) {}
+            message = ""; // Clear the message after sending
+        } catch (e) {}
     }
 
     function clean() {
-    try{
-        // showChatHistory = true;
-        showChatWindow = true;
-        showChatRoom = true;
-    } catch (e) {}
+        try {
+            // showChatHistory = true;
+            showChatWindow = true;
+            showChatRoom = true;
+        } catch (e) {}
     }
 
     function kickUser(user: any, login: string, roomId: string, duration: any) {
-    try{
-        $session.emit("kickUser", {
-            user,
-            roomId: roomId,
-            login: login,
-            duration,
-        });
-    } catch (e) {}
+        try {
+            $session.emit("kickUser", {
+                user,
+                roomId: roomId,
+                login: login,
+                duration,
+            });
+        } catch (e) {}
     }
     function muteUser(user: any, login: string, roomId: string, duration: any) {
-    try{
-        $session.emit("muteUser", {
-            user,
-            roomId: roomId,
-            login: login,
-            duration,
-        });
-    } catch (e) {}
+        try {
+            $session.emit("muteUser", {
+                user,
+                roomId: roomId,
+                login: login,
+                duration,
+            });
+        } catch (e) {}
     }
 
     function banUser(user: any, login: string, roomId: string) {
-    try{
-        $session.emit("banUser", { user, roomId: roomId, login: login });
-    } catch (e) {}
+        try {
+            $session.emit("banUser", { user, roomId: roomId, login: login });
+        } catch (e) {}
     }
 
     function makeAdmin(user: any, login: string, roomId: string) {
-    try{
-        $session.emit("makeAdmin", { user, roomId: roomId, login: login });
-    } catch (e) {}
+        try {
+            $session.emit("makeAdmin", { user, roomId: roomId, login: login });
+        } catch (e) {}
     }
 
     function unbanUser(user: any, userId: any, roomId: any) {
-    try{
-        $session.emit("unbanUser", { user, userId, roomId });
+        try {
+            $session.emit("unbanUser", { user, userId, roomId });
 
-        // Listen for confirmation or errors
-        $session.on("userUnbanned", ({ userId, roomId }: any) => {
-            // Update the UI or notify the admin that the user has been unbanned
-        });
+            // Listen for confirmation or errors
+            $session.on("userUnbanned", ({ userId, roomId }: any) => {
+                // Update the UI or notify the admin that the user has been unbanned
+            });
 
-        $session.on("unbanError", ({ message }: any) => {
-            // Handle the error (e.g., display an error message to the admin)
-        });
-    } catch (e) {}
+            $session.on("unbanError", ({ message }: any) => {
+                // Handle the error (e.g., display an error message to the admin)
+            });
+        } catch (e) {}
     }
 
     //------------------------------OFFLINE ADDINGS----------------------------===============
 
     async function leaveChatRoom() {
-        try{
-        if (selectedChatRoom) {
-            $session.emit("leaveChatRoom", {
-                user: usere,
-                room: selectedChatRoom,
-            });
-            selectedChatRoom = null;
-            selectedChatRoomid = "";
-        } else {
-            console.warn("No chat room selected to leave.");
-        }
-    } catch (e) { }
+        try {
+            if (selectedChatRoom) {
+                $session.emit("leaveChatRoom", {
+                    user: usere,
+                    room: selectedChatRoom,
+                });
+                selectedChatRoom = null;
+                selectedChatRoomid = "";
+            } else {
+                console.warn("No chat room selected to leave.");
+            }
+        } catch (e) {}
     }
 
     async function passChatRoom() {
-        try{
-        if (selectedChatRoom) {
-            let newPassword;
-            if (selectedChatRoom.password) {
-                // If there's already a password, prompt for the new password
-                newPassword = prompt("Please enter the new room password:");
-            } else {
-                // If there's no password, allow the owner to set one
-                newPassword = prompt("Set a password for the chat room:");
+        try {
+            if (selectedChatRoom) {
+                let newPassword;
+                if (selectedChatRoom.password) {
+                    // If there's already a password, prompt for the new password
+                    newPassword = prompt("Please enter the new room password:");
+                } else {
+                    // If there's no password, allow the owner to set one
+                    newPassword = prompt("Set a password for the chat room:");
+                }
+                if (newPassword) {
+                    // Emit the event to the server with the new password
+                    $session.emit("passChatRoom", {
+                        user: usere,
+                        room: selectedChatRoom,
+                        newPassword: newPassword,
+                    });
+                } else {
+                    console.warn(
+                        "Password change aborted. No password provided.",
+                    );
+                }
             }
-            if (newPassword) {
-                // Emit the event to the server with the new password
-                $session.emit("passChatRoom", {
-                    user: usere,
-                    room: selectedChatRoom,
-                    newPassword: newPassword,
-                });
-            } else {
-                console.warn("Password change aborted. No password provided.");
-            }
-        }
-    } catch (e) { }
+        } catch (e) {}
     }
 
     async function cancelpassChatRoom() {
-        try{
-        if (selectedChatRoom) {
-            if (selectedChatRoom.hashedPassword) {
-                $session.emit("cancelpassChatRoom", {
-                    user: usere,
-                    room: selectedChatRoom,
-                });
+        try {
+            if (selectedChatRoom) {
+                if (selectedChatRoom.hashedPassword) {
+                    $session.emit("cancelpassChatRoom", {
+                        user: usere,
+                        room: selectedChatRoom,
+                    });
+                }
+            } else {
+                console.warn("Password cancel aborted..");
             }
-        } else {
-            console.warn("Password cancel aborted..");
-        }
-    } catch (e) { }
+        } catch (e) {}
     }
 
     function openProfileModal(username: any) {
-    try{
-        userToDisplay = username;
-        isProfileModalOpen = true;
-        isModalVisible = true;
-    } catch (e) {}
+        try {
+            userToDisplay = username;
+            isProfileModalOpen = true;
+            isModalVisible = true;
+        } catch (e) {}
     }
 
     function toggleModal() {
-    try{
-        isModalVisible = !isModalVisible;
+        try {
+            isModalVisible = !isModalVisible;
 
-        if (!isModalVisible) {
-            isProfileModalOpen = false;
-        }
-    } catch (e) {}
+            if (!isModalVisible) {
+                isProfileModalOpen = false;
+            }
+        } catch (e) {}
     }
 
     function handleKeyDown(event: any) {
-    try{
-        // If the Enter key is pressed
-        if (event.key === "Enter") {
-            event.preventDefault(); // To prevent a newline or form submission
-            sendMessage();
-        }
+        try {
+            // If the Enter key is pressed
+            if (event.key === "Enter") {
+                event.preventDefault(); // To prevent a newline or form submission
+                sendMessage();
+            }
 
-        // If the Tab key is pressed
-        if (event.key === "Tab") {
-            event.preventDefault(); // Prevent moving to the next input or button
+            // If the Tab key is pressed
+            if (event.key === "Tab") {
+                event.preventDefault(); // Prevent moving to the next input or button
 
-            // Insert a tab character at the cursor's current position
-            const start = event.target.selectionStart;
-            const end = event.target.selectionEnd;
-            message =
-                message.substring(0, start) + "\t" + message.substring(end);
+                // Insert a tab character at the cursor's current position
+                const start = event.target.selectionStart;
+                const end = event.target.selectionEnd;
+                message =
+                    message.substring(0, start) + "\t" + message.substring(end);
 
-            // Position the cursor after the inserted tab character
-            event.target.selectionStart = start + 1;
-            event.target.selectionEnd = start + 1;
-        }
-    } catch (e) {}
+                // Position the cursor after the inserted tab character
+                event.target.selectionStart = start + 1;
+                event.target.selectionEnd = start + 1;
+            }
+        } catch (e) {}
     }
 </script>
 
@@ -826,7 +839,7 @@
                                             usere,
                                             user.user.login,
                                             selectedChatRoomid,
-                                            kickDuration
+                                            kickDuration,
                                         )}>Kick</button
                                 >
                                 <button
@@ -835,7 +848,7 @@
                                             usere,
                                             user.user.login,
                                             selectedChatRoomid,
-                                            kickDuration
+                                            kickDuration,
                                         )}>Mute</button
                                 >
                             </div>
@@ -845,7 +858,7 @@
                                     banUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Ban</button
                             >
                             <button
@@ -853,7 +866,7 @@
                                     unbanUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Unban</button
                             >
 
@@ -862,7 +875,7 @@
                                     makeAdmin(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Make Admin</button
                             >
                             <!-- {/if} -->
@@ -883,7 +896,7 @@
                                             usere,
                                             user.user.login,
                                             selectedChatRoomid,
-                                            kickDuration
+                                            kickDuration,
                                         )}>Kick</button
                                 >
                                 <button
@@ -892,7 +905,7 @@
                                             usere,
                                             user.user.login,
                                             selectedChatRoomid,
-                                            kickDuration
+                                            kickDuration,
                                         )}>Mute</button
                                 >
                             </div>
@@ -902,7 +915,7 @@
                                     banUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Ban</button
                             >
                             <button
@@ -910,7 +923,7 @@
                                     unbanUser(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Unban</button
                             >
 
@@ -919,7 +932,7 @@
                                     makeAdmin(
                                         usere,
                                         user.user.login,
-                                        selectedChatRoomid
+                                        selectedChatRoomid,
                                     )}>Make Admin</button
                             >
                         {/if}

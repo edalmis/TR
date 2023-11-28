@@ -2,9 +2,9 @@
 	import { goto } from "$app/navigation";
 
 	async function IncrementRank() {
-		try{
+		try {
 			const jwt = localStorage.getItem("jwt");
-			const host = process.env.HOST;
+			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(`http://${host}:3000/user/increment`, {
 				method: "POST",
 				headers: {
@@ -14,13 +14,14 @@
 			});
 
 			if (response.ok) {
-				console.log("-[ Increment Rank ]- Rank and Title well Updated !");
+				console.log(
+					"-[ Increment Rank ]- Rank and Title well Updated !",
+				);
+			} else {
+				goto("/");
 			}
-			else {
-					goto("/");
-				}
 			goto("/Profile");
-		}catch (e) {}
+		} catch (e) {}
 	}
 </script>
 

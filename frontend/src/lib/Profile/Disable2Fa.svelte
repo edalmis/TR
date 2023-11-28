@@ -12,7 +12,7 @@
 	async function handleDisable_2fa() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login };
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(`http://${host}:3000/auth/disable_2fa`, {
 			method: "POST",
 			headers: {
@@ -24,8 +24,7 @@
 
 		if (response.ok) {
 			console.log("-[ Disable 2fa ]- OK ");
-		}
-		else {
+		} else {
 			goto("/");
 		}
 		isGoogleAuthEnabled.set(false);

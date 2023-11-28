@@ -52,7 +52,7 @@
 			if (!jwt) {
 				goto("/");
 			} else {
-				const host = process.env.HOST;
+				const host = import.meta.env.VITE_HOST;
 				// console.log("-[ OtherProfile ]-  - username: ", username);
 				const url = `http://${host}:3000/user/profileOther?username=${username}`;
 				const response = await fetch(url, {
@@ -85,7 +85,7 @@
 					InvitedUserLogin.set(otherUser.login);
 					InvitedUserUsername.set(otherUser.username);
 					InvitedUserId.set(otherUser.id);
-				}else {
+				} else {
 					goto("/");
 				}
 
@@ -117,19 +117,16 @@
 	async function handleRemoveFriend(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToRemove: friendId };
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const response = await fetch(
-			`http://${host}:3000/user/removeFriend`,
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
-			}
-		);
+		const response = await fetch(`http://${host}:3000/user/removeFriend`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${jwt}`,
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ data }),
+		});
 		if (response.ok) {
 			// console.log("response { OK } du [ Undo Friend ] ", response.ok);
 			await socket.emit("updateFriendList", {
@@ -148,7 +145,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(`http://${host}:3000/user/blockUser`, {
 			method: "POST",
 			headers: {
@@ -171,7 +168,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { username: username };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(`http://${host}:3000/user/unblockUser`, {
 			method: "POST",
 			headers: {
@@ -387,7 +384,9 @@
 		padding: 5px 5px;
 		font-size: 8px;
 		border: 2px solid #eff1f4;
-		transition: background 0.3s ease, color 0.3s ease;
+		transition:
+			background 0.3s ease,
+			color 0.3s ease;
 		margin-left: 0;
 		margin-right: 0;
 		cursor: pointer;
@@ -402,7 +401,9 @@
 		padding: 5px 5px;
 		font-size: 8px;
 		border: 2px solid #eff1f4;
-		transition: background 0.3s ease, color 0.3s ease;
+		transition:
+			background 0.3s ease,
+			color 0.3s ease;
 		margin-left: 0;
 		margin-right: 0;
 		cursor: pointer;

@@ -47,15 +47,16 @@
 
 			// Users I Blocked List----------------------------------------------
 			const jwt = localStorage.getItem("jwt");
+			const host = import.meta.env.VITE_HOST;
 			const blockedUsersListResponse = await fetch(
-				`http://localhost:3000/user/blockUserList`,
+				`http://${host}:3000/user/blockUserList`,
 				{
 					method: "GET",
 					headers: {
 						Authorization: `Bearer ${jwt}`,
 						"Content-Type": "application/json",
 					},
-				}
+				},
 			);
 
 			if (blockedUsersListResponse.ok) {
@@ -68,14 +69,14 @@
 
 			// Users Who Blocked Me
 			const usersWhoBlockedMeListResponse = await fetch(
-				`http://localhost:3000/user/blockedByList`,
+				`http://${host}:3000/user/blockedByList`,
 				{
 					method: "GET",
 					headers: {
 						Authorization: `Bearer ${jwt}`,
 						"Content-Type": "application/json",
 					},
-				}
+				},
 			);
 			if (usersWhoBlockedMeListResponse.ok) {
 				usersWhoBlockedMeList =
@@ -106,7 +107,7 @@
 			if (data.alert && data.messages.sendTo == $user.id) {
 				alert(
 					"You have new direct message from " +
-						data.messages.senderLogin
+						data.messages.senderLogin,
 				); //--------------------3
 				dmNotif.set(true); //---------------4
 			}
@@ -121,56 +122,55 @@
 	});
 
 	function handleClick(use: number, logine: string) {
-	try{
-		// console.log('use----------',use)
-		if (
-			!(blockedUsername = usersIBlockedList.some(
-				(blockedUser) => blockedUser.username == logine
-			))
-		)
-			blockedUsername = usersWhoBlockedMeList.some(
-				(blockedBy) => blockedBy.username == logine
-			);
+		try {
+			// console.log('use----------',use)
+			if (
+				!(blockedUsername = usersIBlockedList.some(
+					(blockedUser) => blockedUser.username == logine,
+				))
+			)
+				blockedUsername = usersWhoBlockedMeList.some(
+					(blockedBy) => blockedBy.username == logine,
+				);
 
-		// console.log('blockedusername--', blockedUsername);
-		if (blockedUsername) {
-			alert("Sending direct message blocked!");
-		} else {
-			$session.emit("sendMessage", {
-				message: chatMessage,
-				sendBy: $user.id,
-				sendTo: use,
-			});
-			chatMessage = "";
-			showEmojiPicker = false;
-		}
-	} catch (e) {}
+			// console.log('blockedusername--', blockedUsername);
+			if (blockedUsername) {
+				alert("Sending direct message blocked!");
+			} else {
+				$session.emit("sendMessage", {
+					message: chatMessage,
+					sendBy: $user.id,
+					sendTo: use,
+				});
+				chatMessage = "";
+				showEmojiPicker = false;
+			}
+		} catch (e) {}
 	}
 
 	function handleKeyPress(event: any) {
-	try{
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			handleClick(
-				rooms[roomSelected].userOne.id === $user.id
-					? rooms[roomSelected].userTwo.id
-					: rooms[roomSelected].userOne.id,
-				rooms[roomSelected].userOne.id === $user.id
-					? rooms[roomSelected].userTwo.userName
-					: rooms[roomSelected].userOne.userName
-			);
-		}
-	} catch (e) {}
+		try {
+			if (event.key === "Enter" && !event.shiftKey) {
+				event.preventDefault();
+				handleClick(
+					rooms[roomSelected].userOne.id === $user.id
+						? rooms[roomSelected].userTwo.id
+						: rooms[roomSelected].userOne.id,
+					rooms[roomSelected].userOne.id === $user.id
+						? rooms[roomSelected].userTwo.userName
+						: rooms[roomSelected].userOne.userName,
+				);
+			}
+		} catch (e) {}
 	}
 
 	function handleEmojiSelect(event: any) {
-	try{
-		const selectedEmoji = event.detail.emoji;
-		chatMessage += selectedEmoji;
-		// console.log('emo',selectedEmoji)
-		// Do something with the selectedEmoji
-	} catch (e) {}
-
+		try {
+			const selectedEmoji = event.detail.emoji;
+			chatMessage += selectedEmoji;
+			// console.log('emo',selectedEmoji)
+			// Do something with the selectedEmoji
+		} catch (e) {}
 	}
 </script>
 
@@ -238,7 +238,7 @@
 								: rooms[roomSelected].userOne.id,
 							rooms[roomSelected].userOne.id === $user.id
 								? rooms[roomSelected].userTwo.login
-								: rooms[roomSelected].userOne.login
+								: rooms[roomSelected].userOne.login,
 						)}
 					>send
 				</button>

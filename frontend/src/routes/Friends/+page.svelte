@@ -38,7 +38,7 @@
 	});
 
 	let messagedUsers = new Set(
-		JSON.parse(sessionStorage.getItem("messagedUsers") || "[]")
+		JSON.parse(sessionStorage.getItem("messagedUsers") || "[]"),
 	);
 
 	// [ Online Users ]
@@ -88,7 +88,7 @@
 	function calculateTimeDifference() {
 		const currentTime: any = new Date().getTime();
 		const timeDifference = Math.floor(
-			(currentTime - userLoginTime) / (1000 * 60 * 60)
+			(currentTime - userLoginTime) / (1000 * 60 * 60),
 		); // Difference in hours
 		return timeDifference;
 	}
@@ -136,7 +136,7 @@
 
 					onlineFriendsList = onlineUsersDatas.filter((user) => {
 						return friendsListDatas.some(
-							(friend) => friend.id === user.id
+							(friend) => friend.id === user.id,
 						);
 					});
 					// console.log(onlineFriendsList);
@@ -153,7 +153,7 @@
 					friendsListDatas = newFriendsList;
 					onlineFriendsList = onlineUsersDatas.filter((user) => {
 						return friendsListDatas.some(
-							(friend) => friend.id === user.id
+							(friend) => friend.id === user.id,
 						);
 					});
 					// console.log(onlineFriendsList);
@@ -182,12 +182,12 @@
 						}
 						sentRequestsList = newSentRequestsList;
 						// console.log(" -[ io.on - sentRequestUpdate ]- Liste : ",sentRequestsList);
-					}
+					},
 				);
 				socket.on("inGameFriendUpdate", (inGameUsersList: any[]) => {
 					inGameFriendsList = friendsListDatas.filter((friend) => {
 						return inGameUsersList.some(
-							(user) => friend.id === user.id
+							(user) => friend.id === user.id,
 						);
 					});
 					if (inGameFriendsList.length === 0) {
@@ -203,7 +203,7 @@
 				socket.on("newMessagedm", (data: any) => {
 					alert(
 						"You have new direct message from " +
-							data.messages.senderLogin
+							data.messages.senderLogin,
 					); //--------------------3
 					dmNotif.set(true); //---------------4
 				});
@@ -213,34 +213,36 @@
 				socket.emit("getOnlineUsersDatas");
 
 				// [ User - Me]
+				const host = import.meta.env.VITE_HOST;
 				const response = await fetch(
-					`http://localhost:3000/user/profile`,
+					// `http://localhost:3000/user/profile`,
+					`http://${host}:3000/user/profile`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (response.ok) {
 					const user = await response.json();
 					pictureLink = user.avatar;
-				}
-				else {
+				} else {
 					goto("/");
 				}
 
 				// [ InGame Users ]
 				const inGameUsersListResponse = await fetch(
-					`http://localhost:3000/user/inGameUsers`,
+					// `http://localhost:3000/user/inGameUsers`,
+					`http://${host}:3000/user/inGameUsers`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (inGameUsersListResponse.ok) {
 					inGameUsersList = await inGameUsersListResponse.json();
@@ -248,21 +250,21 @@
 						inGameUsersEmptyArray = true;
 					}
 					// console.log("inGameUsersList: ", inGameUsersList);
-				}
-				else {
+				} else {
 					goto("/");
 				}
 
 				// [ Pending List ]
 				const pendingListResponse = await fetch(
-					`http://localhost:3000/user/pendingList`,
+					// `http://localhost:3000/user/pendingList`,
+					`http://${host}:3000/user/pendingList`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (pendingListResponse.ok) {
 					pendingList = await pendingListResponse.json();
@@ -278,14 +280,14 @@
 
 				// [ Friends List ]
 				const friendsListResponse = await fetch(
-					`http://localhost:3000/user/friendsList`,
+					`http://${host}:3000/user/friendsList`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (friendsListResponse.ok) {
 					friendsListDatas = await friendsListResponse.json();
@@ -295,20 +297,21 @@
 						friendsListDatasEmptyArray = false;
 					}
 					// console.log("friendsListDatas: ", friendsListDatas);
-				}	else {
+				} else {
 					goto("/");
 				}
 
 				// [ Sent Requests List ]
 				const sentRequestsListResponse = await fetch(
-					`http://localhost:3000/user/sentRequestsList`,
+					// `http://localhost:3000/user/sentRequestsList`,
+					`http://${host}:3000/user/sentRequestsList`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (sentRequestsListResponse.ok) {
 					sentRequestsList = await sentRequestsListResponse.json();
@@ -316,20 +319,21 @@
 						sentRequestListEmptyArray = true;
 					}
 					// console.log("sendRequest List: ", sentRequestsList);
-				}else {
+				} else {
 					goto("/");
 				}
 
 				// [ Users I Blocked List ]
 				const blockedUsersListResponse = await fetch(
-					`http://localhost:3000/user/blockUserList`,
+					// `http://localhost:3000/user/blockUserList`,
+					`http://${host}:3000/user/blockUserList`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (blockedUsersListResponse.ok) {
 					usersIBlockedList = await blockedUsersListResponse.json();
@@ -337,20 +341,21 @@
 						usersIBlockedEmptyArray = true;
 					}
 					// console.log("usersIblockedList: ", usersIBlockedList);
-				}else {
+				} else {
 					goto("/");
 				}
 
 				// [ Users Who Blocked Me ]
 				const usersWhoBlockedMeListResponse = await fetch(
-					`http://localhost:3000/user/blockedByList`,
+					// `http://localhost:3000/user/blockedByList`,
+					`http://${host}:3000/user/blockedByList`,
 					{
 						method: "GET",
 						headers: {
 							Authorization: `Bearer ${jwt}`,
 							"Content-Type": "application/json",
 						},
-					}
+					},
 				);
 				if (usersWhoBlockedMeListResponse.ok) {
 					usersWhoBlockedMeList =
@@ -359,14 +364,14 @@
 						usersWhoBlockedMeEmptyArray = true;
 					}
 					// console.log("usersWhoBlockedMeList: ",usersWhoBlockedMeList);
-				}else {
+				} else {
 					goto("/");
 				}
 
 				// [ Online Friends ]
 				onlineFriendsList = onlineUsersDatas.filter((user) => {
 					return friendsListDatas.some(
-						(friend) => friend.id === user.id
+						(friend) => friend.id === user.id,
 					);
 				});
 				// console.log(onlineFriendsList);
@@ -377,7 +382,7 @@
 				// [ InGame Friends ]
 				inGameFriendsList = friendsListDatas.filter((friend) => {
 					return inGameUsersList.some(
-						(user) => friend.id === user.id
+						(user) => friend.id === user.id,
 					);
 				});
 				if (inGameFriendsList.length === 0) {
@@ -418,7 +423,9 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToAccept: friendId };
 		//console.log("-[ Add Friend ]- username sent: ", username);
-		const response = await fetch(`http://localhost:3000/user/addFriend`, {
+		const host = import.meta.env.VITE_HOST;
+		// const response = await fetch(`http://localhost:3000/user/addFriend`, {
+		const response = await fetch(`http://${host}:3000/user/addFriend`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,
@@ -447,8 +454,10 @@
 	async function handleRefuseFriendRequest(friendId: number) {
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToRefuse: friendId };
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(
-			`http://localhost:3000/user/refuseFriendRequest`,
+			// `http://localhost:3000/user/refuseFriendRequest`,
+			`http://${host}:3000/user/refuseFriendRequest`,
 			{
 				method: "POST",
 				headers: {
@@ -456,7 +465,7 @@
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ data }),
-			}
+			},
 		);
 		if (response.ok) {
 			// console.log("response { OK } du [ Refuse Friend ] : ", response.ok);
@@ -476,8 +485,10 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(
-			`http://localhost:3000/user/removeFriend`,
+			// `http://localhost:3000/user/removeFriend`,
+			`http://${host}:3000/user/removeFriend`,
 			{
 				method: "POST",
 				headers: {
@@ -485,7 +496,7 @@
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ data }),
-			}
+			},
 		);
 		if (response.ok) {
 			// console.log("response { OK } du [ Undo Friend ] ", response.ok);
@@ -496,7 +507,6 @@
 		} else {
 			// console.log("response { NOT OK } du [ Undo Friend ]");
 			goto("/");
-				
 		}
 
 		closeModal();
@@ -515,10 +525,10 @@
 		}
 		// console.log('use-----------', use)
 		const isBlockedByMe = usersIBlockedList.some(
-			(user) => user.username === use
+			(user) => user.username === use,
 		);
 		const isBlockedByOthers = usersWhoBlockedMeList.some(
-			(user) => user.username === use
+			(user) => user.username === use,
 		);
 
 		if (isBlockedByMe || isBlockedByOthers) {
@@ -634,7 +644,6 @@
 					</div>
 				</li>
 			{:else}
-
 				{#each onlineUsersDatas as { id, login, username, avatar }}
 					{#if id != myId}
 						<li class="flex justify-between gap-x-6 py-5">
@@ -1147,7 +1156,7 @@
 	}
 
 	.text-xs {
-  		padding-top: 5px; /* Adjust this value as needed */
+		padding-top: 5px; /* Adjust this value as needed */
 	}
 	.text-xs,
 	.text-sm {

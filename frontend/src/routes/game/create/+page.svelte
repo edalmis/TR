@@ -63,25 +63,21 @@
 	async function EnterGame() {
 		try {
 			const jwt = localStorage.getItem("jwt");
-			const host = process.env.HOST;
-			const response = await fetch(
-				`http://${host}:3000/user/enterGame`,
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			const host = import.meta.env.VITE_HOST;
+			const response = await fetch(`http://${host}:3000/user/enterGame`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+			});
 
 			if (response.ok) {
 				// console.log("-[ Enter Game Button ]- ");
 				wsClient.emit("inGameUpdate", { myId: id });
+			} else {
+				goto("/");
 			}
-			else {
-			goto("/");
-		}
 		} catch (e) {}
 	}
 	let refresh: boolean;
@@ -97,7 +93,9 @@
 		}
 
 		console.log("Connection Ws Colyseus [ 3001 ]");
-		client = new Colyseus.Client(`ws://localhost:3001`);
+		const host = import.meta.env.VITE_HOST;
+		// client = new Colyseus.Client(`ws://localhost:3001`);
+		client = new Colyseus.Client(`ws://${host}:3001`);
 		clientColyseus.set(client);
 		navbar.set(false);
 		launchedGame.set(true);
@@ -198,17 +196,14 @@
 	async function LeaveGame() {
 		try {
 			const jwt = localStorage.getItem("jwt");
-			const host = process.env.HOST;
-			const response = await fetch(
-				`http://${host}:3000/user/leaveGame`,
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			const host = import.meta.env.VITE_HOST;
+			const response = await fetch(`http://${host}:3000/user/leaveGame`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
+				},
+			});
 
 			if (response.ok) {
 				// console.log("-[ Leave Game ]- ");
@@ -224,10 +219,9 @@
 					hasInvitedSomeone.set(false);
 					wsClient.emit("cancelInvitation", datas);
 				}
+			} else {
+				goto("/");
 			}
-			else {
-			goto("/");
-		}
 		} catch (e) {
 			// console.error("Failed to connect to the game server:", e);
 		}
@@ -236,8 +230,10 @@
 	async function registerScoreHistory(data: any) {
 		try {
 			const jwt = localStorage.getItem("jwt");
+			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(
-				`http://localhost:3000/user/matchHistory`,
+				// `http://localhost:3000/user/matchHistory`,
+				`http://${host}:3000/user/matchHistory`,
 				{
 					method: "POST",
 					headers: {
@@ -245,15 +241,14 @@
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({ data }),
-				}
+				},
 			);
 
 			if (response.ok) {
 				// console.log("-[ Match History ]-  Set !");
+			} else {
+				goto("/");
 			}
-			else {
-			goto("/");
-		}
 		} catch (e) {}
 	}
 
@@ -360,28 +355,32 @@
 		try {
 			isDisconnected = false;
 			isGamePaused = false; // Resume the game on reconnection
-		}catch (e) {}
+		} catch (e) {}
 	}
 
 	//  Handle key events
 	function handleKeydown(e: KeyboardEvent) {
 		try {
-		if (isGamePaused) {
-			return; // Don't handle key events when the game is paused
-		}
-		switch (e.key) {
-			case "ArrowUp":
-			case "W":
-			case "w":
-				room.send("paddleMove", { newDirection: PaddleDirection.UP });
-				break;
-			case "ArrowDown":
-			case "S":
-			case "s":
-				room.send("paddleMove", { newDirection: PaddleDirection.DOWN });
-				break;
-		}
-		}catch (e) {}
+			if (isGamePaused) {
+				return; // Don't handle key events when the game is paused
+			}
+			switch (e.key) {
+				case "ArrowUp":
+				case "W":
+				case "w":
+					room.send("paddleMove", {
+						newDirection: PaddleDirection.UP,
+					});
+					break;
+				case "ArrowDown":
+				case "S":
+				case "s":
+					room.send("paddleMove", {
+						newDirection: PaddleDirection.DOWN,
+					});
+					break;
+			}
+		} catch (e) {}
 	}
 
 	enum PaddleDirection {
@@ -392,34 +391,37 @@
 
 	function handleKeyup(e: KeyboardEvent) {
 		try {
-		if (isGamePaused) {
-			return; // Don't handle key events when the game is paused
-		}
-		switch (e.key) {
-			case "ArrowUp":
-			case "ArrowDown":
-			case "W":
-			case "S":
-			case "w":
-			case "s":
-				room.send("paddleMove", { newDirection: PaddleDirection.STOP });
-				break;
-		}}catch (e) {}
+			if (isGamePaused) {
+				return; // Don't handle key events when the game is paused
+			}
+			switch (e.key) {
+				case "ArrowUp":
+				case "ArrowDown":
+				case "W":
+				case "S":
+				case "w":
+				case "s":
+					room.send("paddleMove", {
+						newDirection: PaddleDirection.STOP,
+					});
+					break;
+			}
+		} catch (e) {}
 	}
 
 	function resizeCanvas() {
-		try{
+		try {
 			const scale = Math.min(
 				window.innerWidth / GameDimensions.width,
-				window.innerHeight / GameDimensions.height
+				window.innerHeight / GameDimensions.height,
 			);
 			ctx.canvas.width = GameDimensions.width * scale;
 			ctx.canvas.height = GameDimensions.height * scale;
 			ctx.scale(scale, scale);
-		}catch (e) {}
+		} catch (e) {}
 	}
 	function renderLoop() {
-		try{
+		try {
 			requestAnimationFrame(renderLoop);
 			//gameRender();
 			gameRender(ctx, state);

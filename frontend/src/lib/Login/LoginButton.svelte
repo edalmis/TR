@@ -2,9 +2,12 @@
 	import { goto } from "$app/navigation";
 
 	// Url Redirection Lorsque click Button   *-[ Login ]-*   .
-	const loginUrl = `http://localhost:3000/auth/42`;
+	// const loginUrl = `http://localhost:3000/auth/42`;
 
 	function handleLogin() {
+		const host = import.meta.env.VITE_HOST;
+		const loginUrl = `http://${host}:3000/auth/42`;
+		console.log("LoginButton ENV->host: ", host);
 		goto(loginUrl);
 	}
 
@@ -67,9 +70,12 @@
 		width: 6em;
 		height: 6em;
 		border-radius: 50%;
-		box-shadow: 0 8px 0 hsl(0, 100%, 30%), 2px 12px 10px rgba(0, 0, 0, 0.35);
+		box-shadow:
+			0 8px 0 hsl(0, 100%, 30%),
+			2px 12px 10px rgba(0, 0, 0, 0.35);
 		color: hsl(0, 100%, 30%);
-		text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.3),
+		text-shadow:
+			-1px -1px 2px rgba(0, 0, 0, 0.3),
 			1px 1px 2px rgba(255, 255, 255, 0.4);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -81,7 +87,9 @@
 
 	.bigButton:active {
 		transform: translate(0, -2px);
-		box-shadow: 0 2px 0 hsl(0, 100%, 30%), 2px 6px 10px rgba(0, 0, 0, 0.35);
+		box-shadow:
+			0 2px 0 hsl(0, 100%, 30%),
+			2px 6px 10px rgba(0, 0, 0, 0.35);
 	}
 
 	button[aria-current="true"] {

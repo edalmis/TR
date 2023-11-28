@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { closeModal } from "$lib/store/ModalValues";
-  import { onDestroy } from "svelte";
+	import { onDestroy } from "svelte";
 
 	export let image: string;
 	export let login: string;
@@ -10,7 +10,7 @@
 	async function handleGarderImg() {
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, img: image };
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(`http:/${host}:3000/auth/changeImage`, {
 			method: "POST",
 			headers: {
@@ -22,8 +22,7 @@
 
 		if (response.ok) {
 			console.log("-[ Change Image ]- New Image bien Set");
-		}
-		else {
+		} else {
 			goto("/");
 		}
 		closeModal();
@@ -34,9 +33,9 @@
 		closeModal();
 		goto("/Profile");
 	}
-	onDestroy(()=>{
-        closeModal();
-    })
+	onDestroy(() => {
+		closeModal();
+	});
 </script>
 
 <div>
@@ -82,7 +81,9 @@
 		padding: 5px 5px;
 		font-size: 8px;
 		border: 2px solid #eff1f4;
-		transition: background 0.3s ease, color 0.3s ease;
+		transition:
+			background 0.3s ease,
+			color 0.3s ease;
 		margin-left: 0;
 		margin-right: 0;
 	}

@@ -16,7 +16,7 @@
 	let verif: boolean = false;
 
 	async function handleVerifyCode() {
-		const host = process.env.HOST;
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(
 			`http://${host}:3000/auth/verify_2fa?code=${codeVerif}&login=${login}`,
 			{
@@ -24,7 +24,7 @@
 				headers: {
 					"Content-Type": "application/json",
 				},
-			}
+			},
 		);
 
 		if (response.ok) {
