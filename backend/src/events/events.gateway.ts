@@ -15,13 +15,16 @@ import {
 	OnGatewayDisconnect,
 	WsException,
 } from '@nestjs/websockets';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 @WebSocketGateway(
 	3002,
 	{
 		cors: {
-			origin: 'http://localhost:5173',
+			origin: `http://${process.env.HOST}:5173`,
+			// origin: 'http://localhost:5173',
 			methods: ['GET', 'POST'],
 			credentials: true
 		}
@@ -47,51 +50,51 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	async handleConnection(client: Socket) {
 		try {
-		const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
-		if (connected) {
-			// console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
-			this.socketsByUserID.delete(connected.id); // remove old connection from helper map
-			connected.disconnect(); // disconnect old connection
-		}
-		this.socketsByUserID.set(client.handshake.query.id, client);
-		// console.log('-[ EventsGateway ]- client.handshake.query.id: ', client.handshake.query.id);
-		this.userIdFindHelper.set(client.id, client.handshake.query.id);
-		const id: number = parseInt(client.handshake.query.id[0], 10);
-		this.idByClientIdMap.set(client.id, id);
-		// console.log(' -[ EventsGateway ]- client connected :  { ', client.id, ' }');
+			const connected = this.socketsByUserID.get(client.handshake.query.id); // check if user already connected
+			if (connected) {
+				// console.log(" -[ Handle Connection ]- Deja connected, -> deconnection");
+				this.socketsByUserID.delete(connected.id); // remove old connection from helper map
+				connected.disconnect(); // disconnect old connection
+			}
+			this.socketsByUserID.set(client.handshake.query.id, client);
+			// console.log('-[ EventsGateway ]- client.handshake.query.id: ', client.handshake.query.id);
+			this.userIdFindHelper.set(client.id, client.handshake.query.id);
+			const id: number = parseInt(client.handshake.query.id[0], 10);
+			this.idByClientIdMap.set(client.id, id);
+			// console.log(' -[ EventsGateway ]- client connected :  { ', client.id, ' }');
 
-		if (!this.onlineUsersMap.has(id)) {
-			const user = await this.userService.find_user_by_id(id)
-			this.onlineUsersMap.set(id, user);
-			// Get l'ensemble des onLineUsers et creer la List
+			if (!this.onlineUsersMap.has(id)) {
+				const user = await this.userService.find_user_by_id(id)
+				this.onlineUsersMap.set(id, user);
+				// Get l'ensemble des onLineUsers et creer la List
+				const usersDatas: any[] = [];
+				for (const [id, user] of this.onlineUsersMap) {
+					const usr = await this.userService.find_user_by_id(user.id);
+					usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
+				}
+				this.server.emit('onlineUsersUpdate', usersDatas);
+				// console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
+			}
+		} catch (e) { }
+	}
+
+	async handleDisconnect(client: Socket) {
+		try {
+			this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
+			this.userIdFindHelper.delete(client.id);
+
+			const id: number = this.idByClientIdMap.get(client.id);
+			this.idByClientIdMap.delete(client.id);
+			this.onlineUsersMap.delete(id);
+			// console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
 			const usersDatas: any[] = [];
 			for (const [id, user] of this.onlineUsersMap) {
 				const usr = await this.userService.find_user_by_id(user.id);
 				usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
 			}
 			this.server.emit('onlineUsersUpdate', usersDatas);
-			// console.log(' -[ Events - (Connection) - emit ]- usersDatas', usersDatas);
-		}
-	} catch (e) { }
-	}
-
-	async handleDisconnect(client: Socket) {
-		try {
-		this.socketsByUserID.delete(this.userIdFindHelper.get(client.id));
-		this.userIdFindHelper.delete(client.id);
-
-		const id: number = this.idByClientIdMap.get(client.id);
-		this.idByClientIdMap.delete(client.id);
-		this.onlineUsersMap.delete(id);
-		// console.log(' -[ EventsGateway ]- client disconnected : { ', client.id, ' }')
-		const usersDatas: any[] = [];
-		for (const [id, user] of this.onlineUsersMap) {
-			const usr = await this.userService.find_user_by_id(user.id);
-			usersDatas.push({ id: usr.id, login: usr.login, username: usr.userName, avatar: usr.avatar });
-		}
-		this.server.emit('onlineUsersUpdate', usersDatas);
-		// console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
-	} catch (e) { }
+			// console.log(' -[ Events - (Disconnect) - emit ]- usersDatas', usersDatas);
+		} catch (e) { }
 	}
 
 	@SubscribeMessage('getOnlineUsersDatas')
@@ -301,7 +304,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			if (userTwo) {
 				userTwo.emit('newMessagedm', {
 					messages: a,
-					alert : true
+					alert: true
 				})
 			}
 		} catch (e) { }
@@ -484,13 +487,13 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 	@SubscribeMessage('roomIdChatRoom')
 	async getRoomIdChatRoom(client: Socket, roomTitle: string) {
-		try{
-		let a = await this.chatService.findRoomIdByTitle(roomTitle)
-		// console.log('a-----------------', a)
-		client.emit('repRoomIdChatRoom', {
-			id: a,
-		})
-	} catch (e) { }
+		try {
+			let a = await this.chatService.findRoomIdByTitle(roomTitle)
+			// console.log('a-----------------', a)
+			client.emit('repRoomIdChatRoom', {
+				id: a,
+			})
+		} catch (e) { }
 	}
 
 
