@@ -2,7 +2,6 @@
 	import { authentificated } from "$lib/store/store";
 
 	export async function checkJWT() {
-		// const jwt_verifier_url = "http://localhost:3000/auth/verifier_jwt";
 		const host = import.meta.env.VITE_HOST;
 		const jwt_verifier_url = `http://${host}:3000/auth/verifier_jwt`;
 

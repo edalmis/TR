@@ -25,7 +25,6 @@ export class AuthService {
     const back_port = this.configService.get<string>('BACKEND_PORT');
     // Vérifiez si le paramètre "code" est présent dans l'URL
     const url = new URL(req.url, `http://${host}:${front_port}`);
-    // const url = new URL(req.url, 'http://localhost:5173');
     if (url.searchParams.has('code')) {
       const code = url.searchParams.get('code');
       //console.log("Code: ", code);
@@ -40,7 +39,6 @@ export class AuthService {
         const secret: string = this.configService.get<string>('SECRET');
         //console.log("uid: ", uid);
         //console.log("secret: ", secret);
-        // const redirect_uri = encodeURIComponent('http://localhost:3000/auth/42api-return');
         const redirect_uri = encodeURIComponent(`http://${host}:${back_port}/auth/42api-return`);
 
         // console.log("Tentative recuperation { Access ( 42 ) Token } .. .");
@@ -123,7 +121,6 @@ export class AuthService {
       const host = this.configService.get<string>('HOST');
       const front_port = this.configService.get<string>('FRONTEND_PORT');
       const url = new URL(req.url, `http://${host}:${front_port}`);
-      // const url = new URL(req.url, 'http://localhost:5173');
 
       if (url.searchParams.has('code')) {
         code = url.searchParams.get('code');

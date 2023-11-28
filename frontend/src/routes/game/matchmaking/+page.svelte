@@ -58,7 +58,6 @@
 		ballSpeed.set(3);
 		const host = import.meta.env.VITE_HOST;
 		client = new Colyseus.Client(`ws://${host}:3001`);
-		// client = new Colyseus.Client(`ws://localhost:3001`);
 		clientColyseus.set(client);
 
 		navbar.set(false);
@@ -150,17 +149,13 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
-			const response = await fetch(
-				// `http://localhost:3000/user/enterGame`,
-				`http://${host}:3000/user/enterGame`,
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+			const response = await fetch(`http://${host}:3000/user/enterGame`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
 				},
-			);
+			});
 
 			if (response.ok) {
 				// console.log("-[ Enter Game Button ]- ");
@@ -175,17 +170,13 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
-			const response = await fetch(
-				// `http://localhost:3000/user/leaveGame`,
-				`http://${host}:3000/user/leaveGame`,
-				{
-					method: "POST",
-					headers: {
-						Authorization: `Bearer ${jwt}`,
-						"Content-Type": "application/json",
-					},
+			const response = await fetch(`http://${host}:3000/user/leaveGame`, {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-Type": "application/json",
 				},
-			);
+			});
 
 			if (response.ok) {
 				// console.log("-[ Leave Game ]- ");
@@ -201,7 +192,6 @@
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(
-				// `http://localhost:3000/user/matchHistory`,
 				`http://${host}:3000/user/matchHistory`,
 				{
 					method: "POST",

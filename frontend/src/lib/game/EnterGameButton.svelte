@@ -5,7 +5,7 @@
 		try {
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
-			const response = await fetch(`http:/${host}:3000/user/enterGame`, {
+			const response = await fetch(`http://${host}:3000/user/enterGame`, {
 				method: "POST",
 				headers: {
 					Authorization: `Bearer ${jwt}`,
@@ -15,6 +15,8 @@
 
 			if (response.ok) {
 				console.log("-[ Enter Game Button ]- ");
+			} else {
+				goto("/");
 			}
 			goto("/Friends");
 		} catch (e) {}

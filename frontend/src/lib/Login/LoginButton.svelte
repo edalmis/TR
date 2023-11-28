@@ -2,12 +2,11 @@
 	import { goto } from "$app/navigation";
 
 	// Url Redirection Lorsque click Button   *-[ Login ]-*   .
-	// const loginUrl = `http://localhost:3000/auth/42`;
 
 	function handleLogin() {
 		const host = import.meta.env.VITE_HOST;
 		const loginUrl = `http://${host}:3000/auth/42`;
-		console.log("LoginButton ENV->host: ", host);
+		// console.log("LoginButton ENV->host: ", host);
 		goto(loginUrl);
 	}
 

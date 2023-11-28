@@ -6,7 +6,7 @@
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(
-				`http:/${host}:3000/user/incrementLooser`,
+				`http://${host}:3000/user/incrementLooser`,
 				{
 					method: "POST",
 					headers: {

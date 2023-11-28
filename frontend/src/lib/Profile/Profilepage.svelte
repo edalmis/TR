@@ -76,7 +76,6 @@
 				const host = import.meta.env.VITE_HOST;
 				const response = await fetch(
 					`http://${host}:3000/user/profile`,
-					// `http://localhost:3000/user/profile`,
 					{
 						method: "GET",
 						headers: {
@@ -140,7 +139,6 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, newUsername: newUserName };
 		const host = import.meta.env.VITE_HOST;
-		// const response = await fetch(`http://localhost:3000/auth/changeName`, {
 		const response = await fetch(`http://${host}:3000/auth/changeName`, {
 			method: "POST",
 			headers: {

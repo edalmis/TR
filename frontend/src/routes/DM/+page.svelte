@@ -65,6 +65,8 @@
 					usersIBlockedEmptyArray = true;
 				}
 				// console.log("usersIblockedList: ", usersIBlockedList);
+			} else {
+				goto("/");
 			}
 
 			// Users Who Blocked Me
@@ -85,6 +87,8 @@
 					usersWhoBlockedMeEmptyArray = true;
 				}
 				// console.log("usersWhoBlockedMeList: ", usersWhoBlockedMeList);
+			} else {
+				goto("/");
 			}
 		};
 		fetchData();

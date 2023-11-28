@@ -19,6 +19,7 @@
 
 	async function handleEnable_2fa() {
 		const jwt = localStorage.getItem("jwt");
+		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(`http://${host}:3000/auth/enable_2fa`, {
 			method: "GET",
 			headers: {

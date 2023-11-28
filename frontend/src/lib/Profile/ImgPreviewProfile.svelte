@@ -11,7 +11,7 @@
 		const jwt = localStorage.getItem("jwt");
 		const data = { login: login, img: image };
 		const host = import.meta.env.VITE_HOST;
-		const response = await fetch(`http:/${host}:3000/auth/changeImage`, {
+		const response = await fetch(`http://${host}:3000/auth/changeImage`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${jwt}`,

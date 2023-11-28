@@ -61,7 +61,6 @@
 		// console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
 		const jwt = localStorage.getItem("jwt");
 		const host = import.meta.env.VITE_HOST;
-		// const socket = io(`http://localhost:3002`, {
 		const socket = io(`http://${host}:3002`, {
 			withCredentials: true,
 			extraHeaders: {
@@ -93,7 +92,6 @@
 	async function getUserInfo(jwt: string): Promise<number> {
 		try {
 			const host = import.meta.env.VITE_HOST;
-			// const response = await fetch(`http://localhost:3000/user/profile`, {
 			const response = await fetch(`http://${host}:3000/user/profile`, {
 				method: "GET",
 				headers: {
@@ -132,7 +130,6 @@
 				try {
 					// [ 1 - 1 ] Verification validite du Jwt aupres du Backend
 					const host = import.meta.env.VITE_HOST;
-					// const jwt_verifier_url = `http://localhost:3000/auth/verifier_jwt`;
 					const jwt_verifier_url = `http://${host}:3000/auth/verifier_jwt`;
 					const response = await fetch(jwt_verifier_url, {
 						method: "POST",
@@ -211,7 +208,6 @@
 					// console.log("-[ Verif QR Layout ]-   login: ", login);
 					const host = import.meta.env.VITE_HOST;
 					const response = await fetch(
-						// `http://localhost:3000/auth/get_google_2fa/?login=${login}&qr=google`,
 						`http://${host}:3000/auth/get_google_2fa/?login=${login}&qr=google`,
 						{
 							method: "GET",

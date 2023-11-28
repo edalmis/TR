@@ -215,7 +215,6 @@
 				// [ User - Me]
 				const host = import.meta.env.VITE_HOST;
 				const response = await fetch(
-					// `http://localhost:3000/user/profile`,
 					`http://${host}:3000/user/profile`,
 					{
 						method: "GET",
@@ -234,7 +233,6 @@
 
 				// [ InGame Users ]
 				const inGameUsersListResponse = await fetch(
-					// `http://localhost:3000/user/inGameUsers`,
 					`http://${host}:3000/user/inGameUsers`,
 					{
 						method: "GET",
@@ -256,7 +254,6 @@
 
 				// [ Pending List ]
 				const pendingListResponse = await fetch(
-					// `http://localhost:3000/user/pendingList`,
 					`http://${host}:3000/user/pendingList`,
 					{
 						method: "GET",
@@ -303,7 +300,6 @@
 
 				// [ Sent Requests List ]
 				const sentRequestsListResponse = await fetch(
-					// `http://localhost:3000/user/sentRequestsList`,
 					`http://${host}:3000/user/sentRequestsList`,
 					{
 						method: "GET",
@@ -325,7 +321,6 @@
 
 				// [ Users I Blocked List ]
 				const blockedUsersListResponse = await fetch(
-					// `http://localhost:3000/user/blockUserList`,
 					`http://${host}:3000/user/blockUserList`,
 					{
 						method: "GET",
@@ -347,7 +342,6 @@
 
 				// [ Users Who Blocked Me ]
 				const usersWhoBlockedMeListResponse = await fetch(
-					// `http://localhost:3000/user/blockedByList`,
 					`http://${host}:3000/user/blockedByList`,
 					{
 						method: "GET",
@@ -424,7 +418,6 @@
 		const data = { idToAccept: friendId };
 		//console.log("-[ Add Friend ]- username sent: ", username);
 		const host = import.meta.env.VITE_HOST;
-		// const response = await fetch(`http://localhost:3000/user/addFriend`, {
 		const response = await fetch(`http://${host}:3000/user/addFriend`, {
 			method: "POST",
 			headers: {
@@ -456,7 +449,6 @@
 		const data = { idToRefuse: friendId };
 		const host = import.meta.env.VITE_HOST;
 		const response = await fetch(
-			// `http://localhost:3000/user/refuseFriendRequest`,
 			`http://${host}:3000/user/refuseFriendRequest`,
 			{
 				method: "POST",
@@ -486,18 +478,14 @@
 		const data = { idToRemove: friendId };
 		//console.log("-[ Remove Friend ]- username sent: ", username);
 		const host = import.meta.env.VITE_HOST;
-		const response = await fetch(
-			// `http://localhost:3000/user/removeFriend`,
-			`http://${host}:3000/user/removeFriend`,
-			{
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ data }),
+		const response = await fetch(`http://${host}:3000/user/removeFriend`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${jwt}`,
+				"Content-Type": "application/json",
 			},
-		);
+			body: JSON.stringify({ data }),
+		});
 		if (response.ok) {
 			// console.log("response { OK } du [ Undo Friend ] ", response.ok);
 			await socket.emit("updateFriendList", {

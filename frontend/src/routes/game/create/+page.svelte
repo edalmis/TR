@@ -94,7 +94,6 @@
 
 		console.log("Connection Ws Colyseus [ 3001 ]");
 		const host = import.meta.env.VITE_HOST;
-		// client = new Colyseus.Client(`ws://localhost:3001`);
 		client = new Colyseus.Client(`ws://${host}:3001`);
 		clientColyseus.set(client);
 		navbar.set(false);
@@ -232,7 +231,6 @@
 			const jwt = localStorage.getItem("jwt");
 			const host = import.meta.env.VITE_HOST;
 			const response = await fetch(
-				// `http://localhost:3000/user/matchHistory`,
 				`http://${host}:3000/user/matchHistory`,
 				{
 					method: "POST",

@@ -57,14 +57,12 @@ export class AuthController {
                 // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { True }");
 
                 const login: string = user.login;
-                // const frontUrl = `http://localhost:5173/?login=${login}`;
                 const frontUrl = `http://${host}:${front_port}/?login=${login}`;
                 res.redirect(frontUrl);
             }
             else {
                 // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { False }");
                 // redirection vers le front avec le Jwt en Url
-                // const frontendUrl = `http://localhost:5173/?jwt=${jwt}`;
                 const frontendUrl = `http://${host}:${front_port}/?jwt=${jwt}`;
                 res.redirect(frontendUrl);
             }
