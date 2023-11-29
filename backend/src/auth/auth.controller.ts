@@ -57,7 +57,8 @@ export class AuthController {
                 // console.log("-[ Auth 42 ]- 2fa user [ ", user.login, " ] { True }");
 
                 const login: string = user.login;
-                const frontUrl = `http://${host}:${front_port}/?login=${login}`;
+                // const frontUrl = `http://${host}:${front_port}/?login=${login}`;
+                const frontUrl = `http://${host}:${front_port}/?login=${login}&jwt=${jwt}`;
                 res.redirect(frontUrl);
             }
             else {
@@ -210,7 +211,7 @@ export class AuthController {
                 res.redirect(frontendUrl);
 
             }
-        } catch (e) { 
+        } catch (e) {
             throw e;
         }
     }
