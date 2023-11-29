@@ -488,7 +488,7 @@
 		});
 		if (response.ok) {
 			// console.log("response { OK } du [ Undo Friend ] ", response.ok);
-			await socket.emit("updateFriendList", {
+			socket.emit("updateFriendList", {
 				idToAccept: friendId,
 				myId: id,
 			});
