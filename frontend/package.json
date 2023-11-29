@@ -31,6 +31,7 @@
 		"@colyseus/schema": "^2.0.15",
 		"colyseus": "^0.15.7",
 		"colyseus.js": "^0.15.13",
+		"core-js": "^3.33.3",
 		"otplib": "^12.0.1",
 		"qrcode": "^1.5.3",
 		"qrcode-svg": "^1.1.0",
