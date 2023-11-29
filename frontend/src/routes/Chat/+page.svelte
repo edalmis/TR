@@ -804,13 +804,14 @@
             <ul id="userList">
                 <p class="user-list-title">USER LIST</p>
                 <p />
-                <span class="pa">Welcome {usere.login}</span>
+                <span class="pa">Welcome {usere.userName}</span>
                 <p />
 
                 {#each usersInRoom as user}
                     <li>
-                        {user.user.login} <span class="par">: {user.role}</span>
-                        {#if usere.login != user.user.login}
+                        {user.user.userName}
+                        <span class="par">: {user.role}</span>
+                        {#if usere.userName != user.user.userName}
                             <button
                                 on:click={(e) => {
                                     e.stopPropagation();
@@ -822,7 +823,7 @@
                         {/if}
 
                         <!-- svelte-ignore empty-block -->
-                        {#if user.role === "Admin" && usere.login != user.user.login}
+                        {#if user.role === "Admin" && usere.userName != user.user.userName}
                             <!-- {#if usere.role === "Owner"} -->
                             <div>
                                 <input
@@ -880,7 +881,7 @@
                             >
                             <!-- {/if} -->
                         {/if}
-                        {#if user.role === "Participant" && user.user.login != usere.login}
+                        {#if user.role === "Participant" && user.user.userName != usere.userName}
                             <div>
                                 <input
                                     type="number"
