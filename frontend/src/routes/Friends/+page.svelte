@@ -201,11 +201,13 @@
 					topPlayers = data;
 				});
 				socket.on("newMessagedm", (data: any) => {
-					alert(
-						"You have new direct message from " +
-							data.messages.senderLogin,
-					); //--------------------3
-					dmNotif.set(true); //---------------4
+					if (data.alert) {
+						alert(
+							"You have new direct message from " +
+								data.messages.senderLogin,
+						); //--------------------3
+						dmNotif.set(true); //---------------4
+					}
 				});
 
 				// // // // // // // // // [ Execution - onMount() ] // // // // // //

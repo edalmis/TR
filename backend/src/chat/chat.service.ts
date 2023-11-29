@@ -132,7 +132,8 @@ export class ChatService {
 			}
 
 			const senderId = senderUser.id
-			const senderLogin = login
+			// const senderLogin = login
+			const senderLogin = senderUser.userName;
 			// Create the new message
 			const newMessage = this.chatMessageRepository.create({ content, senderId, senderLogin, roomId });
 

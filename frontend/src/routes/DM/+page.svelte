@@ -108,7 +108,8 @@
 
 		$session.on("newMessagedm", (data: any) => {
 			messages = [...messages, data.messages];
-			if (data.alert && data.messages.sendTo == $user.id) {
+			// if (data.alert && data.messages.sendTo == $user.id) {
+			if (data.alert) {
 				alert(
 					"You have new direct message from " +
 						data.messages.senderLogin,
