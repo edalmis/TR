@@ -2,15 +2,14 @@ FROM node:21-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+# COPY package*.json ./
+COPY . .
 
 RUN npm install -g npm@latest
 
 RUN npm install --legacy-peer-deps
 
 RUN npm install bcryptjs --legacy-peer-deps
-
-COPY . .
 
 RUN npm run build
 
