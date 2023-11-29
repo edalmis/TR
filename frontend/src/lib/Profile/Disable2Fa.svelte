@@ -23,8 +23,10 @@
 		});
 
 		if (response.ok) {
-			console.log("-[ Disable 2fa ]- OK ");
+			// console.log("-[ Disable 2fa ]- OK ");
+			alert("Two-factor authentication has been turned off.");
 		} else {
+			alert("Failed to turn off two-factor authentication.");
 			goto("/");
 		}
 		isGoogleAuthEnabled.set(false);
@@ -50,12 +52,21 @@
 
 <style>
 	button {
-		margin-left: 5px;
+		cursor: pointer;
+		color: white;
 		border-width: 1px;
-		border-color: brown;
-		border-radius: 42%;
+		border-radius: 20%;
+		background: rgba(255, 0, 0, 0.326);
+		padding: 5px 5px;
+		font-size: 8px;
+		border: 2px solid #eff1f4;
+		transition:
+			background 0.3s ease,
+			color 0.3s ease;
+		margin-left: 0;
+		margin-right: 0;
 	}
 	button:hover {
-		color: brown;
+		background: rgb(67, 90, 26);
 	}
 </style>
