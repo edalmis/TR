@@ -6,11 +6,19 @@ WORKDIR /app
 
 COPY . .
 
+ARG FRONTEND_PORT
+
+ENV FRONTEND_PORT=$FRONTEND_PORT
+
+EXPOSE $FRONTEND_PORT
+
+RUN npm install -g npm@latest
+
 RUN npm install --legacy-peer-deps
 
-COPY entrypoint.sh .
+# COPY entrypoint.sh .
 
-RUN chmod +x entrypoint.sh && ./entrypoint.sh
+# RUN chmod +x entrypoint.sh && ./entrypoint.sh
 
 ENTRYPOINT [ "npm", "run", "dev" ]
 
