@@ -179,7 +179,7 @@ export class AuthController {
     @UseGuards(AuthGuard) //
     @Post('changeName')
     async changeUserName(@Request() req, @Response() res) {
-        // try {
+        try {
             // console.log(" -[ ChangeName Controller ]- ");
             const data = req.body.data;
             // console.log("-[ ChangeName Controller ]- data: ", data);
@@ -210,7 +210,9 @@ export class AuthController {
                 res.redirect(frontendUrl);
 
             }
-        // } catch (e) { }
+        } catch (e) { 
+            throw e;
+        }
     }
 
     @HttpCode(HttpStatus.OK)

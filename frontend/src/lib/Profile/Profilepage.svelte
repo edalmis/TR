@@ -163,8 +163,9 @@
 			wsClient.emit("changeUsername");
 			goto("/");
 		} else {
-			openModal("errorMsg");
 			goto("/Profile");
+			openModal("errorMsg");
+			
 		}
 	}
 
@@ -212,6 +213,7 @@
 	function reset_inputs(person: any) {
 		newImg = person ? person.newImg : "";
 	}
+	
 </script>
 
 {#if show_Modal}

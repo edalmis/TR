@@ -201,7 +201,12 @@ export class AuthService {
       }
 
       return await this.userService.change_username(login, newUsername);
-    } catch (e) { }
+    }
+      catch (error) {
+        // Handle errors
+        console.error('An error occurred:', error);
+        throw error; // Rethrow the caught error to propagate it further if needed
+      }
   }
 
 }
