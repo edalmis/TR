@@ -17,7 +17,7 @@
 			);
 
 			if (response.ok) {
-				console.log("-[ Increment Looser ]- Score Looser Updated !");
+				// console.log("-[ Increment Looser ]- Score Looser Updated !");
 			} else {
 				goto("/");
 			}

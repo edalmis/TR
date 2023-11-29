@@ -37,7 +37,7 @@
 	}
 </script>
 
-<div>Desabling Google Authentificator</div>
+<!-- <div>Desabling Google Authentificator</div>
 <div>Confirm your choice :</div>
 
 <div>
@@ -48,6 +48,31 @@
 			goto("/Profile");
 		}}>No</button
 	>
+</div> -->
+
+<div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+	<h3
+		class="text-base font-semibold leading-6 text-gray-900"
+		id="modal-title"
+	>
+		Off Two-factor authentication
+	</h3>
+	<div class="mt-2">
+		<p class="text-sm text-gray-500">
+			Are you sure you want to disable Two-factor authentication?
+		</p>
+	</div>
+</div>
+
+<div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+	<button
+		on:click={() => {
+			closeModal();
+			goto("/Profile");
+		}}>Cancel</button
+	>
+
+	<button on:click={handleDisable_2fa}>Confirm</button>
 </div>
 
 <style>

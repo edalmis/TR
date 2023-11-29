@@ -14,7 +14,7 @@
 			});
 
 			if (response.ok) {
-				console.log("-[ Leave Game Button ]- ");
+				// console.log("-[ Leave Game Button ]- ");
 			} else {
 				goto("/");
 			}

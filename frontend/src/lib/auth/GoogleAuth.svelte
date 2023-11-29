@@ -28,24 +28,33 @@
 		);
 
 		if (response.ok) {
-			// console.log("-[ Google Authentificator ]- OK !");
 			let res = await response.json();
 			if (res.jwt !== null) {
+				// console.log("-[ Google Authentificator ]- OK !");
 				const jwt: string = res.jwt;
-				// console.log("-[Google Auth]-JWT: de la Reponse GoogleAuth",jwt);
+				// console.log(
+				// 	"-[Google Auth]-JWT: de la Reponse GoogleAuth",
+				// 	jwt,
+				// );
 				localStorage.setItem("jwt", jwt);
 				authentificated.set(true);
 				isGoogleAuthEnabled.set(true);
 				googleAuth.set(true);
 				verif = true;
+				isGoogleAuthActivated.set(false);
 			} else {
 				// console.log("Google Auth Paramètre 'jwt' { NULL }.");
+				localStorage.removeItem("jwt");
 				isGoogleAuthActivated.set(false);
-				openModal("errorMsg");
-				goto("/");
 				verif = false;
-				errorMsg.set("Google Auth Code Incorect !");
+				alert("Google Auth Code Incorect !");
+				goto("/");
+				location.reload();
 			}
+		} else {
+			localStorage.removeItem("jwt");
+			goto("/");
+			location.reload();
 		}
 		verif = false;
 	}

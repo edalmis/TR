@@ -92,7 +92,7 @@
 			// console.log(" [ CreateGame ] *{ Not a Refresh ! }* ");
 		}
 
-		console.log("Connection Ws Colyseus [ 3001 ]");
+		// console.log("Connection Ws Colyseus [ 3001 ]");
 		const host = import.meta.env.VITE_HOST;
 		client = new Colyseus.Client(`ws://${host}:3001`);
 		clientColyseus.set(client);
@@ -189,7 +189,7 @@
 			wsClient = a;
 		});
 		wsClient.off("refuseCloseGame");
-		console.log("Le composant [Game/Create] a été démonté.");
+		// console.log("Le composant [Game/Create] a été démonté.");
 	});
 
 	async function LeaveGame() {
@@ -261,7 +261,7 @@
 
 			backgroundColor.subscribe((a) => {
 				backgroundColorChoice = a;
-				console.log("gameRender:", backgroundColorChoice);
+				// console.log("gameRender:", backgroundColorChoice);
 			});
 			const roomOptions = {
 				speed: speed,

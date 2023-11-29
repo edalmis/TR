@@ -59,7 +59,7 @@
 	/// // // // // // // // // // // // // // ///
 	// // // // // [  Functions  ] // // // // //
 	function connectSocket(id: number) {
-		console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
+		// console.log(" -[ Layout ]- Ws Connection ( 3002 ) ...");
 		const jwt = localStorage.getItem("jwt");
 		const host = import.meta.env.VITE_HOST;
 		const socket = io(`http://${host}:3002`, {
@@ -123,16 +123,16 @@
 
 	if (auth === false) {
 		//  *- [ Authentification ] -* { Local Storage }  via  URL
-		console.log(" [ 0 ] auth === false ");
+		// console.log(" [ 0 ] auth === false ");
 		onMount(async () => {
 			// [ 1 ] Check si un Jwt est deja present Dans le LocalStorage du Browser
 			const token = localStorage.getItem("jwt");
 			if (token) {
-				console.log(
-					" [ 1.1 ] On a bien un JWT present dans le localStorage !",
-				);
+				// console.log(
+				// 	" [ 1.1 ] On a bien un JWT present dans le localStorage !",
+				// );
 				try {
-					console.log(" [ 1.1 ] Verif Jwt !");
+					// console.log(" [ 1.1 ] Verif Jwt !");
 					// [ 1 - 1 ] Verification validite du Jwt aupres du Backend
 					const host = import.meta.env.VITE_HOST;
 					const jwt_verifier_url = `http://${host}:3000/auth/verifier_jwt`;
@@ -147,7 +147,7 @@
 
 					// [ 1 - 2 ] Authorisation Acces si reponse Positive du Back !
 					if (response.ok) {
-						console.log(" [ 1.2 ] Jwt ok du Back !");
+						// console.log(" [ 1.2 ] Jwt ok du Back !");
 						// console.log("reponse du Backend ***[ Ok ]*** pour le JWT");
 						authentificated.set(true);
 
@@ -165,7 +165,7 @@
 					// [ 1 - 3 ] Si Jwt non Valide par le Back, effacement
 					else {
 						// console.log("reponse du Backend ***[ BAD ]*** pour le JWT");
-						console.log(" [ 1.2* ] Jwt BAD du Back !");
+						// console.log(" [ 1.2* ] Jwt BAD du Back !");
 						authentificated.set(false);
 						localStorage.clear();
 						goto("/");
@@ -175,18 +175,18 @@
 
 			// [ 2 ] Si Aucun Jwt dans localStorage du Browser Verification si Jwt present Dans Url
 			else {
-				console.log(" [ 2.0 ] Pas Jwt LocalStorage !");
+				// console.log(" [ 2.0 ] Pas Jwt LocalStorage !");
 				// console.log("Pas de Jwt dans le Local storage");
 				// [ 2 - 1 ] Recupere Parametre l'UrL
 				const queryString = window.location.search;
 				const urlParams = new URLSearchParams(queryString);
 				let jwt: any;
 
-				console.log(" [ 2.1 ] Check login URL GoogleAUTH... ");
+				// console.log(" [ 2.1 ] Check login URL GoogleAUTH... ");
 				if (urlParams.has("login")) {
-					console.log(
-						" [ 2.1-1 loginURL] login dans URL GoogleAUTH ! ",
-					);
+					// console.log(
+					// 	" [ 2.1-1 loginURL] login dans URL GoogleAUTH ! ",
+					// );
 
 					const jwtPromise = urlParams.get("jwt");
 					jwt = await jwtPromise;
@@ -213,13 +213,13 @@
 						//console.log("-[ Enable 2fa ]-Response: ", res);
 						isGoogleAuthActivated.set(true);
 						qrGoogle.set(res.url);
-						console.log(" [ 2.1-2 loginURL] GoogleAUTH OK! ");
+						// console.log(" [ 2.1-2 loginURL] GoogleAUTH ON! ");
 						//console.log("-[ Enable 2fa]- qrSource: ", QrSource);
 						jwt = localStorage.getItem("jwt");
-						console.log(
-							" [ 2.1-2 loginURL] GoogleAUTH OK ... Jwt: ",
-							jwt,
-						);
+						// console.log(
+						// 	" [ 2.1-2 loginURL] GoogleAUTH ON ... Jwt: ",
+						// 	jwt,
+						// );
 						// 	let id = await getUserInfo(jwt);
 						// 	if (id === -1) return;
 						// 	// Connexion socket
@@ -247,9 +247,9 @@
 					}
 				} else {
 					// [ 2 - 2 ] Recuperation JWT avec 'await' pour résoudre la Promise
-					console.log(" [ 2.1 jwtURL] Check Jwt dans URL ... ");
+					// console.log(" [ 2.1 jwtURL] Check Jwt dans URL ... ");
 					if (urlParams.has("jwt")) {
-						console.log(" [ 2.1-1 jwtURL] Jwt dans URL !");
+						// console.log(" [ 2.1-1 jwtURL] Jwt dans URL !");
 						const jwtPromise = urlParams.get("jwt");
 						jwt = await jwtPromise;
 						// console.log("JWT:", jwt);
@@ -272,7 +272,7 @@
 						// else {console.log("Paramètre URL 'jwt' non trouvé.");}
 
 						// [ 2 - 5 ] Redirection Vers Le Home afin de relancer Verification
-						console.log(" [ 2.1-2 jwtURL] Goto( / ) !");
+						// console.log(" [ 2.1-2 jwtURL] Goto( / ) !");
 						goto("/");
 					}
 				}

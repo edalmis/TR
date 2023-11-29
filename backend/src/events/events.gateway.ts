@@ -680,7 +680,7 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 	//------------------------------OFFLINE ADDINGS----------------------------===============
 	@SubscribeMessage('leaveChatRoom')
 	async leaveChatRoom(client: Socket, payload: { user: UserEntity, room: ChatRoom }) {
-		console.log("Received leaveChatRoom payload:", payload);
+		// console.log("Received leaveChatRoom payload:", payload);
 		try {
 			const { user, room } = payload;
 
@@ -698,13 +698,14 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 				if (second) {
 					const done = await this.chatService.makeOwner(room);
 					// console.log('done**--**-*-*-*-*-', done)
-					if (done)
-						console.log('New owner selected', done)
+					if (done) {
+						// console.log('New owner selected', done)
+					}
 				}
 				else {
 					this.server.to('1').emit("chatRoomDeleted", { success: true, room });
 					await this.chatService.deleteRoom(room);
-					console.log("[LeaveChatRoom]");
+					// console.log("[LeaveChatRoom]");
 				}
 			}
 			client.leave(room.id);

@@ -77,19 +77,19 @@
 
 <svelte:body
 	on:viewportchanged={() => {
-		console.log(
-			"Viewport Size changed to: ",
-			Viewport.Width + "x" + Viewport.Height
-		);
+		// console.log(
+		// 	"Viewport Size changed to: ",
+		// 	Viewport.Width + "x" + Viewport.Height
+		// );
 	}}
 	on:orientationchangeend={() => {
-		console.log(
-			"Screen Orientation changed to: ",
-			Viewport.Orientation +
-				(Viewport.detailledOrientation == null
-					? ""
-					: "(" + Viewport.detailledOrientation + ")")
-		);
+		// console.log(
+		// 	"Screen Orientation changed to: ",
+		// 	Viewport.Orientation +
+		// 		(Viewport.detailledOrientation == null
+		// 			? ""
+		// 			: "(" + Viewport.detailledOrientation + ")")
+		// );
 	}}
 />
 
@@ -111,7 +111,6 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		
 	}
 
 	autoTyping {

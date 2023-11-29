@@ -92,7 +92,9 @@ export class AuthController {
             // console.log("-[ verify_2fa ]-");
             const tokenJwt = await this.authService.verify_2fa(req);
             res.json({ jwt: tokenJwt });
-        } catch (e) { }
+        } catch (e) {
+            throw (e);
+        }
     }
 
     @HttpCode(HttpStatus.OK)

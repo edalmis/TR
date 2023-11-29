@@ -1,5 +1,5 @@
 
-import { Injectable, UnauthorizedException, BadRequestException, } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ImATeapotException, } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
@@ -164,7 +164,9 @@ export class AuthService {
       }
       // console.log("-[ Verify_2Fa ]- Code INVALIDE");
       return null;
-    } catch (e) { }
+    } catch (e) {
+      throw (e)
+    }
   }
   /////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -192,21 +194,23 @@ export class AuthService {
       if (login === newUsername) {
         if (userNameCheck) {
           // console.log('UserName already in use');
-          throw new BadRequestException('UserName already in use');
+          // throw new BadRequestException('UserName already in use');
+          throw new ImATeapotException('UserName already in use');
         }
       }
       else if (userNameCheck || userLoginCheck) {
         // console.log('New UserName already in use');
-        throw new BadRequestException('UserName already in use');
+        // throw new BadRequestException('UserName already in use');
+        throw new ImATeapotException('UserName already in use');
       }
 
       return await this.userService.change_username(login, newUsername);
     }
-      catch (error) {
-        // Handle errors
-        console.error('An error occurred:', error);
-        throw error; // Rethrow the caught error to propagate it further if needed
-      }
+    catch (error) {
+      // Handle errors
+      console.error('An error occurred:', error);
+      throw error; // Rethrow the caught error to propagate it further if needed
+    }
   }
 
 }

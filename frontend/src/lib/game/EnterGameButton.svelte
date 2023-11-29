@@ -14,7 +14,7 @@
 			});
 
 			if (response.ok) {
-				console.log("-[ Enter Game Button ]- ");
+				// console.log("-[ Enter Game Button ]- ");
 			} else {
 				goto("/");
 			}

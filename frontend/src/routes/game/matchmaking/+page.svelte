@@ -227,7 +227,7 @@
 			state = room.state;
 
 			room.onMessage("state", (message: any) => {
-				console.log("New game state received:", message);
+				// console.log("New game state received:", message);
 			});
 			room.onMessage("startGame", (message: any) => {});
 

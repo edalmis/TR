@@ -29,7 +29,7 @@
 		});
 
 		if (response.ok) {
-			console.log("-[ Enable 2fa ]- OK");
+			// console.log("-[ Enable 2fa ]- OK");
 			let res = await response.json();
 			//console.log("-[ Enable 2fa ]-Response: ", res);
 			QrSource = res.url;
