@@ -1,6 +1,6 @@
 <script lang="ts" , context="module">
 	import Typewriter from "svelte-typewriter";
-	import Viewport from "svelte-viewport-info";
+	// import Viewport from "svelte-viewport-info";
 	import Modal from "$lib/modals/Modal.svelte";
 	import Chat from "$lib/chat/Chat.svelte";
 	import Game from "$lib/game/Game.svelte";
@@ -75,7 +75,7 @@
 	</div>
 </main>
 
-<svelte:body
+<!-- <svelte:body
 	on:viewportchanged={() => {
 		// console.log(
 		// 	"Viewport Size changed to: ",
@@ -91,7 +91,7 @@
 		// 			: "(" + Viewport.detailledOrientation + ")")
 		// );
 	}}
-/>
+/> -->
 
 <style lnag="postcss">
 	.main {

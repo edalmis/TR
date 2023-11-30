@@ -7,7 +7,7 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["images/42auth_image.png","images/backgroundImg.jpg","images/backgroundImg.png","images/defaultAvatar.jpg","images/game_background.png","images/imgT1.jpg","images/imgT2.jpg","images/imgT3.jpg","images/logo-42.jpg","images/milky_galaxy.jpg","images/playRoom.jpg"]),
+	assets: new Set(["images/42auth_image.png","images/backgroundImg.jpg","images/defaultAvatar.jpg","images/game_background.png","images/imgT1.jpg","images/imgT2.jpg","images/imgT3.jpg","images/logo-42.jpg","images/milky_galaxy.jpg","images/playRoom.jpg"]),
 	mimeTypes: {".png":"image/png",".jpg":"image/jpeg"},
 	_: {
 		client: {"start":"_app/immutable/entry/start.1e9d9f3d.js","app":"_app/immutable/entry/app.957b41d8.js","imports":["_app/immutable/entry/start.1e9d9f3d.js","_app/immutable/chunks/scheduler.7c1da786.js","_app/immutable/chunks/singletons.954b5846.js","_app/immutable/chunks/index.dfdd8657.js","_app/immutable/chunks/paths.0e6369ab.js","_app/immutable/entry/app.957b41d8.js","_app/immutable/chunks/preload-helper.cf010ec4.js","_app/immutable/chunks/scheduler.7c1da786.js","_app/immutable/chunks/index.7a22757c.js"],"stylesheets":[],"fonts":[]},
